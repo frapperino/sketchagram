@@ -5,7 +5,7 @@ package sketchagram.chalmers.com.model;
  */
 public class User extends ADigitalPerson {
 
-    protected User(String name, String username, Profile profile) {
+    public User(String name, String username, Profile profile) {
         super(name, username, profile);
     }
 }
