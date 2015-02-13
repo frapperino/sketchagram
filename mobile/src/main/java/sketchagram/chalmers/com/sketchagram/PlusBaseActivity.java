@@ -74,9 +74,9 @@ public abstract class PlusBaseActivity extends Activity
 
         // Initialize the PlusClient connection.
         // Scopes indicate the information about the user your application will be able to access.
-        mPlusClient =
-                new PlusClient.Builder(this, this, this).setScopes(Scopes.PLUS_LOGIN,
-                        Scopes.PLUS_ME).build();
+//        mPlusClient =
+//                new PlusClient.Builder(this, this, this).setScopes(Scopes.PLUS_LOGIN,
+//                        Scopes.PLUS_ME).build();
     }
 
     /**
@@ -109,9 +109,9 @@ public abstract class PlusBaseActivity extends Activity
      * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
      */
     private void initiatePlusClientConnect() {
-        if (!mPlusClient.isConnected() && !mPlusClient.isConnecting()) {
-            mPlusClient.connect();
-        }
+//        if (!mPlusClient.isConnected() && !mPlusClient.isConnecting()) {
+//            mPlusClient.connect();
+//        }
     }
 
     /**
@@ -119,9 +119,9 @@ public abstract class PlusBaseActivity extends Activity
      * This will call back to {@link #onDisconnected()}.
      */
     private void initiatePlusClientDisconnect() {
-        if (mPlusClient.isConnected()) {
-            mPlusClient.disconnect();
-        }
+ //       if (mPlusClient.isConnected()) {
+ //           mPlusClient.disconnect();
+ //       }
     }
 
     /**

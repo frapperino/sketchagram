@@ -1,17 +1,32 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private final String FILENAME = "user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+        Log.e("RANDOM", pref.getAll().toString());
+        String username =
+                pref.getString("username", "not found");
+        ((TextView)findViewById(R.id.text)).setText(username);
     }
 
 
@@ -32,6 +47,12 @@ public class MainActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_about) {
+            return true;
+        } else if (id == R.id.action_logout) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

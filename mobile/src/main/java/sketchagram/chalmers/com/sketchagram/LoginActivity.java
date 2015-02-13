@@ -7,15 +7,20 @@ import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +37,11 @@ import com.google.android.gms.common.SignInButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.User;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 
 /**
@@ -64,11 +74,14 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     private SignInButton mPlusSignInButton;
     private View mSignOutButtons;
     private View mLoginFormView;
+    private final String FILENAME = "user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
         setupActionBar();
 
         // Find the Google+ sign in button.
@@ -129,8 +142,20 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // Show the Up button in the action bar.
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+//            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    public void emailLogin(View view) {
+        SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+        Editor prefs = pref.edit();
+        String username = ((EditText)findViewById(R.id.email)).getText().toString();
+        prefs.clear();
+        prefs.putString("username", username);
+        prefs.commit();
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -139,9 +164,15 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("username", "Username1");
+        startActivity(intent);
+
         if (mAuthTask != null) {
             return;
         }
+
 
         // Reset errors.
         mEmailView.setError(null);
