@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,7 +58,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
+            "foo@example.com:hello", "bar@example.com:world", "asd@smth.com:asd123"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -117,18 +116,15 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mEmailLoginFormView = findViewById(R.id.email_login_form);
         mSignOutButtons = findViewById(R.id.plus_sign_out_buttons);
+
+        SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+        if(!pref.getString("username", "").isEmpty()){
+            attemptLogin();
+        }
     }
 
     private void populateAutoComplete() {
@@ -146,16 +142,14 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         }
     }
 
-    public void emailLogin(View view) {
-        SharedPreferences pref = getSharedPreferences(FILENAME, 0);
-        Editor prefs = pref.edit();
-        String username = ((EditText)findViewById(R.id.email)).getText().toString();
-        prefs.clear();
-        prefs.putString("username", username);
-        prefs.commit();
+    public void emailLogin(View view){
+        SharedPreferences prefs = getSharedPreferences(FILENAME, 0);
+        Editor editor = prefs.edit();
+        editor.putString("username", mEmailView.getText().toString());
+        editor.putString("password", mPasswordView.getText().toString());
+        editor.commit();
 
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
+        attemptLogin();
     }
 
     /**
@@ -165,9 +159,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
      */
     public void attemptLogin() {
 
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra("username", "Username1");
-        startActivity(intent);
 
         if (mAuthTask != null) {
             return;
@@ -181,6 +172,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+
+        SharedPreferences prefs = getSharedPreferences(FILENAME, 0);
+        email = prefs.getString("username", email);
+        password = prefs.getString("password", password);
+
 
         boolean cancel = false;
         View focusView = null;
@@ -214,6 +210,9 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
         }
     }
 

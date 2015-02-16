@@ -50,6 +50,11 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.action_about) {
             return true;
         } else if (id == R.id.action_logout) {
+            //Delete saved user
+            SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+            SharedPreferences.Editor prefs = pref.edit();
+            prefs.clear();
+            prefs.commit();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
