@@ -1,8 +1,13 @@
 <component name="libraryTable">
   <library name="wearable-1.1.0">
     <CLASSES>
+<<<<<<< HEAD
       <root url="jar://$PROJECT_DIR$/mobile/build/intermediates/exploded-aar/com.google.android.support/wearable/1.1.0/classes.jar!/" />
       <root url="file://$PROJECT_DIR$/mobile/build/intermediates/exploded-aar/com.google.android.support/wearable/1.1.0/res" />
+=======
+      <root url="file://$PROJECT_DIR$/mobile/build/intermediates/exploded-aar/com.google.android.support/wearable/1.1.0/res" />
+      <root url="jar://$PROJECT_DIR$/mobile/build/intermediates/exploded-aar/com.google.android.support/wearable/1.1.0/classes.jar!/" />
+>>>>>>> origin/uml
     </CLASSES>
     <JAVADOC />
     <SOURCES />
