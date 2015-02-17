@@ -12,7 +12,7 @@ public class Emoticon extends AMessage {
     }
 
     @Override
-    public <T> T getMessage() {
-        return null;
+    public String getMessage() {
+        return ":D";
     }
 }
