@@ -1,5 +1,25 @@
 *.class
 
+#Android Studio
+.gradle
+.idea
+
+#OSX files
+.DS_Store
+
+#Windows thumbnail
+Thumbs.db
+
+local.properties
+
+#generated files
+bin/
+gen/
+
+#built application files
+*.apk
+*.ap_
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
