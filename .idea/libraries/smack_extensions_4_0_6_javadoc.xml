@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="smack-extensions-4.0.6-javadoc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mobile/libs/smack-extensions-4.0.6-javadoc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="smack-core-compression-4.0.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mobile/libs/smack-core-compression-4.0.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
