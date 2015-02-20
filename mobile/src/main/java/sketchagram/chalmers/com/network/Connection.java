@@ -25,6 +25,7 @@ public class Connection {
     }
     public Connection(){
         config = new ConnectionConfiguration("127.0.0.1", 5222);
+        config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         connect();
         manager = AccountManager.getInstance(connection);
