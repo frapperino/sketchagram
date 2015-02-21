@@ -34,11 +34,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
+import org.apache.http.conn.params.ConnConnectionParamBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.network.Connection;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -150,6 +153,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         editor.commit();
 
         attemptLogin();
+    }
+
+    public void register(View view){
+        Connection conn = new Connection();
+        conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
     }
 
     /**

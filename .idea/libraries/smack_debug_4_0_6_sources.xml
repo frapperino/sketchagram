@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="smack-debug-4.0.6-sources">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/mobile/libs/smack-debug-4.0.6-sources.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

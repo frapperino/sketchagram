@@ -2,39 +2,193 @@
 <items version="2" >
 
     <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-debug-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="c8d1d3f4b745bd788006be185fc7f261d415f049">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-debug-4.1.0-rc1-48538546deb61cb7babe7b5a15f0f16895c372f8.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-ae4d03d2d996165bdfde647f0897912a1958cf0f.jar" />
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-948aafbc96f31796f32aad317005d74f2dfb15d3.jar" />
     </item>
     <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/classes.jar"
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-java7-4.1.0-rc1.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-42c8b95e9630d8ebc7d22788471997ef3274fcc0.jar" />
+        sha1="88d1b54f6125cbfe6b25c99b3c7b7f69712691c5">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-java7-4.1.0-rc1-8048b93aa177c3b2dd3cfa13cd1a543697f7eb6f.jar" />
     </item>
     <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-android-4.1.0-rc1.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-414911d14fa1f33fce52224a6c3c4aff86082a09.jar" />
+        sha1="74e80e0ab71015a7034068b045169a564a4797ee">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-android-4.1.0-rc1-fbdc7a81ff0c90a6ed278d0875fbdbca5b9ea38b.jar" />
     </item>
     <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-experimental-4.1.0-rc1.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-740792c7d2cb05f001283391b8cba78d12846a84.jar" />
+        sha1="1161cf83eaf5d4d8fc6bc1beebf06ed1a44218df">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-experimental-4.1.0-rc1-4bbda72078b33171865402829a3448eb8fcdfed4.jar" />
     </item>
     <item
-        jar="/Users/Bosch/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.3/support-annotations-21.0.3.jar"
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-bosh-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="725e0452bc684f0c15484a9eef7c7c2f90e81134">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-bosh-4.1.0-rc1-cf8d54cd7dde081542616a24bae2960d022d758b.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-sasl-provided-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="33daa3259b803626b79d2d7d893365991b8c4e6f">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-sasl-provided-4.1.0-rc1-29c308c2b17162f8fbb03d5e31013fc4d191dd2f.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.3/support-annotations-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-a7287ab1664067512a78dc4f6f9aea56504500c5.jar" />
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-8d5c9cb921701693fe814ad39232632b347aceb1.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-e86d874c6d27fa47ced368c01bfd3c72a2697728.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-extensions-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="1f00838d9acaf7f3f7ce15177c1a0ff3876defb2">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-extensions-4.1.0-rc1-f7182dce12da5b802a75ec4dab812c51b7ffca90.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-59e062d8c7cd793e841aa52ece25f75cdea026c6.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-compression-jzlib-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="31adf3b2aa4e6c314a0a7e09845e702e49dfaf76">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-compression-jzlib-4.1.0-rc1-b6d74a202c31d13d0b3a132b1401a11f38730f9e.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-im-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d83286c7f0d488b2bd720c72a2684bdc97d527e7">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-im-4.1.0-rc1-7be17edac5b3bc59cdc0120b854879101d7ff725.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-android-extensions-4.1.0-rc1-javadoc.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="125756b8e3116d645900281881c10f0a8b6b3691">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-android-extensions-4.1.0-rc1-javadoc-d561f8939027ce0e5f3154e05397cbe86a6c134c.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-debug-slf4j-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="639a0193e30ef47ba41463589fe71ebd4bb56d8c">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-debug-slf4j-4.1.0-rc1-473fd60370658f37287c12fea7f9626a0204646e.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-android-extensions-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="0e78532f4339d75432e2cfc15ef6efcbd686943b">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-android-extensions-4.1.0-rc1-5a0c4b545fbc0ef2519047c0814f7208a9576e9e.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-android-4.1.0-rc1-javadoc.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="a00d47e007abf972a86dd35df5568466061471ec">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-android-4.1.0-rc1-javadoc-e0509838200f76f63c224c991f6eca8058375dfe.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-jingle-old-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="ee455467484c0aa058a84dea42835a112f090d3e">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-jingle-old-4.1.0-rc1-d76df650ddb1b0b757eb56534b271ba41c1e0a1d.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-88cb6eda091d6b31602907da1bd3456e61674038.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-sasl-javax-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="bf3683c26795850723be435407454c88883d272d">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-sasl-javax-4.1.0-rc1-ec5195ad78bff357824fc9c32981a1985d85c711.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-tcp-4.1.0-rc1-javadoc.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="cdff10508302acd5bff262e5497155ee1786e00a">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-tcp-4.1.0-rc1-javadoc-5b76580066d2045168ce912b81e14c1ecb7e3bcd.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-legacy-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="5cb06dad8c20f77d350d47cc876580ba7ef81ce9">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-legacy-4.1.0-rc1-1b2f3fd26e272373d39de158c3587bf04091881a.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-resolver-minidns-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="74328debb0a7f2d74f6b8f0ee904e6ba9ae51161">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-resolver-minidns-4.1.0-rc1-37123eae9dab723f4a5a7abfaaa6eb8f99a31132.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-resolver-javax-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="c6869b2d67d3c6f6ae3493e4eaf6a3f6877af088">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-resolver-javax-4.1.0-rc1-044902eeda0e02a454068d91d8e387ba148792c0.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-core-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="28ee23fb96a5499ec77db3033b53193521fb8ae6">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-core-4.1.0-rc1-9515bdb35df5b5bb228d2324cdcb56ccc36d45db.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-resolver-dnsjava-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="82180a1e275e2ba22569d638319f2ffaa16e4ee7">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-resolver-dnsjava-4.1.0-rc1-04276c2fc15c1707a87e15772bcc3c43746ce1e9.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/smack-tcp-4.1.0-rc1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="7bee23e03e7adefe994bf751dea43119a9bfe6cb">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/smack-tcp-4.1.0-rc1-b2d10f7ef86ef3a2971cf10373bb52f4f3510143.jar" />
     </item>
 
 </items>
