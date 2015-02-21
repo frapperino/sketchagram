@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,8 @@ public class Conversation {
     private List<ADigitalPerson> participants;
 
     public Conversation(){
-
+        history = new ArrayList<AMessage>();
+        participants = new ArrayList<ADigitalPerson>();
     }
 
     public List<AMessage> getHistory() {
@@ -27,5 +29,10 @@ public class Conversation {
 
     public void setParticipants(List<ADigitalPerson> participants) {
         this.participants = participants;
+    }
+
+    @Override
+    public String toString(){
+        return getParticipants().toString();
     }
 }

@@ -13,8 +13,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
-import sketchagram.chalmers.com.sketchagram.dummy.ContactDummy;
-import sketchagram.chalmers.com.sketchagram.dummy.ConversationDummy;
+import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A fragment representing a list of Items.
@@ -76,8 +76,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         }
 
         // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<ConversationDummy.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, ConversationDummy.ITEMS);
+        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1,
+                    SystemUser.getInstance().getUser().getConversationList());
     }
 
     @Override
@@ -118,7 +119,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(ContactDummy.ITEMS.get(position).id);
+            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().
+                    getConversationList().get(position).getParticipants().toString()); //TODO: how to find right conversation.
         }
     }
 

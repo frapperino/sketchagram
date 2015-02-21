@@ -1,29 +1,27 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
-        , ItemFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener {
+        , ContactFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener {
 
     private final String FILENAME = "user";
     private EmoticonFragment emoticonFragment;
-    private ItemFragment itemFragment;
+    private ContactFragment contactFragment;
     private ConversationFragment conversationFragment;
 
     @Override
@@ -32,14 +30,15 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         setContentView(R.layout.activity_main);
         SharedPreferences pref = getSharedPreferences(FILENAME, 0);
         emoticonFragment = new EmoticonFragment();
-        itemFragment = new ItemFragment();
+        contactFragment = new ContactFragment();
         conversationFragment = new ConversationFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragmentlayout, conversationFragment);
         ft.commit();
-        String username =
-                pref.getString("username", "not found");
 //        ((TextView)findViewById(R.id.text)).setText(username);
+        User user = new User(pref.getString("username", null), new Profile());
+        SystemUser.getInstance().setUser(user);
+        DummyData.injectData();
     }
 
 
@@ -87,7 +86,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction t = getFragmentManager().beginTransaction();
-        t.replace(R.id.fragmentlayout, itemFragment);
+        t.replace(R.id.fragmentlayout, contactFragment);
         t.commit();
 
     }
