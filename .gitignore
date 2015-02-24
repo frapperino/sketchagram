@@ -2,7 +2,7 @@
 
 #Android Studio
 .gradle
-.idea
+.idea/
 
 #OSX files
 .DS_Store
