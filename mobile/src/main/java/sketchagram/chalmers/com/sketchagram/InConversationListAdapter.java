@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * Created by Bosch on 24/02/15.
@@ -62,7 +63,10 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
 
-        holder.titleText.setText(item.getMessage().toString());
+        holder.titleText.setText(item.getSENDER().getUsername() + ": " + item.getMessage().toString());
+        if(item.getSENDER().getUsername().equals(SystemUser.getInstance().getUser().getUsername()))
+            holder.titleText.setText("Me: " + item.getMessage().toString());
+
         return viewToUse;
     }
 }

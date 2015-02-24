@@ -43,11 +43,24 @@ public class DummyData {
         participants.add(user.getContactList().get(5));
         participants.add(user.getContactList().get(1));
         Conversation conversation = new Conversation(participants);
+
         participants.remove(1);
         TextMessage text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(5), participants);
         text.setTextMessage("Yolo");
-        conversation.addMessage
-                (text);
+        conversation.addMessage(text);
+
+        participants.add(user.getContactList().get(5));
+        participants.remove(1);
+        text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(1), participants);
+        text.setTextMessage("Haha");
+
+        conversation.addMessage(text);
+        participants.add(user.getContactList().get(1));
+        participants.remove(0);
+        text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(0), participants);
+        text.setTextMessage("Kul man kan ha då...");
+        conversation.addMessage(text);
+
         SystemUser.getInstance().getUser().addConversation(conversation);
     }
 }

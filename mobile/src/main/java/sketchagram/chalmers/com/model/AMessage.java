@@ -18,4 +18,8 @@ public abstract class AMessage {
 
     public abstract  <T> T getMessage();
 
+    public ADigitalPerson getSENDER(){
+        return SENDER;
+    }
+
 }
