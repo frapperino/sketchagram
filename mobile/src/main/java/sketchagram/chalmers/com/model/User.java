@@ -3,8 +3,6 @@ package sketchagram.chalmers.com.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import sketchagram.chalmers.com.sketchagram.DummyData;
-
 /**
  * Created by Bosch on 10/02/15.
  */
