@@ -19,14 +19,24 @@ public class DummyData {
 
     public static void injectData(){
         User user = SystemUser.getInstance().getUser();
-        for(int i=0; i<5; i++) {
-            Contact contact = new Contact("Contact"+i, new Profile());
-            user.addContact(contact);
-        }
+
+        Contact contact = new Contact("Jabbe", new Profile());
+        user.addContact(contact);
+        contact = new Contact("Frappe", new Profile());
+        user.addContact(contact);
+        contact = new Contact("Lam(m)", new Profile());
+        user.addContact(contact);
+        contact = new Contact("Alex", new Profile());
+        user.addContact(contact);
+        contact = new Contact("Olliver", new Profile());
+        user.addContact(contact);
+        contact = new Contact("Bosch", new Profile());
+        user.addContact(contact);
+
         List<ADigitalPerson> particitpants = new ArrayList<ADigitalPerson>();
-        particitpants.add(new Contact("Jabbe", new Profile()));
-        particitpants.add(new Contact("Frappe", new Profile()));
-        particitpants.add(new Contact("Lam(m)", new Profile()));
+        particitpants.add(user.getContactList().get(0));
+        particitpants.add(user.getContactList().get(5));
+        particitpants.add(user.getContactList().get(1));
         Conversation conversation = new Conversation();
         conversation.setParticipants(particitpants);
             SystemUser.getInstance().getUser().addConversation(conversation);

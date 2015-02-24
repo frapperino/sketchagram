@@ -82,19 +82,14 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         return super.onOptionsItemSelected(item);
     }
 
-    public void imageClick(View view) {
-        Log.e("IMAGE", "click");
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.e("FRAGMENT", "New message");
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction t = getFragmentManager().beginTransaction();
         t.replace(R.id.fragmentlayout, contactFragment);
         t.commit();
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.e("FRAGMENT", uri.getFragment());
     }
 
     @Override
