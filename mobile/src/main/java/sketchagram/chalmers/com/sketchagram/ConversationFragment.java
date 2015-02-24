@@ -119,7 +119,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().
+            mListener.onFragmentInteraction("conversation " + SystemUser.getInstance().getUser().
                     getConversationList().get(position).getParticipants().toString()); //TODO: how to find right conversation.
         }
     }

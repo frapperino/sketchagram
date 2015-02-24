@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import sketchagram.chalmers.com.model.SystemUser;
+
 
 /**
  * A fragment representing a list of Items.
@@ -72,7 +74,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
+        mAdapter = new InConversationListAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList().get(1).getHistory());
     }
 
     @Override
