@@ -1,4 +1,4 @@
-package sketchagram.chalmers.com.sketchagram;
+package sketchagram.chalmers.com.model.test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import sketchagram.chalmers.com.model.User;
 /**
  * Created by Bosch on 20/02/15.
  */
+
+//TODO: Remove once real profiles have been created.
 public class DummyData {
 
     public static void injectData(){
