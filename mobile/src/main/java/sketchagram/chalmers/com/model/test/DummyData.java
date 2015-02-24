@@ -1,5 +1,9 @@
 package sketchagram.chalmers.com.model.test;
 
+import android.os.SystemClock;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +12,7 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.TextMessage;
 import sketchagram.chalmers.com.model.User;
 
 /**
@@ -38,6 +43,11 @@ public class DummyData {
         participants.add(user.getContactList().get(5));
         participants.add(user.getContactList().get(1));
         Conversation conversation = new Conversation(participants);
-            SystemUser.getInstance().getUser().addConversation(conversation);
+        participants.remove(1);
+        TextMessage text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(5), participants);
+        text.setTextMessage("Yolo");
+        conversation.addMessage
+                (text);
+        SystemUser.getInstance().getUser().addConversation(conversation);
     }
 }

@@ -7,12 +7,19 @@ import java.util.List;
  */
 public class TextMessage extends AMessage {
 
-    protected TextMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
+    private String textMessage;
+
+    public TextMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
         super(timestamp, sender, receiver);
+        textMessage = "";
     }
 
     @Override
-    public <T> T getMessage() {
-        return null;
+    public String getMessage() {
+        return textMessage;
+    }
+
+    public void setTextMessage(String textMessage) {
+        this.textMessage = textMessage;
     }
 }
