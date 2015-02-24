@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class RealtimePainting extends Painting {
 
-    protected RealtimePainting(double timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver ) {
+    protected RealtimePainting(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver ) {
         super(timestamp, sender, receiver);
     }
 }

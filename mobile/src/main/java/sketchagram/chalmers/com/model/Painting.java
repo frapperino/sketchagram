@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class Painting extends AMessage {
 
-    protected Painting(double timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver ) {
+    protected Painting(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver ) {
         super(timestamp, sender, receiver);
     }
 

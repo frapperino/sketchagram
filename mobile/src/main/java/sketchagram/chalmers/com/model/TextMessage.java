@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class TextMessage extends AMessage {
 
-    protected TextMessage(double timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
+    protected TextMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
         super(timestamp, sender, receiver);
     }
 

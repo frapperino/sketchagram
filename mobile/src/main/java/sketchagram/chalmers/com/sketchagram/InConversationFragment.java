@@ -12,8 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import sketchagram.chalmers.com.model.SystemUser;
 
-import sketchagram.chalmers.com.sketchagram.dummy.ContactDummy;
 
 /**
  * A fragment representing a list of Items.
@@ -24,7 +24,7 @@ import sketchagram.chalmers.com.sketchagram.dummy.ContactDummy;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ItemFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class InConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,8 +49,8 @@ public class ItemFragment extends Fragment implements AbsListView.OnItemClickLis
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static ItemFragment newInstance(String param1, String param2) {
-        ItemFragment fragment = new ItemFragment();
+    public static InConversationFragment newInstance(String param1, String param2) {
+        InConversationFragment fragment = new InConversationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -62,7 +62,7 @@ public class ItemFragment extends Fragment implements AbsListView.OnItemClickLis
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment() {
+    public InConversationFragment() {
     }
 
     @Override
@@ -74,15 +74,13 @@ public class ItemFragment extends Fragment implements AbsListView.OnItemClickLis
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<ContactDummy.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, ContactDummy.ITEMS);
+        mAdapter = new InConversationListAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList().get(1).getHistory());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_inconversation, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
@@ -117,7 +115,6 @@ public class ItemFragment extends Fragment implements AbsListView.OnItemClickLis
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(ContactDummy.ITEMS.get(position).id);
         }
     }
 

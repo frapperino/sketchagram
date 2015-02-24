@@ -10,7 +10,7 @@ import java.util.List;
 public class Emoticon extends AMessage {
 
 
-    protected Emoticon(double timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
+    public Emoticon(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
         super(timestamp, sender, receiver);
     }
 
@@ -19,7 +19,4 @@ public class Emoticon extends AMessage {
         return ":D";
     }
 
-    private void paint(){
-
-    }
 }
