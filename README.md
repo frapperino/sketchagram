@@ -1,3 +1,3 @@
 # sketchagram
 Smartwatch application
-hej huttu
+Android communication application using Android Wear.
