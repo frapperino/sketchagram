@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class ConstantText extends TextMessage{
 
-    protected ConstantText(double timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
+    protected ConstantText(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
         super(timestamp, sender, receiver);
     }
 

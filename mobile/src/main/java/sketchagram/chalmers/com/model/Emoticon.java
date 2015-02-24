@@ -1,5 +1,7 @@
 package sketchagram.chalmers.com.model;
 
+import android.graphics.drawable.Drawable;
+
 import java.util.List;
 
 /**
@@ -7,12 +9,14 @@ import java.util.List;
  */
 public class Emoticon extends AMessage {
 
-    protected Emoticon(double timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
+
+    public Emoticon(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
         super(timestamp, sender, receiver);
     }
 
     @Override
-    public <T> T getMessage() {
-        return null;
+    public String getMessage() {
+        return ":D";
     }
+
 }

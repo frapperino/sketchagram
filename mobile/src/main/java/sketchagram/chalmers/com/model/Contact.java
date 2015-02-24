@@ -6,8 +6,8 @@ package sketchagram.chalmers.com.model;
 public class Contact extends ADigitalPerson {
     private boolean favorite;
 
-    protected Contact(String name, String username, Profile profile) {
-        super(name, username, profile);
+    public Contact(String username, Profile profile) {
+        super(username, profile);
     }
 
     public boolean isFavorite() {
@@ -17,4 +17,10 @@ public class Contact extends ADigitalPerson {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+
+    @Override
+    public String toString(){
+        return super.getUsername();
+    }
+
 }

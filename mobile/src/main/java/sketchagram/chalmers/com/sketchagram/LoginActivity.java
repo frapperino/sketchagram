@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -125,6 +126,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         if(!pref.getString("username", "").isEmpty()){
             attemptLogin();
         }
+
+        SystemUser.getInstance().setUser(new User(pref.getString("username", null), new Profile()));
     }
 
     private void populateAutoComplete() {
@@ -212,6 +215,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mAuthTask.execute((Void) null);
 
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             startActivity(intent);
         }
     }
