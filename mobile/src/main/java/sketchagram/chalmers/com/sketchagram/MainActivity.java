@@ -11,6 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.test.DummyData;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -21,6 +28,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         , ContactFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener {
 
     private final String FILENAME = "user";
+    private final String MESSAGE = "message";
     private EmoticonFragment emoticonFragment;
     private ContactFragment contactFragment;
     private ConversationFragment conversationFragment;
@@ -84,21 +92,41 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        Log.e("FRAGMENT", "New message");
+        Log.e("EMOTICON", uri.getPath());
+
+        SharedPreferences preferences = getSharedPreferences(MESSAGE, 0);
+        preferences.edit()
+                .clear()
+                .putString(MESSAGE, ":D")
+                .commit();
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction t = getFragmentManager().beginTransaction();
-        t.replace(R.id.fragmentlayout, contactFragment);
-        t.commit();
+        t.replace(R.id.fragmentlayout, contactFragment)
+                .commit();
     }
 
     @Override
     public void onFragmentInteraction(String id) {
         Log.e("FRAGMENT", id);
+        List<ADigitalPerson> receivers = new ArrayList<>();
+        for(Contact c : SystemUser.getInstance().getUser().getContactList()) {
+            if(c.getUsername().equals(id))
+                receivers.add(c);
+        }
+
+        List<ADigitalPerson> participants = receivers;
+        participants.add(SystemUser.getInstance().getUser());
+        Emoticon emoticon = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
+
+
+        Conversation conversation = new Conversation(participants);
+        conversation.addMessage(emoticon);
+        SystemUser.getInstance().getUser().addConversation(conversation);
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction t = getFragmentManager().beginTransaction();
-        t.replace(R.id.fragmentlayout, conversationFragment);
-        t.commit();
+        t.replace(R.id.fragmentlayout, conversationFragment)
+                .commit();
     }
 }

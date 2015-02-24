@@ -98,7 +98,8 @@ public class EmoticonFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        newMessage(Uri.EMPTY);
+        Uri uri = Uri.EMPTY;
+        newMessage(uri.buildUpon().path(":D").build());
     }
 
 

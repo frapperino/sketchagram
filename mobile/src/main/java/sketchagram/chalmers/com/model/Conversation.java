@@ -10,25 +10,21 @@ public class Conversation {
     private List<AMessage> history;
     private List<ADigitalPerson> participants;
 
-    public Conversation(){
+    public Conversation(List<ADigitalPerson> participants){
         history = new ArrayList<AMessage>();
-        participants = new ArrayList<ADigitalPerson>();
+        this.participants = participants;
     }
 
     public List<AMessage> getHistory() {
         return history;
     }
 
-    public void setHistory(List<AMessage> history) {
-        this.history = history;
-    }
-
     public List<ADigitalPerson> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<ADigitalPerson> participants) {
-        this.participants = participants;
+    public void addMessage(AMessage message) {
+        history.add(message);
     }
 
     @Override

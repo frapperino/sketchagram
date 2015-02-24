@@ -33,12 +33,11 @@ public class DummyData {
         contact = new Contact("Bosch", new Profile());
         user.addContact(contact);
 
-        List<ADigitalPerson> particitpants = new ArrayList<ADigitalPerson>();
-        particitpants.add(user.getContactList().get(0));
-        particitpants.add(user.getContactList().get(5));
-        particitpants.add(user.getContactList().get(1));
-        Conversation conversation = new Conversation();
-        conversation.setParticipants(particitpants);
+        List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
+        participants.add(user.getContactList().get(0));
+        participants.add(user.getContactList().get(5));
+        participants.add(user.getContactList().get(1));
+        Conversation conversation = new Conversation(participants);
             SystemUser.getInstance().getUser().addConversation(conversation);
     }
 }
