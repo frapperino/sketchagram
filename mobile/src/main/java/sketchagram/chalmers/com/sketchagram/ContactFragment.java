@@ -75,9 +75,8 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<Contact>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, SystemUser.getInstance().getUser().getContactList());
+        // Sets the adapter to customized one which enables our layout of items.
+        mAdapter = new ContactListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
     }
 
     @Override
