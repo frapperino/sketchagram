@@ -143,6 +143,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     public void emailLogin(View view){
+
         SharedPreferences prefs = getSharedPreferences(FILENAME, 0);
         Editor editor = prefs.edit();
         editor.putString("username", mEmailView.getText().toString());
