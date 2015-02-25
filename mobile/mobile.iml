@@ -85,29 +85,11 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="smack-core-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-jingle-old-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-6.5.87" level="project" />
-    <orderEntry type="library" exported="" name="smack-sasl-provided-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="smack-resolver-dnsjava-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-experimental-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-extensions-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-android-extensions-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-debug-slf4j-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-im-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-compression-jzlib-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-tcp-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-sasl-javax-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-legacy-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-android-4.1.0-rc1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="smack-debug-4.1.0-rc1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-6.5.87" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="smack-resolver-minidns-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-bosh-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-java7-4.1.0-rc1" level="project" />
-    <orderEntry type="library" exported="" name="smack-resolver-javax-4.1.0-rc1" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="asmack-android-8-4.0.6" level="project" />
   </component>
 </module>
 
