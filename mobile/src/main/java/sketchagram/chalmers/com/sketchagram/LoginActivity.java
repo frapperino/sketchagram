@@ -35,6 +35,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
 import org.apache.http.conn.params.ConnConnectionParamBean;
+import org.jivesoftware.smack.XMPPException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +158,15 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
     public void register(View view){
         Connection conn = new Connection();
-        conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
+        Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
+        if(e != null){
+            if(e.getMessage().toString().equals("conflict")){
+                //TODO: Tell user to pick another name
+            }
+        } else {
+            boolean success = conn.login(mEmailView.getText().toString(), mPasswordView.getText().toString());
+        }
+
     }
 
     /**
