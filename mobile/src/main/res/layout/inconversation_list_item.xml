@@ -16,13 +16,6 @@
             android:text="Large Text"
             android:id="@+id/titleTextView"
             android:layout_gravity="center" />
-
-        <ImageView
-            android:layout_width="131dp"
-            android:layout_height="122dp"
-            android:id="@+id/photoImageView"
-            android:layout_gravity="left|bottom"
-            android:src="@drawable/profile" />
     </FrameLayout>
 
 </LinearLayout>

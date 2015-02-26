@@ -50,9 +50,9 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
             if(useList){
-                viewToUse = mInflater.inflate(R.layout.contact_list_item, null);
+                viewToUse = mInflater.inflate(R.layout.inconversation_list_item, null);
             } else {
-                viewToUse = mInflater.inflate(R.layout.contact_grid_item, null);
+                viewToUse = mInflater.inflate(R.layout.inconversation_grid_item, null);
             }
 
             holder = new ViewHolder();
