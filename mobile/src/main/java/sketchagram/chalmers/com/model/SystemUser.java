@@ -8,7 +8,7 @@ public class SystemUser {
     private User user;
 
     public static void initInstance() {
-        SystemUser ourInstance = new SystemUser();
+        ourInstance = new SystemUser();
     }
 
     public static SystemUser getInstance() {
