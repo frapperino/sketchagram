@@ -1,9 +1,14 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.FragmentTransaction;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +16,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
@@ -26,14 +43,23 @@ import sketchagram.chalmers.com.model.User;
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
         , ContactFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener,
-        InConversationFragment.OnFragmentInteractionListener{
+        InConversationFragment.OnFragmentInteractionListener, MessageApi.MessageListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        Handler.Callback{
 
+    private static final int MSG_POST_NOTIFICATIONS = 0;
+    private static final long POST_NOTIFICATIONS_DELAY_MS = 200;
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
+    private final String TAG = "SKETCHAGRAM";
     private EmoticonFragment emoticonFragment;
     private ContactFragment contactFragment;
     private ConversationFragment conversationFragment;
     private InConversationFragment inConversationFragment;
+    private Handler mHandler;
+    private int postedNotificationCount = 0;
+
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +77,34 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
+
+        //  Needed for communication between watch and device.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        Log.d(TAG, "onConnected: " + connectionHint);
+                        tellWatchConnectedState("connected");
+                        //  "onConnected: null" is normal.
+                        //  There's nothing in our bundle.
+                    }
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        Log.d(TAG, "onConnectionSuspended: " + cause);
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult result) {
+                        Log.d(TAG, "onConnectionFailed: " + result);
+                    }
+                })
+                .addApi(Wearable.API)
+                .build();
+
+        mGoogleApiClient.connect();
+        Wearable.MessageApi.addListener(mGoogleApiClient, this).setResultCallback(resultCallback);
+        mHandler = new Handler(this);
     }
 
 
@@ -134,10 +188,151 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             conversation.addMessage(emoticon);
             SystemUser.getInstance().getUser().addConversation(conversation);
 
+            postNotifications();
+
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
             t.replace(R.id.fragmentlayout, conversationFragment)
                     .commit();
         }
+    }
+
+    //Below code is for connecting and communicating with Wear
+
+
+    private void tellWatchConnectedState(final String state){
+
+        new AsyncTask<Void, Void, List<Node>>(){
+
+            @Override
+            protected List<Node> doInBackground(Void... params) {
+                return getNodes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Node> nodeList) {
+                for(Node node : nodeList) {
+                    Log.v(TAG, "telling " + node.getId() + " i am " + state);
+
+                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
+                            mGoogleApiClient,
+                            node.getId(),
+                            " " + state,
+                            null
+                    );
+
+                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                        @Override
+                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                            Log.v(TAG, "Phone: " + sendMessageResult.getStatus().getStatusMessage());
+                        }
+                    });
+                }
+            }
+        }.execute();
+
+    }
+
+
+    private List<Node> getNodes() {
+        List<Node> nodes = new ArrayList<Node>();
+        NodeApi.GetConnectedNodesResult rawNodes =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+        for (Node node : rawNodes.getNodes()) {
+            nodes.add(node);
+        }
+        return nodes;
+    }
+
+    /**
+     * Not needed, but here to show capabilities. This callback occurs after the MessageApi
+     * listener is added to the Google API Client.
+     */
+    private ResultCallback<Status> resultCallback =  new ResultCallback<Status>() {
+        @Override
+        public void onResult(Status status) {
+            Log.v(TAG, "Status: " + status.getStatus().isSuccess());
+            new AsyncTask<Void, Void, Void>(){
+                @Override
+                protected Void doInBackground(Void... params) {
+                    //TODO put code here to do something when listener is added.
+                    return null;
+                }
+            }.execute();
+        }
+    };
+
+    /**
+     * Begin to re-post the sample notification(s).
+     */
+    private void updateNotifications(boolean cancelExisting) {
+        // Disable messages to skip notification deleted messages during cancel.
+        sendBroadcast(new Intent(NotificationIntentReceiver.ACTION_DISABLE_MESSAGES)
+                .setClass(this, NotificationIntentReceiver.class));
+
+        if (cancelExisting) {
+            // Cancel all existing notifications to trigger fresh-posting behavior: For example,
+            // switching from HIGH to LOW priority does not cause a reordering in Notification Shade.
+            NotificationManagerCompat.from(this).cancelAll();
+            postedNotificationCount = 0;
+
+            // Post the updated notifications on a delay to avoid a cancel+post race condition
+            // with notification manager.
+            mHandler.removeMessages(MSG_POST_NOTIFICATIONS);
+            mHandler.sendEmptyMessageDelayed(MSG_POST_NOTIFICATIONS, POST_NOTIFICATIONS_DELAY_MS);
+        } else {
+            postNotifications();
+        }
+    }
+
+    /**
+     * Post the sample notification(s) using current options.
+     */
+    private void postNotifications() {
+        sendBroadcast(new Intent(NotificationIntentReceiver.ACTION_ENABLE_MESSAGES)
+                .setClass(this, NotificationIntentReceiver.class));
+
+        NotificationPreset preset = NotificationPresets.PRESETS[
+                0];
+        CharSequence titlePreset = "Notifikation";
+        CharSequence textPreset = "Det här är en notifikation!!! Wiiiie! :D";
+        NotificationPreset.BuildOptions options = new NotificationPreset.BuildOptions(
+                titlePreset,
+                textPreset);
+        Notification[] notifications = preset.buildNotifications(this, options);
+
+        // Post new notifications
+        for (int i = 0; i < notifications.length; i++) {
+            NotificationManagerCompat.from(this).notify(i, notifications[i]);
+        }
+        // Cancel any that are beyond the current count.
+        for (int i = notifications.length; i < postedNotificationCount; i++) {
+            NotificationManagerCompat.from(this).cancel(i);
+        }
+        postedNotificationCount = notifications.length;
+    }
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        Log.e("CLOCK", "Click");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        return false;
     }
 }
