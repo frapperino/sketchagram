@@ -183,17 +183,17 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             participants.add(SystemUser.getInstance().getUser());
             Emoticon emoticon = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
 
-
             Conversation conversation = new Conversation(participants);
             conversation.addMessage(emoticon);
             SystemUser.getInstance().getUser().addConversation(conversation);
 
             postNotifications();
-
+            conversationFragment = new ConversationFragment();
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
             t.replace(R.id.fragmentlayout, conversationFragment)
                     .commit();
+
         }
     }
 
@@ -314,6 +314,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.e("CLOCK", "Click");
+        onFragmentInteraction("[Bosch, asd@smth.com]");
     }
 
     @Override

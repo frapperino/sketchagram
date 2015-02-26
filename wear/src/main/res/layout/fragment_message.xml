@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:text="New Message"
         android:id="@+id/messageButton"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:onClick="sendMessage" />
 
 </FrameLayout>

@@ -27,7 +27,7 @@ public class User extends ADigitalPerson {
     }
 
     public void addConversation(Conversation conversation){
-        Boolean exist = false;
+        boolean exist = false;
         for(Conversation c : conversationList){
             if(c.getParticipants().equals(conversation.getParticipants())) {
                 for (AMessage msg : conversation.getHistory())
