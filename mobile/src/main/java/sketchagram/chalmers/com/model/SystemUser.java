@@ -4,14 +4,15 @@ package sketchagram.chalmers.com.model;
  * Created by Bosch on 20/02/15.
  */
 public class SystemUser {
-    private static SystemUser ourInstance = new SystemUser();
+    private static SystemUser ourInstance;
     private User user;
+
+    public static void initInstance() {
+        SystemUser ourInstance = new SystemUser();
+    }
 
     public static SystemUser getInstance() {
         return ourInstance;
-    }
-
-    private SystemUser() {
     }
 
     public User getUser() {
