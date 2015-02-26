@@ -50,6 +50,12 @@ public class Connection{
         }
     }
 
+    public void logout(){
+
+        disconnect();
+        connection = new XMPPTCPConnection(config);
+    }
+
     public Exception createAccount(String userName, String password) {
         AsyncTask task = new AsyncTask() {
             @Override

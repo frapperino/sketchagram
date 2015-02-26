@@ -1,4 +1,5 @@
 package sketchagram.chalmers.com.model;
+import sketchagram.chalmers.com.network.*;
 
 /**
  * Created by Bosch on 20/02/15.
@@ -6,6 +7,7 @@ package sketchagram.chalmers.com.model;
 public class SystemUser {
     private static SystemUser ourInstance = new SystemUser();
     private User user;
+    private Connection connection = new Connection();
 
     public static SystemUser getInstance() {
         return ourInstance;
@@ -21,4 +23,6 @@ public class SystemUser {
     public void setUser(User user) {
         this.user = user;
     }
+    public Connection getConnection() {return connection;}
+    //public void newConnection() {this.connection = new Connection();}
 }

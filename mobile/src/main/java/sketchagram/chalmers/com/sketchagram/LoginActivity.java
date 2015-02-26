@@ -160,7 +160,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     public void register(View view){
-        Connection conn = new Connection();
+        Connection conn = SystemUser.getInstance().getConnection();
         Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
         if(e != null){
             if(e.getMessage().toString().equals("conflict")){
@@ -168,6 +168,12 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             }
         } else {
             boolean success = conn.login(mEmailView.getText().toString(), mPasswordView.getText().toString());
+            if(success){
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                startActivity(intent);
+                //TODO: Login here
+            }
         }
 
     }
@@ -210,7 +216,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+       /* if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
@@ -218,7 +224,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }
+        }*/
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -228,12 +234,19 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            Connection conn = SystemUser.getInstance().getConnection();
+            boolean success = conn.login(email, password);
+            if (success){
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                startActivity(intent);
+            }
+           // mAuthTask = new UserLoginTask(email, password);
+           // mAuthTask.execute((Void) null);
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-            startActivity(intent);
+            //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            //startActivity(intent);
         }
     }
 
