@@ -114,25 +114,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
         // enabling action bar app icon and behaving it as toggle button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, //nav menu toggle icon
-                R.string.app_name, // nav drawer open - description for accessibility TODO: change text
-                R.string.app_name // nav drawer close - description for accessibility TODO: change text
-        ){
-            public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
@@ -156,7 +139,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Log.d("DRAWER DEBUG", ""+id);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -185,8 +168,9 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             FragmentTransaction t = getFragmentManager().beginTransaction();
             t.replace(R.id.fragmentlayout, emoticonFragment);
             t.commit();
-        } else if (id == R.id.home) {
+        } else if (id == 16908332) {
             mDrawerLayout.openDrawer(mDrawerList);
+            Log.d("DRAWER DEBUG", "HOME CLICKED");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -263,19 +247,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             case 1:
                 fragment = new EmoticonFragment();
                 break;
-            case 2:
-                fragment = new EmoticonFragment();
-                break;
-            case 3:
-                fragment = new EmoticonFragment();
-                break;
-            case 4:
-                fragment = new EmoticonFragment();
-                break;
-            case 5:
-                fragment = new EmoticonFragment();
-                break;
-
             default:
                 break;
         }
