@@ -1,8 +1,13 @@
 package sketchagram.chalmers.com.model.test;
 
+import android.database.Cursor;
+import android.os.Bundle;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import sketchagram.chalmers.com.database.DBHelper;
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
@@ -18,10 +23,11 @@ import sketchagram.chalmers.com.model.User;
 public class DummyData {
 
     public static void injectData(){
+
         User user = SystemUser.getInstance().getUser();
 
-        Contact contact = new Contact("Jabbe", new Profile());
-        user.addContact(contact);
+        String user_name = ("Jabbe");
+        Contact contact;
         contact = new Contact("Frappe", new Profile());
         user.addContact(contact);
         contact = new Contact("Lam(m)", new Profile());
@@ -35,9 +41,20 @@ public class DummyData {
 
         List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
         participants.add(user.getContactList().get(0));
-        participants.add(user.getContactList().get(5));
+        participants.add(user.getContactList().get(4));
         participants.add(user.getContactList().get(1));
         Conversation conversation = new Conversation(participants);
             SystemUser.getInstance().getUser().addConversation(conversation);
+
+
+        DBHelper db;
+
+        db.insertContact("hello","0059505","kjeankr");
+
+
+        Log.d("jabbe", "inserted and getted");
+
     }
+
+
 }

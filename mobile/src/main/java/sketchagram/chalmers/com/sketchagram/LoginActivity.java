@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -17,7 +16,6 @@ import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -40,8 +38,6 @@ import java.util.List;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 
 /**
@@ -81,6 +77,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Initiate the database helper with a context.
+        SystemUser.getInstance().initiateDatabase(this.getApplicationContext());
 
         setupActionBar();
 
