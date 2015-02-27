@@ -19,6 +19,7 @@ import java.util.List;
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.AMessage;
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.TextMessage;
 
@@ -125,6 +126,15 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
             // fragment is attached to one) that an item has been selected.
             List<ADigitalPerson> receiverList = new ArrayList<ADigitalPerson>();
             receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
+            boolean create = true;
+            for(Conversation conversation : SystemUser.getInstance().getUser().getConversationList()){
+                if(conversation.getParticipants().equals(receiverList)){
+                    create = false;
+                }
+            }
+            if(create){
+                SystemUser.getInstance().getConnection().createConversation(receiverList.get(0));
+            }
             AMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
             SystemUser.getInstance().getConnection().sendMessage(message, "TextMessage");
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());

@@ -9,6 +9,7 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.Manager;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -62,7 +63,7 @@ public class Connection{
         try {
             SASLAuthentication.supportSASLMechanism("PLAIN");
             connection.connect();
-            /*getChatManager().addChatListener(new ChatManagerListener() {
+            getChatManager().addChatListener(new ChatManagerListener() {
                 @Override
                 public void chatCreated(Chat chat, boolean b) {
                     if(!b) {
@@ -70,7 +71,7 @@ public class Connection{
                         chat.addMessageListener(messageListener);
                     }
                 }
-            });*/
+            });
         } catch (SmackException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -82,28 +83,24 @@ public class Connection{
     }
     private void disconnect(){
         try {
-            Presence presence = new Presence(Presence.Type.unavailable);
-            presence.setStatus(connection.getUser() + "offline");
-            if(connection.isConnected()) {
-                connection.sendPacket(presence);
-            }
-            connection.disconnect(presence);
-            boolean b = connection.isConnected();
-            System.out.println(b);
+            connection.disconnect();
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
     }
 
     private ChatManager getChatManager(){
-        connect();
-        return ChatManager.getInstanceFor(connection);
+        if(connection.isConnected()) {
+            return ChatManager.getInstanceFor(connection);
+        }
+        return null;
     }
 
     public void logout(){
+        connect();
         disconnect();
         connection = new XMPPTCPConnection(config);
-        SystemUser.getInstance().newConnection();
+
     }
 
     public Exception createAccount(String userName, String password) {
