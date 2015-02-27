@@ -21,10 +21,10 @@ public class DBHelper extends SQLiteOpenHelper{
     public static final String CONTACTS_COLUMN_NAME = "name";
     public static final String CONTACTS_COLUMN_EMAIL = "email";
     public static final String CONTACTS_COLUMN_STREET = "street";
-
+    private static DBHelper instance;
     private HashMap hp;
 
-    public DBHelper(Context context)
+    private DBHelper(Context context)
     {
         super(context, DATABASE_NAME , null, 1);
     }
@@ -99,4 +99,11 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
+    public static void initInstance(Context ctx){
+        instance = new DBHelper(ctx);
+    }
+
+    public static DBHelper getInstance() {
+        return instance;
+    }
 }

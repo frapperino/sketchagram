@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
 
 
@@ -74,7 +77,16 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        mAdapter = new InConversationListAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList().get(1).getHistory());
+        String participants = getActivity().getSharedPreferences("Participants", 0).getString("Participants", "");
+        Conversation conversation = null;
+        for(Conversation c : SystemUser.getInstance().getUser().getConversationList()){
+            if(c.getParticipants().toString().equals(participants))
+                conversation = c;
+        }
+        if(conversation == null)
+            conversation = SystemUser.getInstance().getUser().getConversationList().get(0);
+
+        mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
     }
 
     @Override

@@ -77,8 +77,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Initiate the database helper with a context.
-        SystemUser.getInstance().initiateDatabase(this.getApplicationContext());
 
         setupActionBar();
 
@@ -124,8 +122,10 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         if(!pref.getString("username", "").isEmpty()){
             attemptLogin();
         }
-
-        SystemUser.getInstance().setUser(new User(pref.getString("username", null), new Profile()));
+        String user = pref.getString("username", null);
+        if (user == null)
+            throw new NullPointerException("User not found in shared preferences");
+        SystemUser.getInstance().setUser(new User(user, new Profile()));
     }
 
     private void populateAutoComplete() {
@@ -214,6 +214,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mAuthTask.execute((Void) null);
 
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             startActivity(intent);
         }
     }

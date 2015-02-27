@@ -1,8 +1,10 @@
 package sketchagram.chalmers.com.model.test;
 
 import android.database.Cursor;
-import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.TextMessage;
 import sketchagram.chalmers.com.model.User;
 
 /**
@@ -23,11 +26,10 @@ import sketchagram.chalmers.com.model.User;
 public class DummyData {
 
     public static void injectData(){
-
         User user = SystemUser.getInstance().getUser();
 
-        String user_name = ("Jabbe");
-        Contact contact;
+        Contact contact = new Contact("Jabbe", new Profile());
+        user.addContact(contact);
         contact = new Contact("Frappe", new Profile());
         user.addContact(contact);
         contact = new Contact("Lam(m)", new Profile());
@@ -41,20 +43,41 @@ public class DummyData {
 
         List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
         participants.add(user.getContactList().get(0));
-        participants.add(user.getContactList().get(4));
+        participants.add(user.getContactList().get(5));
         participants.add(user.getContactList().get(1));
         Conversation conversation = new Conversation(participants);
-            SystemUser.getInstance().getUser().addConversation(conversation);
 
+        participants.remove(1);
+        TextMessage text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(5), participants);
+        text.setTextMessage("Yolo");
+        conversation.addMessage(text);
 
-        DBHelper db;
+        participants.add(user.getContactList().get(5));
+        participants.remove(1);
+        text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(1), participants);
+        text.setTextMessage("Haha");
 
-        db.insertContact("hello","0059505","kjeankr");
+        conversation.addMessage(text);
+        participants.add(user.getContactList().get(1));
+        participants.remove(0);
+        text = new TextMessage(SystemClock.currentThreadTimeMillis(), user.getContactList().get(0), participants);
+        text.setTextMessage("Kul man kan ha då...");
+        conversation.addMessage(text);
 
+        SystemUser.getInstance().getUser().addConversation(conversation);
 
-        Log.d("jabbe", "inserted and getted");
+        /*
+        Database tests
+         */
+        DBHelper dbh = DBHelper.getInstance();
+        dbh.insertContact("alex","halibababa","hello");
+        Cursor rs = dbh.getData(1);
+        rs.moveToFirst();
+        String namn = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_NAME));
+        String email = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_EMAIL));
+        String street = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_STREET));
+
+        Log.d("jabbe", namn + email + street);
 
     }
-
-
 }

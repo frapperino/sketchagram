@@ -27,7 +27,17 @@ public class User extends ADigitalPerson {
     }
 
     public void addConversation(Conversation conversation){
-        conversationList.add(conversation);
+        Boolean exist = false;
+        for(Conversation c : conversationList){
+            if(c.getParticipants().equals(conversation.getParticipants())) {
+                for (AMessage msg : conversation.getHistory())
+                    c.addMessage(msg);
+                exist = true;
+            }
+
+        }
+        if(!exist)
+            conversationList.add(conversation);
     }
 
     public List<Contact> getContactList() {
@@ -36,6 +46,11 @@ public class User extends ADigitalPerson {
 
     public List<Conversation> getConversationList() {
         return conversationList;
+    }
+
+    @Override
+    public String toString() {
+        return getUsername();
     }
 
 }

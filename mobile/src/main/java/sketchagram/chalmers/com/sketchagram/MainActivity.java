@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         ft.add(R.id.fragmentlayout, conversationFragment);
         ft.commit();
 //        ((TextView)findViewById(R.id.text)).setText(username);
-        User user = new User(pref.getString("username", null), new Profile());
+        User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
     }
