@@ -68,7 +68,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -172,7 +171,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
                 startActivity(intent);
-                //TODO: Login here
             }
         }
 
@@ -184,13 +182,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
-
-
-        if (mAuthTask != null) {
-            return;
-        }
-
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -241,12 +232,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
                 startActivity(intent);
             }
-           // mAuthTask = new UserLoginTask(email, password);
-           // mAuthTask.execute((Void) null);
+            showProgress(false);
 
-            //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-            //startActivity(intent);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            startActivity(intent);
         }
     }
 
@@ -404,63 +394,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 

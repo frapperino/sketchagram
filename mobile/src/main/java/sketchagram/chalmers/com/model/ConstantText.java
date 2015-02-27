@@ -11,8 +11,8 @@ public class ConstantText extends TextMessage{
         super(timestamp, sender, receiver);
     }
 
-    @Override
-    public <T> T getMessage() {
-        return null;
-    }
+    //@Override
+    //public <T> T getMessage() {
+   //     return null;
+    //}
 }

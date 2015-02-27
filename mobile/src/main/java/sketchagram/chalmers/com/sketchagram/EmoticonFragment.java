@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import sketchagram.chalmers.com.model.Emoticon;
+import sketchagram.chalmers.com.model.SystemUser;
 
 
 /**
@@ -99,6 +100,7 @@ public class EmoticonFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Uri uri = Uri.EMPTY;
+
         newMessage(uri.buildUpon().path(":D").build());
     }
 

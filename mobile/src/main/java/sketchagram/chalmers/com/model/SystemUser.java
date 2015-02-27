@@ -24,5 +24,5 @@ public class SystemUser {
         this.user = user;
     }
     public Connection getConnection() {return connection;}
-    //public void newConnection() {this.connection = new Connection();}
+    public void newConnection() {this.connection = new Connection();}
 }

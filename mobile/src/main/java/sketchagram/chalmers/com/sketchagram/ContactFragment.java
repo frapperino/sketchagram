@@ -13,8 +13,14 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.AMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.TextMessage;
 
 /**
  * A fragment representing a list of Items.
@@ -117,6 +123,10 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
+            List<ADigitalPerson> receiverList = new ArrayList<ADigitalPerson>();
+            receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
+            AMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
+            SystemUser.getInstance().getConnection().sendMessage(message, "TextMessage");
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }
