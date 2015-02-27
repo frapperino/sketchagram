@@ -1,21 +1,25 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,7 +39,12 @@ import java.util.List;
 public class MainActivity extends Activity implements
         View.OnClickListener,
         MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks{
+        GoogleApiClient.ConnectionCallbacks,
+        MessageFragment.OnFragmentInteractionListener,
+        ContactFragment.OnFragmentInteractionListener, WearableListView.ClickListener {
+
+    private ContactFragment contactFragment;
+    private MessageFragment messageFragment;
 
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
@@ -48,8 +57,15 @@ public class MainActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_message);
+        setContentView(R.layout.activity_main);
+
         btn = findViewById(R.id.messageButton);
+        contactFragment = new ContactFragment();
+        messageFragment = new MessageFragment();
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.wearable_fragment_layout, messageFragment);
+        ft.commit();
 
 
         //  Is needed for communication between the wearable and the device.
@@ -69,6 +85,22 @@ public class MainActivity extends Activity implements
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onClick(WearableListView.ViewHolder viewHolder) {
+
+    }
+
+    @Override
+    public void onTopEmptyRegionClick() {
+
     }
 
 
@@ -154,9 +186,22 @@ public class MainActivity extends Activity implements
 
     }
 
+    private static ArrayList<Integer> listItems;
+    static {
+        listItems = new ArrayList<Integer>();
+        listItems.add(R.drawable.happyface);
+        listItems.add(R.drawable.happyface);
+        listItems.add(R.drawable.happyface);
+        listItems.add(R.drawable.happyface);
+        listItems.add(R.drawable.happyface);
+        listItems.add(R.drawable.happyface);
+    }
+
+
     public void sendMessage(View view){
         Log.e("WATCH", "Trying to send a message");
-        sendStartMessage();
+        Intent intent = new Intent(this, AdvancedListActivity.class);
+        startActivity(intent);
     }
 
     /** Post a new or updated notification using the selected notification options. */
@@ -181,6 +226,7 @@ public class MainActivity extends Activity implements
     @Override
     public void onClick(View v) {
         Log.e("WATCH", "trying to send a message");
-        sendStartMessage();
     }
+
+
 }
