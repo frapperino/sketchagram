@@ -6,6 +6,7 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdvancedListActivity extends Activity implements WearableListView.ClickListener  {
 
@@ -26,37 +28,37 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_stub);
 
-        mAdapter = new MyListAdapter();
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                if(mAdapter == null)
-                    Log.e("ADAPTER", "NULL");
-                if(mListView == null)
-                    Log.e("LISTVIEW", "NULL");
-                mListView.setAdapter(mAdapter);
-                mListView.setClickListener(AdvancedListActivity.this);
+                loadAdapter();
             }
         });
+    }
+
+    private void loadAdapter(){
+        mAdapter = new MyListAdapter(this, listItems);
+        LinearLayoutManager mManager = new LinearLayoutManager(getApplicationContext());
+        mListView.setLayoutManager(mManager);
+        mListView.setAdapter(mAdapter);
+        mListView.setClickListener(AdvancedListActivity.this);
     }
 
     private static ArrayList<Integer> listItems;
     static {
         listItems = new ArrayList<Integer>();
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
+        listItems.add(R.drawable.content_icon_small);
+        listItems.add(R.drawable.content_icon_small);
+        listItems.add(R.drawable.content_icon_small);
+        listItems.add(R.drawable.content_icon_small);
+        listItems.add(R.drawable.content_icon_small);
     }
 
     @Override
@@ -71,6 +73,13 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     public class MyListAdapter extends WearableListView.Adapter {
 
+        private final Context context;
+        private final List<Integer> items;
+
+        public MyListAdapter(Context context, List<Integer> items) {
+            this.context = context;
+            this.items = items;
+        }
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             return new WearableListView.ViewHolder(new MyItemView(AdvancedListActivity.this));
@@ -78,21 +87,12 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
         @Override
         public void onBindViewHolder(WearableListView.ViewHolder viewHolder, int i) {
-            if(viewHolder == null)
-                Log.e("VIEWHOLDER","NULL");
-            MyItemView itemView = (MyItemView) viewHolder.itemView;
-
-            TextView txtView = (TextView) itemView.findViewById(R.id.text);
-            txtView.setText(String.format("Item %d", i));
-
-            Integer resourceId = listItems.get(i);
-            CircledImageView imgView = (CircledImageView) itemView.findViewById(R.id.image);
-            imgView.setImageResource(resourceId);
+            //TODO: Add content without getting nullpointers
         }
 
         @Override
         public int getItemCount() {
-            return listItems.size();
+            return items.size();
         }
     }
 

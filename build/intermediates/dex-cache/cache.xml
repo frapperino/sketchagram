@@ -2,25 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/6.5.87/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="6384c6cd674a22610b932d9464aa6938d067f285">
-        <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-6877771c967d1afe2709da3fa2d4fb8ecfef1ed5.jar" />
-    </item>
-    <item
         jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="686344a780033e4ba22b926cd225f8d4941247e6">
         <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-ca03cc63479ddf877b2dcfe9eeabd638d5ec1fbc.jar" />
-    </item>
-    <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-ae4d03d2d996165bdfde647f0897912a1958cf0f.jar" />
     </item>
     <item
         jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/6.5.87/classes.jar"
@@ -30,18 +16,18 @@
         <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-65b396665fc71147d27260175a46ac0d1b5528d1.jar" />
     </item>
     <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/classes.jar"
+        jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.google.android.support/wearable/1.1.0/classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-42c8b95e9630d8ebc7d22788471997ef3274fcc0.jar" />
+        sha1="27f19641b81b1078e653d2f0e5d1ed44d158a785">
+        <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-acc18b9de26d240e1fa175050afc77f63969670a.jar" />
     </item>
     <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/6.5.87/classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-414911d14fa1f33fce52224a6c3c4aff86082a09.jar" />
+        sha1="6384c6cd674a22610b932d9464aa6938d067f285">
+        <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-6877771c967d1afe2709da3fa2d4fb8ecfef1ed5.jar" />
     </item>
     <item
         jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
@@ -58,32 +44,11 @@
         <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-757549037a5e8c8aa473f6848bf5a5b8727b3dd5.jar" />
     </item>
     <item
-        jar="/Users/Bosch/git/sketchagram/wear/build/intermediates/exploded-aar/com.google.android.support/wearable/1.1.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="27f19641b81b1078e653d2f0e5d1ed44d158a785">
-        <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/classes-acc18b9de26d240e1fa175050afc77f63969670a.jar" />
-    </item>
-    <item
         jar="/Users/Bosch/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
         <dex dex="/Users/Bosch/git/sketchagram/wear/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-5179193a6fb1b9cca0ac2dc81fc20ee2568c6be8.jar" />
-    </item>
-    <item
-        jar="/Users/Bosch/git/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-740792c7d2cb05f001283391b8cba78d12846a84.jar" />
-    </item>
-    <item
-        jar="/Users/Bosch/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.3/support-annotations-21.0.3.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
-        <dex dex="/Users/Bosch/git/sketchagram/mobile/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-a7287ab1664067512a78dc4f6f9aea56504500c5.jar" />
     </item>
 
 </items>

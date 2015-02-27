@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="vertical"
-    tools:context=".AdvancedListActivity" tools:deviceIds="wear_square">
+    tools:context=".MainActivity" tools:deviceIds="wear_square">
 
     <android.support.wearable.view.WearableListView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/list"
+        android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
