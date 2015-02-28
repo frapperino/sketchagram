@@ -1,25 +1,21 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +32,7 @@ import sketchagram.chalmers.com.model.User;
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
         , ContactFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener,
-        InConversationFragment.OnFragmentInteractionListener{
+        InConversationFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
 
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
@@ -45,25 +41,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     private ConversationFragment conversationFragment;
     private InConversationFragment inConversationFragment;
 
-    /**
-     * NavDrawer variables.
-     */
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
-
-    // nav drawer title
-    private CharSequence mDrawerTitle;
-
     // used to store app title
-    private CharSequence mTitle = "Sketchagram"; //TODO: Change to be correct text.
+    private CharSequence mTitle;
 
-    // slide menu items
-    private String[] navMenuTitles;
-    private TypedArray navMenuIcons;
-
-    private ArrayList<NavDrawerItem> navDrawerItems;
-    private NavDrawerListAdapter adapter;
+    private NavigationDrawerFragment mNavigationDrawerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,52 +58,21 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragmentlayout, conversationFragment);
         ft.commit();
-//        ((TextView)findViewById(R.id.text)).setText(username);
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
 
         /*
-        NavDrawer
+        Navigation drawer
          */
-        // load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
 
-        // nav drawer icons from resources
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
-
-        navDrawerItems = new ArrayList<NavDrawerItem>();
-
-        // adding nav drawer items to array
-        // Conversations
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true, "5"));
-        // Contacts
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true, "50+"));
-
-
-        // Recycle the typed array
-        navMenuIcons.recycle();
-
-        // setting the nav drawer list adapter
-        adapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
-        mDrawerList.setAdapter(adapter);
-
-        // enabling action bar app icon and behaving it as toggle button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        if (savedInstanceState == null) {
-            // on first time display view for first nav item
-            displayView(0);
-        }
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
 
@@ -139,7 +89,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        Log.d("DRAWER DEBUG", ""+id);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -158,7 +107,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             SharedPreferences pref = getSharedPreferences(FILENAME, 0);
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
-            prefs.commit();
+            prefs.apply();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -168,9 +117,12 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             FragmentTransaction t = getFragmentManager().beginTransaction();
             t.replace(R.id.fragmentlayout, emoticonFragment);
             t.commit();
-        } else if (id == 16908332) {
-            mDrawerLayout.openDrawer(mDrawerList);
-            Log.d("DRAWER DEBUG", "HOME CLICKED");
+        } else if (id == R.id.home) {
+            //if(mNavigationDrawerFragment.isDrawerOpen()) {
+                //mNavigationDrawerFragment.
+            //}
+        } else {
+            throw new IllegalStateException("Forbidden item selected in menu!");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -183,7 +135,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         preferences.edit()
                 .clear()
                 .putString(MESSAGE, ":D")
-                .commit();
+                .apply();
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction t = getFragmentManager().beginTransaction();
@@ -222,48 +174,61 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                     .commit();
         }
     }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        // update the main content by replacing fragments
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentlayout, PlaceholderFragment.newInstance(position + 1))
+                .commit();
+    }
+
     /**
-     * Slide menu item click listener for NavDraw.
-     * */
-    private class SlideMenuClickListener implements
-            ListView.OnItemClickListener {
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends android.support.v4.app.Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public PlaceholderFragment() {
+        }
+
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            // display view for selected nav drawer item
-            displayView(position);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_conversation, container, false);
+            return rootView;
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            ((MainActivity) activity).onSectionAttached(
+                    getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-    /**
-     * Diplaying fragment view for selected nav drawer list item
-     * */
-    private void displayView(int position) {
-        // update the main content by replacing fragments
-        Fragment fragment = null;
-        switch (position) {
-            case 0:
-                fragment = new ConversationFragment();
-                break;
+
+    public void onSectionAttached(int number) {
+        switch (number) {
             case 1:
-                fragment = new EmoticonFragment();
+                mTitle = getString(R.string.hello_world);
                 break;
-            default:
-                break;
-        }
-
-        if (fragment != null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentlayout, fragment).commit();
-
-            // update selected item and title, then close the drawer
-            mDrawerList.setItemChecked(position, true);
-            mDrawerList.setSelection(position);
-            setTitle(navMenuTitles[position]);
-            mDrawerLayout.closeDrawer(mDrawerList);
-        } else {
-            // error in creating fragment
-            Log.e("MainActivity", "Error in creating fragment");
         }
     }
 }
