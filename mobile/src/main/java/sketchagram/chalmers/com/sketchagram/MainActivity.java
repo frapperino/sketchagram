@@ -44,6 +44,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     // used to store app title
     private CharSequence mTitle;
 
+    private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     @Override
@@ -65,6 +66,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         /*
         Navigation drawer
          */
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -112,15 +115,13 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             startActivity(intent);
             finish();
         } else if (id == R.id.action_new_message) {
-
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
             t.replace(R.id.fragmentlayout, emoticonFragment);
             t.commit();
-        } else if (id == R.id.home) {
-            //if(mNavigationDrawerFragment.isDrawerOpen()) {
-                //mNavigationDrawerFragment.
-            //}
+        } else if (id == android.R.id.home) {
+            //Open/close navigation drawer on ActionBar click.
+            mDrawerLayout.closeDrawers();
         } else {
             throw new IllegalStateException("Forbidden item selected in menu!");
         }
