@@ -39,12 +39,8 @@ import java.util.List;
 public class MainActivity extends Activity implements
         View.OnClickListener,
         MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks,
-        MessageFragment.OnFragmentInteractionListener,
-        ContactFragment.OnFragmentInteractionListener, WearableListView.ClickListener {
+        GoogleApiClient.ConnectionCallbacks, WearableListView.ClickListener {
 
-    private ContactFragment contactFragment;
-    private MessageFragment messageFragment;
 
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
@@ -57,15 +53,9 @@ public class MainActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_message);
 
         btn = findViewById(R.id.messageButton);
-        contactFragment = new ContactFragment();
-        messageFragment = new MessageFragment();
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.wearable_fragment_layout, messageFragment);
-        ft.commit();
 
 
         //  Is needed for communication between the wearable and the device.
@@ -85,11 +75,6 @@ public class MainActivity extends Activity implements
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
     }
 

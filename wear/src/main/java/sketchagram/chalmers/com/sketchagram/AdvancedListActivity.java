@@ -190,6 +190,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         String s = messageEvent.getPath();
+        contacts.clear();
         for(String contact : s.split(" ")) {
             if(contact.contains("[") ){
                 contact = contact.substring(1,contact.length()-1);
