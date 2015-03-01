@@ -135,67 +135,6 @@ public class MainActivity extends Activity implements
         }
     };
 
-    private List<Node> getNodes() {
-        List<Node> nodes = new ArrayList<Node>();
-        NodeApi.GetConnectedNodesResult rawNodes =
-                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-        for (Node node : rawNodes.getNodes()) {
-            nodes.add(node);
-        }
-        return nodes;
-    }
-
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * Now, theoretically, only one should be: the phone. However, they return us more
-     * a list. In the case where the phone happens to not be the first/only, I decided to
-     * make a List of all the nodes and we'll loop through them and send each of them
-     * a message. After getting the list of nodes, it sends a message to each of them telling
-     * it to start. One the last successful node, it saves it as our one peerNode.
-     */
-    private void sendStartMessage(){
-
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.e(TAG, "......Phone: Sending Msg:  to node:  " + node.getId());
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            "/start",
-                            null
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.e("DEVELOPER", "......Phone: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    private static ArrayList<Integer> listItems;
-    static {
-        listItems = new ArrayList<Integer>();
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-        listItems.add(R.drawable.happyface);
-    }
 
 
     public void sendMessage(View view){

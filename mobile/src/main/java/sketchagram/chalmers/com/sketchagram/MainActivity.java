@@ -317,7 +317,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             sendContacts();
         } else {
             Log.e("CLOCK", "Click");
-            onFragmentInteraction("[Bosch, asd@smth.com]");
+            onFragmentInteraction(messageEvent.getPath());
         }
     }
 

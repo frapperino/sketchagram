@@ -57,10 +57,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
                 contacts = new ArrayList<>();
-                contacts.add("dummy 1");
-                contacts.add("dummy 2");
-                contacts.add("dummy 3");
-                sendForContactsMessage();
+                messagePhone("contacts");
                 loadAdapter();
 
             }
@@ -87,7 +84,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     }
 
     private void loadAdapter(){
-        Log.e("WATCH", contacts.toString());
+        Log.e("ADAPTER", contacts.toString());
         mAdapter = new MyListAdapter(this, contacts);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(AdvancedListActivity.this);
@@ -102,7 +99,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void sendForContactsMessage(){
+    private void messagePhone(final String message){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -119,7 +116,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
-                            "/contacts",
+                            message,
                             null
                     );
 
@@ -149,7 +146,11 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        Toast.makeText(this, String.format("You selected item #%s", viewHolder.getPosition()), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Click", Toast.LENGTH_SHORT).show();
+
+        messagePhone(contacts.get(viewHolder.getPosition()));
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -194,10 +195,18 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
                 contact = contact.substring(1,contact.length()-1);
             } else if(contact.contains("]")){
                 contact = contact.substring(0,contact.length()-1);
+            } else {
+                contact = contact.substring(0,contact.length()-1);
             }
             contacts.add(contact);
 
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
         Log.e("WATCH", contacts.toString());
     }
 
@@ -220,9 +229,9 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             MyItemView mItemView = (MyItemView) viewHolder.itemView;
             final String item = items.get(i);
 
-            TextView textView = (TextView) mItemView.findViewById(R.id.text);
+            TextView txt = (TextView) mItemView.findViewById(R.id.text);
+            txt.setText(item.toString());
 
-            textView.setText(item.toString());
 
         }
 
@@ -239,7 +248,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.fragment_message, this);
+            View.inflate(context, R.layout.wearable_listview_item, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }
