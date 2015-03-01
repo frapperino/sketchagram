@@ -42,7 +42,9 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
-    private List<String> contacts;
+    private List<String> contactChoices;
+    private List<String> receivers;
+    private final List<String> MSGTAG = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,10 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                contacts = new ArrayList<>();
-                messagePhone("contacts");
+                contactChoices = new ArrayList<>();
+                receivers = new ArrayList<>();
+                MSGTAG.add("contacts");
+                messagePhone(MSGTAG);
                 loadAdapter();
 
             }
@@ -84,8 +88,8 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     }
 
     private void loadAdapter(){
-        Log.e("ADAPTER", contacts.toString());
-        mAdapter = new MyListAdapter(this, contacts);
+        Log.e("ADAPTER", contactChoices.toString());
+        mAdapter = new MyListAdapter(this, contactChoices);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(AdvancedListActivity.this);
     }
@@ -99,7 +103,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void messagePhone(final String message){
+    private void messagePhone(final List<String> message){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -112,11 +116,11 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             protected void onPostExecute(List<Node> nodeList) {
                 for(Node node : nodeList) {
                     Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
-
+                    Log.e("WATCH", "Sending to: " + message.toString());
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
-                            message,
+                            message.toString(),
                             null
                     );
 
@@ -146,11 +150,14 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        Toast.makeText(this, "Click", Toast.LENGTH_SHORT).show();
-
-        messagePhone(contacts.get(viewHolder.getPosition()));
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        Toast.makeText(this, viewHolder.getPosition() + " : " + contactChoices.size(), Toast.LENGTH_SHORT).show();
+        if(viewHolder.getPosition() == contactChoices.size()-1){
+            messagePhone(receivers);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else {
+            receivers.add(contactChoices.get(viewHolder.getPosition()));
+        }
     }
 
     @Override
@@ -190,7 +197,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         String s = messageEvent.getPath();
-        contacts.clear();
+        contactChoices.clear();
         for(String contact : s.split(" ")) {
             if(contact.contains("[") ){
                 contact = contact.substring(1,contact.length()-1);
@@ -199,16 +206,17 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             } else {
                 contact = contact.substring(0,contact.length()-1);
             }
-            contacts.add(contact);
+            contactChoices.add(contact);
 
         }
+        contactChoices.add("Send");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mAdapter.notifyDataSetChanged();
             }
         });
-        Log.e("WATCH", contacts.toString());
+        Log.e("WATCH", contactChoices.toString());
     }
 
     public class MyListAdapter extends WearableListView.Adapter {

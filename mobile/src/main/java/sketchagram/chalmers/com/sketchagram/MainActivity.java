@@ -174,9 +174,19 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                     .commit();
         } else {
             List<ADigitalPerson> receivers = new ArrayList<>();
-            for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
-                if (c.getUsername().equals(id))
-                    receivers.add(c);
+            for(String contact : id.split(" ")) {
+                if(contact.contains("[") ){
+                    contact = contact.substring(1,contact.length()-1);
+                } else if(contact.contains("]")){
+                    contact = contact.substring(0,contact.length()-1);
+                } else {
+                    contact = contact.substring(0,contact.length()-1);
+                }
+
+                for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
+                    if (c.getUsername().equals(contact))
+                        receivers.add(c);
+                }
             }
 
             List<ADigitalPerson> participants = receivers;
