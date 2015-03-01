@@ -5,7 +5,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="sketchagram.chalmers.com.sketchagram.LoginActivity">
+    tools:context="sketchagram.chalmers.com.sketchagram.LoginActivity"
+    android:background="@drawable/login_background">
 
     <!-- Login progress -->
     <ProgressBar android:id="@+id/login_progress" style="?android:attr/progressBarStyleLarge"
@@ -16,18 +17,6 @@
         android:layout_height="match_parent">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <com.google.android.gms.common.SignInButton android:id="@+id/plus_sign_in_button"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/facebook"
-                android:id="@+id/facebook_button"
-                android:background="#ff366eff"
-                android:textColor="#ffffffff" />
 
             <LinearLayout android:id="@+id/plus_sign_out_buttons"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -47,10 +36,23 @@
             <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="vertical">
 
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:text="@string/facebook"
+                    android:id="@+id/facebook_button"
+                    android:background="#ff366eff"
+                    android:textColor="#ffffffff" />
+
+                <com.google.android.gms.common.SignInButton android:id="@+id/plus_sign_in_button"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp" />
+
                 <AutoCompleteTextView android:id="@+id/email" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress" android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/abc_primary_text_material_light" />
 
                 <EditText android:id="@+id/password" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_password"
@@ -73,6 +75,7 @@
                     android:onClick="emailLogin" />
 
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

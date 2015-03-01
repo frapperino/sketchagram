@@ -28,7 +28,6 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
@@ -46,6 +45,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         InConversationFragment.OnFragmentInteractionListener, MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         Handler.Callback{
+
 
     private static final int MSG_POST_NOTIFICATIONS = 0;
     private static final long POST_NOTIFICATIONS_DELAY_MS = 200;
@@ -196,7 +196,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
         }
     }
-
     //Below code is for connecting and communicating with Wear
 
 
