@@ -1,19 +1,16 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-
-import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
@@ -25,7 +22,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ContactFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ContactManagementFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,8 +47,8 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static ContactFragment newInstance(String param1, String param2) {
-        ContactFragment fragment = new ContactFragment();
+    public static ContactManagementFragment newInstance(String param1, String param2) {
+        ContactManagementFragment fragment = new ContactManagementFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,7 +60,7 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ContactFragment() {
+    public ContactManagementFragment() {
     }
 
     @Override

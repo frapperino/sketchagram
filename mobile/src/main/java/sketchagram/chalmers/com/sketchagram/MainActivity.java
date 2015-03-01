@@ -2,10 +2,12 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.app.Fragment;    //v4 only used for android version 3 or lower.
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -31,15 +33,16 @@ import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
-        , ContactFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener,
-        InConversationFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
+        , ContactSendFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener,
+        InConversationFragment.OnFragmentInteractionListener, ContactManagementFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
 
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
-    private EmoticonFragment emoticonFragment;
-    private ContactFragment contactFragment;
-    private ConversationFragment conversationFragment;
-    private InConversationFragment inConversationFragment;
+    private Fragment emoticonFragment;
+    private Fragment contactSendFragment;
+    private Fragment conversationFragment;
+    private Fragment inConversationFragment;
+    private Fragment contactManagementFragment;
 
     // used to store app title
     private CharSequence mTitle;
@@ -53,9 +56,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         setContentView(R.layout.activity_main);
         SharedPreferences pref = getSharedPreferences(FILENAME, 0);
         emoticonFragment = new EmoticonFragment();
-        contactFragment = new ContactFragment();
+        contactSendFragment = new ContactSendFragment();
         conversationFragment = new ConversationFragment();
         inConversationFragment = new InConversationFragment();
+        contactManagementFragment = new ContactManagementFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragmentlayout, conversationFragment);
         ft.commit();
@@ -69,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -139,8 +143,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 .apply();
 
         //Create a new fragment and replace the old fragment in layout.
-        FragmentTransaction t = getFragmentManager().beginTransaction();
-        t.replace(R.id.fragmentlayout, contactFragment)
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentlayout, contactSendFragment)
                 .commit();
     }
 
@@ -178,17 +182,35 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        Log.e("NavDraw", ""+position);
         // update the main content by replacing fragments
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentlayout, PlaceholderFragment.newInstance(position + 1))
                 .commit();
+        //Logic for item selection in navigation drawer.
+        Fragment fragment = null;
+        switch(position) {
+            case 0:
+                fragment = conversationFragment;
+                break;
+            case 1:
+                fragment = contactManagementFragment;
+                break;
+            default:
+                throw new IllegalStateException("Illegal option chosen in NavigationDrawer!");
+        }
+        if(fragment != null) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentlayout, fragment)
+                    .commit();
+        }
     }
 
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends android.support.v4.app.Fragment {
+    public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -226,9 +248,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     }
 
     public void onSectionAttached(int number) {
+        String [] navDrawTitles = getResources().getStringArray(R.array.nav_drawer_items);
         switch (number) {
             case 1:
-                mTitle = getString(R.string.hello_world);
+                mTitle = navDrawTitles[0];
                 break;
         }
     }
