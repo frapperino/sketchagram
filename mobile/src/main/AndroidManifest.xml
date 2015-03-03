@@ -35,6 +35,10 @@
 
 
         </activity>
+        <service
+            android:name="sketchagram.chalmers.com.network.Connection"
+            android:exported="false"
+        />
 
         <meta-data
             android:name="com.google.android.gms.version"

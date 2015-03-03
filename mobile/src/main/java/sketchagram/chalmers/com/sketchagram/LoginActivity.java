@@ -233,10 +233,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 startActivity(intent);
             }
             showProgress(false);
-
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-            startActivity(intent);
         }
     }
 

@@ -1,5 +1,7 @@
 package sketchagram.chalmers.com.network;
 
+import android.app.IntentService;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
@@ -40,16 +42,18 @@ import sketchagram.chalmers.com.model.TextMessage;
 /**
  * Created by Olliver on 15-02-18.
  */
-public class Connection{
+public class Connection extends IntentService{
     ConnectionConfiguration config;
     XMPPTCPConnection connection;
     AccountManager manager;
-    ChatManager chatManager;
     List<Chat> chatList;
 
-    public Connection(){
+    public Connection() {
+        super("Connection");
+    }
+    public void init(){
         config = new ConnectionConfiguration("83.254.68.47", 5222);
-                config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
+        config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         chatList = new ArrayList<Chat>();
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -57,21 +61,13 @@ public class Connection{
                     new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        SASLAuthentication.supportSASLMechanism("PLAIN");
+        connect();
     }
 
     private void connect(){
         try {
-            SASLAuthentication.supportSASLMechanism("PLAIN");
             connection.connect();
-            getChatManager().addChatListener(new ChatManagerListener() {
-                @Override
-                public void chatCreated(Chat chat, boolean b) {
-                    if(!b) {
-                        chatList.add(chat);
-                        chat.addMessageListener(messageListener);
-                    }
-                }
-            });
         } catch (SmackException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -81,25 +77,33 @@ public class Connection{
         }
 
     }
-    private void disconnect(){
+    private void disconnect(Presence presence){
         try {
-            connection.disconnect();
+            if (presence != null){
+                connection.disconnect(presence);
+            }else {
+                connection.disconnect();
+            }
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
     }
 
     private ChatManager getChatManager(){
+        ChatManager chatManager = null;
         if(connection.isConnected()) {
-            return ChatManager.getInstanceFor(connection);
+            chatManager = ChatManager.getInstanceFor(connection);
         }
-        return null;
+        return chatManager;
     }
 
     public void logout(){
-        connect();
-        disconnect();
-        connection = new XMPPTCPConnection(config);
+        Presence presence = new Presence(Presence.Type.unavailable);
+        presence.setMode(Presence.Mode.away);
+        if(connection.isConnected()){
+            disconnect(presence);
+            init();
+        }
 
     }
 
@@ -108,12 +112,10 @@ public class Connection{
             @Override
             protected Object doInBackground(Object[] params){
                 try {
-                    logout();
-                    connect();
-                    manager = AccountManager.getInstance(connection);
-                    manager.supportsAccountCreation();
-                    manager.createAccount(params[0].toString(), params[1].toString());
-                    disconnect();
+                        if(connection.isConnected()){
+                        manager = AccountManager.getInstance(connection);
+                        manager.createAccount(params[0].toString(), params[1].toString());
+                    }
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
@@ -141,18 +143,19 @@ public class Connection{
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params){
-                logout();
-                connect();
                 try {
-                    connection.login(userName, password);
-                    getChatManager().addChatListener(new ChatManagerListener() {
-                        @Override
-                        public void chatCreated(Chat chat, boolean b) {
-                            if(!b){
-                                chat.addMessageListener(messageListener);
+                    if(connection.isConnected()){
+                        connection.login(userName, password);
+                        getChatManager().addChatListener(new ChatManagerListener() {
+                            @Override
+                            public void chatCreated(Chat chat, boolean b) {
+                                if(!b){
+                                    chatList.add(chat);
+                                    chat.addMessageListener(messageListener);
+                                }
                             }
-                        }
-                    });
+                        });
+                       }
                 } catch (XMPPException e) {
                     e.printStackTrace();
                     return false;
@@ -178,8 +181,9 @@ public class Connection{
     }
 
     public void createConversation(ADigitalPerson recipient){
-        chatManager = getChatManager();
-        chatList.add(chatManager.createChat(recipient.getUsername(), messageListener));
+        ChatManager chatManager = getChatManager();
+        Chat chat = chatManager.createChat(recipient.getUsername()+ "@datorn/Smack", messageListener);
+        chatList.add(chat);
     }
 
     public void sendMessage(AMessage aMessage, String type) {
@@ -233,5 +237,10 @@ public class Connection{
             }
         }
     };
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+    }
 }
 

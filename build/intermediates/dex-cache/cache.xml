@@ -23,13 +23,6 @@
         <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-e86d874c6d27fa47ced368c01bfd3c72a2697728.jar" />
     </item>
     <item
-        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-88cb6eda091d6b31602907da1bd3456e61674038.jar" />
-    </item>
-    <item
         jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/libs/asmack-android-8-4.0.6.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -49,6 +42,13 @@
         revision="21.1.2"
         sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
         <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-59e062d8c7cd793e841aa52ece25f75cdea026c6.jar" />
+    </item>
+    <item
+        jar="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/Users/Olliver/AndroidStudioProjects/sketchagram/mobile/build/intermediates/pre-dexed/debug/classes-88cb6eda091d6b31602907da1bd3456e61674038.jar" />
     </item>
 
 </items>
