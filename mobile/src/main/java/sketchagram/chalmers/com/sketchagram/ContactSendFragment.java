@@ -74,7 +74,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         }
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
+        mAdapter = new ContactSendListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
     }
 
     @Override

@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
@@ -73,7 +76,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         }
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
+        mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getContactList());
     }
 
     @Override
