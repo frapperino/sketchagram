@@ -34,7 +34,7 @@ import sketchagram.chalmers.com.model.User;
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
         , ContactSendFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener,
-        InConversationFragment.OnFragmentInteractionListener, ContactManagementFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
+        InConversationFragment.OnFragmentInteractionListener, ContactManagementFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
 
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
@@ -43,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     private Fragment conversationFragment;
     private Fragment inConversationFragment;
     private Fragment contactManagementFragment;
+    private Fragment addContactFragment;
 
     // used to store app title
     private CharSequence mTitle;
@@ -60,8 +61,9 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         conversationFragment = new ConversationFragment();
         inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
+        addContactFragment = new AddContactFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.fragmentlayout, conversationFragment);
+        ft.add(R.id.fragment_frame, conversationFragment);
         ft.commit();
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
@@ -81,7 +83,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -121,7 +122,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         } else if (id == R.id.action_new_message) {
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
-            t.replace(R.id.fragmentlayout, emoticonFragment);
+            t.replace(R.id.fragment_frame, emoticonFragment);
             t.commit();
         } else if (id == android.R.id.home) {
             //Open/close navigation drawer on ActionBar click.
@@ -134,7 +135,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        Log.e("EMOTICON", uri.getPath());
+        Log.d("EMOTICON", uri.getPath());
 
         SharedPreferences preferences = getSharedPreferences(MESSAGE, 0);
         preferences.edit()
@@ -144,18 +145,18 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragmentlayout, contactSendFragment)
+        fragmentTransaction.replace(R.id.fragment_frame, contactSendFragment)
                 .commit();
     }
 
     @Override
     public void onFragmentInteraction(String id) {
-        Log.e("FRAGMENT", id);
+        Log.d("FRAGMENT", id);
         if (id.contains("conversation")) {
 
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
-            t.replace(R.id.fragmentlayout, inConversationFragment)
+            t.replace(R.id.fragment_frame, inConversationFragment)
                     .commit();
         } else {
             List<ADigitalPerson> receivers = new ArrayList<>();
@@ -175,19 +176,16 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
-            t.replace(R.id.fragmentlayout, conversationFragment)
+            t.replace(R.id.fragment_frame, conversationFragment)
                     .commit();
         }
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.e("NavDraw", ""+position);
+        Log.d("NavDraw", ""+position);
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragmentlayout, PlaceholderFragment.newInstance(position + 1))
-                .commit();
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -202,49 +200,20 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         }
         if(fragment != null) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentlayout, fragment)
+                    .replace(R.id.fragment_frame, fragment)
                     .commit();
         }
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * Start the add contact fragment on responding button-press.
+     * @param view
      */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_conversation, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
+    public void startAddContactFragment(View view) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.fragment_frame, addContactFragment);
+        ft.commit();
     }
 
     public void onSectionAttached(int number) {

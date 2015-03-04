@@ -2,7 +2,9 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +27,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ContactManagementFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ContactManagementFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -82,7 +84,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_contact_management_list, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);

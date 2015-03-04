@@ -2,9 +2,8 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.ListFragment;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import sketchagram.chalmers.com.model.AMessage;
-import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.SystemUser;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A fragment representing a list of Items.
@@ -28,7 +28,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class InConversationFragment extends ListFragment implements AbsListView.OnItemClickListener {
+public class AddContactFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,8 +53,8 @@ public class InConversationFragment extends ListFragment implements AbsListView.
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static InConversationFragment newInstance(String param1, String param2) {
-        InConversationFragment fragment = new InConversationFragment();
+    public static AddContactFragment newInstance(String param1, String param2) {
+        AddContactFragment fragment = new AddContactFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,7 +66,7 @@ public class InConversationFragment extends ListFragment implements AbsListView.
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public InConversationFragment() {
+    public AddContactFragment() {
     }
 
     @Override
@@ -78,22 +78,15 @@ public class InConversationFragment extends ListFragment implements AbsListView.
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        String participants = getActivity().getSharedPreferences("Participants", 0).getString("Participants", "");
-        Conversation conversation = null;
-        for(Conversation c : SystemUser.getInstance().getUser().getConversationList()){
-            if(c.getParticipants().toString().equals(participants))
-                conversation = c;
-        }
-        if(conversation == null)
-            conversation = SystemUser.getInstance().getUser().getConversationList().get(0);
-
-        mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
+        // Sets the adapter to customized one which enables our layout of items.
+        //TODO: replace with real found contacts.
+        mAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<>(Arrays.asList("Contact 1", "Contact 2")));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_inconversation, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_contact, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
@@ -128,6 +121,7 @@ public class InConversationFragment extends ListFragment implements AbsListView.
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
+            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }
 
@@ -142,6 +136,11 @@ public class InConversationFragment extends ListFragment implements AbsListView.
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
+    }
+
+    public void addContact() {
+        //TODO: Start add_contact fragment/activity.
+        Log.d("Add_Contact", "Button pressed!");
     }
 
     /**

@@ -1,8 +1,10 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+
+import java.util.List;
 
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -25,7 +29,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ConversationFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -113,9 +117,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         mListener = null;
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("ITEM_CLICK", "ITEM_CLICK");
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
