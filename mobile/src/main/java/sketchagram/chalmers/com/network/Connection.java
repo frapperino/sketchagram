@@ -1,8 +1,12 @@
 package sketchagram.chalmers.com.network;
 
 import android.app.IntentService;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.IBinder;
 import android.os.StrictMode;
 
 import com.google.gson.Gson;
@@ -42,15 +46,32 @@ import sketchagram.chalmers.com.model.TextMessage;
 /**
  * Created by Olliver on 15-02-18.
  */
-public class Connection extends IntentService{
+public class Connection extends Service{
     ConnectionConfiguration config;
     XMPPTCPConnection connection;
     AccountManager manager;
     List<Chat> chatList;
+    private final IBinder binder = new Binder();
 
     public Connection() {
-        super("Connection");
+        super();
     }
+
+    @Override
+    public void onCreate(){
+        init();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId){
+        return Service.START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
     public void init(){
         config = new ConnectionConfiguration("83.254.68.47", 5222);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
@@ -67,7 +88,9 @@ public class Connection extends IntentService{
 
     private void connect(){
         try {
-            connection.connect();
+            if(!connection.isConnected()){
+                connection.connect();
+            }
         } catch (SmackException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -182,7 +205,7 @@ public class Connection extends IntentService{
 
     public void createConversation(ADigitalPerson recipient){
         ChatManager chatManager = getChatManager();
-        Chat chat = chatManager.createChat(recipient.getUsername()+ "@datorn/Smack", messageListener);
+        Chat chat = chatManager.createChat(recipient.getUsername()+ "@raspberrypi", messageListener);
         chatList.add(chat);
     }
 
@@ -192,7 +215,7 @@ public class Connection extends IntentService{
         message.setBody(new Gson().toJson(aMessage));
         for(Chat c : chatList) {
             for(ADigitalPerson recipient : aMessage.getRECEIVER()){
-                if(c.getParticipant().equals(recipient.getUsername())) {
+                if(c.getParticipant().split("@")[0].equals(recipient.getUsername())) {
                     try {
                         c.sendMessage(message);
                     } catch (SmackException.NotConnectedException e) {
@@ -237,10 +260,5 @@ public class Connection extends IntentService{
             }
         }
     };
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
-    }
 }
 

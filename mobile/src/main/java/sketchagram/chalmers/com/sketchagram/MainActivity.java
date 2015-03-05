@@ -23,6 +23,8 @@ import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 
+import sketchagram.chalmers.com.network.*;
+
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
         , ContactFragment.OnFragmentInteractionListener, ConversationFragment.OnFragmentInteractionListener,
@@ -51,6 +53,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
+        //Intent conn = new Intent(this.context, Connection.class);
     }
 
 
