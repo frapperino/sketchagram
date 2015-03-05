@@ -19,7 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".AdvancedListActivity"
-                    android:label="@string/app_name">
+            android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".ConversationListActivity"
+            android:label="@string/app_name">
 
         </activity>
     </application>

@@ -155,7 +155,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         preferences.edit()
                 .clear()
                 .putString(MESSAGE, ":D")
-                .commit();
+                .apply();
 
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction t = getFragmentManager().beginTransaction();
@@ -320,10 +320,16 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         }
         postedNotificationCount = notifications.length;
     }
+
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().contains("contacts")) {
             sendContacts();
+        } else if(messageEvent.getPath().contains("clockversations")) {
+            Log.e("Phone", "sending convo's");
+            sendConversations();
+        } else if(messageEvent.getPath().contains("username")) {
+            sendUsername();
         } else {
             Log.e("CLOCK", "Click");
             onFragmentInteraction(messageEvent.getPath());
@@ -349,7 +355,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     public boolean handleMessage(Message msg) {
         return false;
     }
-
 
 
     /**
@@ -378,6 +383,88 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                             mGoogleApiClient,
                             node.getId(),
                             SystemUser.getInstance().getUser().getContactList().toString(),
+                            null
+                    );
+
+                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                        @Override
+                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                            Log.v("DEVELOPER", "......Clock: " + sendMessageResult.getStatus().getStatusMessage());
+                        }
+                    });
+                }
+            }
+        }.execute();
+
+    }
+
+    /**
+     * This method will generate all the nodes that are attached to a Google Api Client.
+     * Now, theoretically, only one should be: the phone. However, they return us more
+     * a list. In the case where the phone happens to not be the first/only, I decided to
+     * make a List of all the nodes and we'll loop through them and send each of them
+     * a message. After getting the list of nodes, it sends a message to each of them telling
+     * it to start. One the last successful node, it saves it as our one peerNode.
+     */
+    private void sendConversations(){
+
+        new AsyncTask<Void, Void, List<Node>>(){
+
+            @Override
+            protected List<Node> doInBackground(Void... params) {
+                return getNodes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Node> nodeList) {
+                for(Node node : nodeList) {
+                    Log.v(TAG, "......Phone: Sending Msg:  to node:  " + node.getId());
+
+                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
+                            mGoogleApiClient,
+                            node.getId(),
+                            SystemUser.getInstance().getUser().getConversationList().toString(),
+                            null
+                    );
+
+                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                        @Override
+                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                            Log.v("DEVELOPER", "......Clock: " + sendMessageResult.getStatus().getStatusMessage());
+                        }
+                    });
+                }
+            }
+        }.execute();
+
+    }
+
+    /**
+     * This method will generate all the nodes that are attached to a Google Api Client.
+     * Now, theoretically, only one should be: the phone. However, they return us more
+     * a list. In the case where the phone happens to not be the first/only, I decided to
+     * make a List of all the nodes and we'll loop through them and send each of them
+     * a message. After getting the list of nodes, it sends a message to each of them telling
+     * it to start. One the last successful node, it saves it as our one peerNode.
+     */
+    private void sendUsername(){
+
+        new AsyncTask<Void, Void, List<Node>>(){
+
+            @Override
+            protected List<Node> doInBackground(Void... params) {
+                return getNodes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Node> nodeList) {
+                for(Node node : nodeList) {
+                    Log.v(TAG, "username = " + SystemUser.getInstance().getUser().getUsername());
+
+                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
+                            mGoogleApiClient,
+                            node.getId(),
+                            SystemUser.getInstance().getUser().getUsername(),
                             null
                     );
 

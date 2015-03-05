@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ public class MainActivity extends Activity implements
     public static final String KEY_REPLY = "reply";
     private static final int SAMPLE_NOTIFICATION_ID = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,10 @@ public class MainActivity extends Activity implements
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
+
+        List<String> ls = new ArrayList<>();
+        ls.add("username");
+        messagePhone(ls);
 
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -122,9 +128,15 @@ public class MainActivity extends Activity implements
 
 
 
-    public void sendMessage(View view){
+    public void sendMessage(View view) {
         Log.e("WATCH", "Trying to send a message");
         Intent intent = new Intent(this, AdvancedListActivity.class);
+        startActivity(intent);
+    }
+
+    public void showConversations(View view) {
+        Log.e("WATCH", "Showing conversations");
+        Intent intent = new Intent(this, ConversationListActivity.class);
         startActivity(intent);
     }
 
@@ -144,12 +156,67 @@ public class MainActivity extends Activity implements
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
+        Log.e("WATCH","username = " + messageEvent.getPath());
+        getSharedPreferences("user",0).edit().putString("username", messageEvent.getPath()).commit();
 
     }
 
     @Override
     public void onClick(View v) {
         Log.e("WATCH", "trying to send a message");
+    }
+
+
+    /**
+     * This method will generate all the nodes that are attached to a Google Api Client.
+     * Now, theoretically, only one should be: the phone. However, they return us more
+     * a list. In the case where the phone happens to not be the first/only, I decided to
+     * make a List of all the nodes and we'll loop through them and send each of them
+     * a message. After getting the list of nodes, it sends a message to each of them telling
+     * it to start. One the last successful node, it saves it as our one peerNode.
+     */
+    private void messagePhone(final List<String> message){
+
+        new AsyncTask<Void, Void, List<Node>>(){
+
+            @Override
+            protected List<Node> doInBackground(Void... params) {
+                return getNodes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Node> nodeList) {
+                for(Node node : nodeList) {
+                    Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
+                    Log.e("WATCH", "Sending to: " + message.toString());
+                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
+                            mGoogleApiClient,
+                            node.getId(),
+                            message.toString(),
+                            null
+                    );
+
+                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                        @Override
+                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                            Log.e("DEVELOPER", "......Phone: " + sendMessageResult.getStatus().getStatusMessage());
+
+                        }
+                    });
+                }
+            }
+        }.execute();
+
+    }
+
+    private List<Node> getNodes() {
+        List<Node> nodes = new ArrayList<Node>();
+        NodeApi.GetConnectedNodesResult rawNodes =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+        for (Node node : rawNodes.getNodes()) {
+            nodes.add(node);
+        }
+        return nodes;
     }
 
 
