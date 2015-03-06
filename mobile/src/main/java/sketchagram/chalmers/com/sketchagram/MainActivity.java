@@ -44,6 +44,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     private Fragment inConversationFragment;
     private Fragment contactManagementFragment;
     private Fragment addContactFragment;
+    private FragmentManager fragmentManager;
 
     // used to store app title
     private CharSequence mTitle;
@@ -62,12 +63,14 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         addContactFragment = new AddContactFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_frame, conversationFragment);
-        ft.commit();
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
+
+        fragmentManager = getFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.fragment_frame, conversationFragment);
+        ft.commit();
 
         /*
         Navigation drawer
@@ -75,7 +78,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
+                fragmentManager.findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -121,11 +124,11 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             finish();
         } else if (id == R.id.action_new_message) {
             //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = getFragmentManager().beginTransaction();
+            FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, emoticonFragment);
             t.commit();
         } else if (id == android.R.id.home) {
-            //Open/close navigation drawer on ActionBar click.
+            //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
         } else {
             throw new IllegalStateException("Forbidden item selected in menu!");
@@ -144,7 +147,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 .apply();
 
         //Create a new fragment and replace the old fragment in layout.
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, contactSendFragment)
                 .commit();
     }
@@ -153,9 +156,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     public void onFragmentInteraction(String id) {
         Log.d("FRAGMENT", id);
         if (id.contains("conversation")) {
-
             //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = getFragmentManager().beginTransaction();
+            FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, inConversationFragment)
                     .commit();
         } else {
@@ -169,13 +171,12 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             participants.add(SystemUser.getInstance().getUser());
             Emoticon emoticon = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
 
-
             Conversation conversation = new Conversation(participants);
             conversation.addMessage(emoticon);
             SystemUser.getInstance().getUser().addConversation(conversation);
 
             //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = getFragmentManager().beginTransaction();
+            FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, conversationFragment)
                     .commit();
         }
@@ -184,8 +185,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         Log.d("NavDraw", ""+position);
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -210,18 +209,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
      * @param view
      */
     public void startAddContactFragment(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.fragment_frame, addContactFragment);
         ft.commit();
-    }
-
-    public void onSectionAttached(int number) {
-        String [] navDrawTitles = getResources().getStringArray(R.array.nav_drawer_items);
-        switch (number) {
-            case 1:
-                mTitle = navDrawTitles[0];
-                break;
-        }
     }
 }

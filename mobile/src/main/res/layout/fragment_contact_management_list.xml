@@ -11,7 +11,7 @@
         tools:context="sketchagram.chalmers.com.sketchagram.ContactManagementFragment">
 
         <ListView
-            android:id="@android:id/list"
+            android:id="@+id/contact_management_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

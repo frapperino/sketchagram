@@ -12,6 +12,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -29,7 +30,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ConversationFragment extends ListFragment implements AbsListView.OnItemClickListener {
+public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -81,8 +82,7 @@ public class ConversationFragment extends ListFragment implements AbsListView.On
 
         // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<Conversation>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1,
-                    SystemUser.getInstance().getUser().getConversationList());
+                android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getConversationList());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ConversationFragment extends ListFragment implements AbsListView.On
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
 
         // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mListView = (AbsListView) view.findViewById(R.id.conversation_list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
