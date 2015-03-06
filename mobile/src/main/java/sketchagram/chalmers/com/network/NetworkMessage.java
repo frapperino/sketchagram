@@ -79,7 +79,7 @@ public class NetworkMessage<T> {
         }
         switch (mess.getLanguage()){
             case "TextMessage":
-                TextMessage tMessage = new TextMessage(System.currentTimeMillis(), sender, personReceivers);
+                TextMessage tMessage = new TextMessage(getTimestamp(), sender, personReceivers);
                 tMessage.setTextMessage((String)getMessage());
                 return tMessage;
 
