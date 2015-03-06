@@ -17,6 +17,10 @@ public class SystemUser {
         this.connection.init();
     }
 
+    public static void initInstance(){
+        ourInstance = new SystemUser();
+    }
+
     public User getUser() {
         return user;
     }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import sketchagram.chalmers.com.sketchagram.MyApplication;
+
 /**
  * Created by Bosch on 10/02/15.
  */
@@ -42,7 +44,7 @@ public class User extends ADigitalPerson  {
         if(!exist)
             conversationList.add(conversation);
         setChanged();
-        Handler handler = new Handler();
+        Handler handler = new Handler(MyApplication.getContext().getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
