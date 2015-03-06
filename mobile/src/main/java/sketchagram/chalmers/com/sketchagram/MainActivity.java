@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +75,15 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_about) {
-            return true;
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.about_dialog);
+            ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
         } else if (id == R.id.action_logout) {
             //Delete saved user
             SharedPreferences pref = getSharedPreferences(FILENAME, 0);
@@ -89,7 +100,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             t.replace(R.id.fragmentlayout, emoticonFragment);
             t.commit();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
