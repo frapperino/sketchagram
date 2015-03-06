@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.network;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
@@ -7,41 +8,52 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.StrictMode;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.Manager;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SASLAuthentication;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.sasl.SASLMechanism;
 import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Handler;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.Painting;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.TextMessage;
+import sketchagram.chalmers.com.sketchagram.MainActivity;
 
 /**
  * Created by Olliver on 15-02-18.
@@ -73,10 +85,11 @@ public class Connection extends Service{
     }
 
     public void init(){
+        //SmackAndroid.init()
         config = new ConnectionConfiguration("83.254.68.47", 5222);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
-        chatList = new ArrayList<Chat>();
+        chatList = new ArrayList<>();
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy =
                     new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -175,6 +188,17 @@ public class Connection extends Service{
                                 if(!b){
                                     chatList.add(chat);
                                     chat.addMessageListener(messageListener);
+                                    String participant = chat.getParticipant();
+                                    List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
+                                    for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
+                                        if(contact.getUsername().equals(participant.split("@")[0])){
+                                            participants.add(contact);
+                                        }
+                                    }
+
+                                    participants.add(SystemUser.getInstance().getUser());
+
+                                    SystemUser.getInstance().getUser().addConversation(new Conversation(participants));
                                 }
                             }
                         });
@@ -211,11 +235,24 @@ public class Connection extends Service{
 
     public void sendMessage(AMessage aMessage, String type) {
         Message message = new Message();
-        message.setLanguage(type);
-        message.setBody(new Gson().toJson(aMessage));
+        switch (type){
+            case "TextMessage":
+                NetworkMessage<String> networkMessage = new NetworkMessage<>();
+                networkMessage.convertToNetworkMessage(aMessage);
+                message.setLanguage(type);
+                Gson gson = new Gson();
+                String object = gson.toJson(networkMessage);
+                message.setBody(object);
+                sendMessageToContacts(networkMessage, message);
+
+        }
+
+    }
+    private void sendMessageToContacts(NetworkMessage networkMessage,  Message message){
         for(Chat c : chatList) {
-            for(ADigitalPerson recipient : aMessage.getRECEIVER()){
-                if(c.getParticipant().split("@")[0].equals(recipient.getUsername())) {
+            List<String> receivers = networkMessage.getReceivers();
+            for(Object recipient : receivers){
+                if(c.getParticipant().split("@")[0].equals(recipient.toString())) {
                     try {
                         c.sendMessage(message);
                     } catch (SmackException.NotConnectedException e) {
@@ -234,28 +271,34 @@ public class Connection extends Service{
             for(Conversation c : conversationList){
                 boolean same = true;
                 for(ADigitalPerson person : c.getParticipants()){
-                    if(!chat.getParticipant().equals(person.getUsername())){
-                        same = false;
+                    if(!chat.getParticipant().split("@")[0].equals(person.getUsername())){
+                        if(!SystemUser.getInstance().getUser().getUsername().equals(person.getUsername())){
+                            same = false;
+                        }
                     }
                 }
                 if(same){
                     Gson gson = new Gson();
                     AMessage aMessage = null;
+                    TextMessage text = gson.fromJson(message.getBody(), TextMessage.class);
                     switch (message.getLanguage()) {
                         case "Painting":
                             aMessage = gson.fromJson(message.getBody(), Painting.class);
                             break;
                         case "TextMessage":
-                            aMessage = gson.fromJson(message.getBody(), TextMessage.class);
+                            String body =  message.getBody();
+                            NetworkMessage<String> networkMessage = gson.fromJson(body, NetworkMessage.class);
+                            TextMessage textMessage = (TextMessage)networkMessage.convertFromNetworkMessage(message, c);
+                            c.addMessage(textMessage);
+                            System.out.println(textMessage.getMessage());
                             break;
                         case "Emoticon":
                             aMessage = gson.fromJson(message.getBody(), Emoticon.class);
                             break;
+                        default:
+                            aMessage = gson.fromJson(message.getBody(), AMessage.class);
+                            break;
                     }
-
-                    aMessage = gson.fromJson(message.getBody(), AMessage.class);
-                    c.addMessage(aMessage);
-                    System.out.println(aMessage.getMessage());
                 }
             }
         }

@@ -1,12 +1,15 @@
 package sketchagram.chalmers.com.model;
 
+import android.os.Handler;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by Bosch on 10/02/15.
  */
-public class User extends ADigitalPerson {
+public class User extends ADigitalPerson  {
     private String password = "password";   //TODO: replace with real password.
     private boolean requireLogin = true;
     private List<Conversation> conversationList;
@@ -38,6 +41,15 @@ public class User extends ADigitalPerson {
         }
         if(!exist)
             conversationList.add(conversation);
+        setChanged();
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                notifyObservers();
+            }
+        };
+        handler.post(runnable);
     }
 
     public List<Contact> getContactList() {
@@ -52,5 +64,6 @@ public class User extends ADigitalPerson {
     public String toString() {
         return getUsername();
     }
+
 
 }

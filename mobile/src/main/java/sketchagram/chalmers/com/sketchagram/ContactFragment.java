@@ -135,7 +135,8 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
             if(create){
                 SystemUser.getInstance().getConnection().createConversation(receiverList.get(0));
             }
-            AMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
+            TextMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
+            message.setTextMessage(":D");
             SystemUser.getInstance().getConnection().sendMessage(message, "TextMessage");
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
