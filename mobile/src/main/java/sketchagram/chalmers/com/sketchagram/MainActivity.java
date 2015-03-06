@@ -1,6 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,8 +13,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
@@ -25,8 +22,6 @@ import sketchagram.chalmers.com.model.test.DummyData;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
-
-import sketchagram.chalmers.com.network.*;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
@@ -56,7 +51,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
-        //Intent conn = new Intent(this.context, Connection.class);
     }
 
 
@@ -85,7 +79,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
             prefs.commit();
-            SystemUser.getInstance().getConnection().logout();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
