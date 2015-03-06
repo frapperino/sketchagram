@@ -66,18 +66,6 @@ public class DummyData {
 
         SystemUser.getInstance().getUser().addConversation(conversation);
 
-        /*
-        Database tests
-         */
-        DBHelper dbh = DBHelper.getInstance();
-        dbh.insertContact("alex","halibababa","hello");
-        Cursor rs = dbh.getData(1);
-        rs.moveToFirst();
-        String namn = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_NAME));
-        String email = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_EMAIL));
-        String street = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_STREET));
-
-        Log.d("jabbe", namn + email + street);
 
     }
 }

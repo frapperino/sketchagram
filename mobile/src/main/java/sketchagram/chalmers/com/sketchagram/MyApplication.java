@@ -3,6 +3,7 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Application;
 
 import sketchagram.chalmers.com.database.DBHelper;
+import sketchagram.chalmers.com.database.SketchagramDb;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
@@ -10,8 +11,8 @@ import sketchagram.chalmers.com.model.SystemUser;
  */
 public class MyApplication extends Application {
     private static MyApplication ourInstance;
-
-    public MyApplication getInstance(){
+    private static SketchagramDb db;
+    public static MyApplication getInstance(){
         return ourInstance;
     }
 
@@ -30,7 +31,11 @@ public class MyApplication extends Application {
     {
         // Initialize the instance of MySingleton
         SystemUser.initInstance();
-        DBHelper.initInstance(getApplicationContext());
+        db = new SketchagramDb(getApplicationContext());
+    }
+
+    public SketchagramDb getDatabase(){
+        return db;
     }
 
     public void customAppMethod()

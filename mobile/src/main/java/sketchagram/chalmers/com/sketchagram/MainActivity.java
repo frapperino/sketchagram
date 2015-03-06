@@ -17,6 +17,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
+import sketchagram.chalmers.com.database.SketchagramDb;
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
@@ -54,6 +55,12 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         User user = new User(pref.getString("username", "User"), new Profile());
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
+        SketchagramDb db = MyApplication.getInstance().getDatabase();
+        for(Contact c : db.getAllContacts()){
+            Log.d(c.getUsername(), "contact");
+        }
+
+
     }
 
 
@@ -73,6 +80,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            SketchagramDb db = MyApplication.getInstance().getDatabase();
+            db.insertContact("fredrik", "frappe", "frappino");
             return true;
         } else if (id == R.id.action_about) {
             final Dialog dialog = new Dialog(this);
