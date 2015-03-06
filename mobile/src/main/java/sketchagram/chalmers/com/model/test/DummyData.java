@@ -33,9 +33,11 @@ public class DummyData {
         user.addContact(contact);
         contact = new Contact("Alex", new Profile());
         user.addContact(contact);
-        contact = new Contact("Olliver", new Profile());
+        contact = new Contact("olliver", new Profile());
         user.addContact(contact);
         contact = new Contact("Bosch", new Profile());
+        user.addContact(contact);
+        contact = new Contact("asdasd", new Profile());
         user.addContact(contact);
 
         List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
