@@ -15,7 +15,7 @@ public class MyApplication extends Application {
     private static MyApplication ourInstance;
     private static SketchagramDb db = null;
     private static Context context;
-    public MyApplication getInstance(){
+    public static MyApplication getInstance(){
         return ourInstance;
     }
 
