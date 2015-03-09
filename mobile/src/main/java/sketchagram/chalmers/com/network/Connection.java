@@ -188,17 +188,6 @@ public class Connection extends Service{
                                 if(!b){
                                     chatList.add(chat);
                                     chat.addMessageListener(messageListener);
-                                    String participant = chat.getParticipant();
-                                    List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
-                                    for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
-                                        if(contact.getUsername().equals(participant.split("@")[0])){
-                                            participants.add(contact);
-                                        }
-                                    }
-
-                                    participants.add(SystemUser.getInstance().getUser());
-
-                                    SystemUser.getInstance().getUser().addConversation(new Conversation(participants));
                                 }
                             }
                         });
@@ -279,9 +268,21 @@ public class Connection extends Service{
                 }
                 if(same){
                     Gson gson = new Gson();
-                    AMessage aMessage = null;
-                    TextMessage text = gson.fromJson(message.getBody(), TextMessage.class);
                     c.addMessage(getMessage(message.getBody(), message.getLanguage()));
+                }else{
+                    String participant = chat.getParticipant();
+                    List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
+                    for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
+                        if(contact.getUsername().equals(participant.split("@")[0])){
+                            participants.add(contact);
+                        }
+                    }
+
+                    participants.add(SystemUser.getInstance().getUser());
+
+                    Conversation con = new Conversation(participants);
+                    SystemUser.getInstance().getUser().addConversation(con);
+                    con.addMessage(getMessage(message.getBody(), message.getLanguage()));
                 }
             }
         }
