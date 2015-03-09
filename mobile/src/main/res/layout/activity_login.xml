@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/action_register"
                     android:id="@+id/register_button"
-                    android:onClick="emailLogin" />
+                    android:onClick="register" />
 
             </LinearLayout>
 

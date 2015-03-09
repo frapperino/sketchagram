@@ -1,9 +1,11 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Application;
-
 import sketchagram.chalmers.com.database.DBHelper;
 import sketchagram.chalmers.com.database.SketchagramDb;
+import android.content.Context;
+import com.google.android.gms.internal.ge;
+
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
@@ -12,7 +14,8 @@ import sketchagram.chalmers.com.model.SystemUser;
 public class MyApplication extends Application {
     private static MyApplication ourInstance;
     private static SketchagramDb db = null;
-    public static MyApplication getInstance(){
+    private static Context context;
+    public MyApplication getInstance(){
         return ourInstance;
     }
 
@@ -20,6 +23,7 @@ public class MyApplication extends Application {
     public void onCreate()
     {
         super.onCreate();
+        context = getApplicationContext();
         ourInstance = this;
 
         // Initialize the singletons so their instances
@@ -44,5 +48,9 @@ public class MyApplication extends Application {
     public void customAppMethod()
     {
         // Custom application method
+    }
+
+    public static Context getContext(){
+        return context;
     }
 }

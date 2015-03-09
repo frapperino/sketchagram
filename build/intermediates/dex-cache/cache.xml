@@ -2,53 +2,39 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\6.5.87\classes.jar"
+        jar="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.5.87\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="95482e7c792a7c0d5a9d5461e97726bd54fe9549">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\classes-9e8e46d6d68c711bac1bd5746cc2f5ddb794c327.jar" />
+        sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
+        <dex dex="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\pre-dexed\debug\classes-fa265558dda79340395b046670006b3cc527795d.jar" />
     </item>
     <item
-        jar="C:\Users\Alex\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
+        jar="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-2a4d7a009910c2886c85ac2307c4700543cff8fe.jar" />
+        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
+        <dex dex="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\pre-dexed\debug\classes-dbfea9d08bfd4483e538381219b8469902788ada.jar" />
     </item>
     <item
-        jar="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
+        jar="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\classes-836ea2ab59c2f16f5fd68d5d818cd7a7bec56a91.jar" />
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\pre-dexed\debug\classes-ad3e282f59232261583d26e9cbef721d32004bd4.jar" />
     </item>
     <item
-        jar="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        jar="C:\Users\Alle\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.3\support-annotations-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-0a2be02e5efa5b961c82ef0a4402df00dfc1abba.jar" />
+        sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
+        <dex dex="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-858287f54a45d2fe900427ff1d3e8504f584bc1c.jar" />
     </item>
     <item
-        jar="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\exploded-aar\com.google.android.support\wearable\1.1.0\classes.jar"
+        jar="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\libs\internal_impl-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="27f19641b81b1078e653d2f0e5d1ed44d158a785">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\classes-37b15a504a0245ff0772b98315e2cf22c6053d4e.jar" />
-    </item>
-    <item
-        jar="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.0\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="efeda77c808750cb670ee9c48d8a1835d89dbcb2">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\classes-b0cefa156e9800c2abda19c10930ad4a9b70d377.jar" />
-    </item>
-    <item
-        jar="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\exploded-aar\com.google.android.gms\play-services-wearable\6.5.87\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="6384c6cd674a22610b932d9464aa6938d067f285">
-        <dex dex="C:\Users\Alex\Documents\GitHub\Sketchagram\sketchagram\wear\build\intermediates\pre-dexed\debug\classes-145949d60388da75b20d59a222ddad009c3956fb.jar" />
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="C:\Users\Alle\Documents\GitHub\sketchagram\mobile\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-b609a9c0267c99f478fe5f393b70cef247b41aa3.jar" />
     </item>
 
 </items>
