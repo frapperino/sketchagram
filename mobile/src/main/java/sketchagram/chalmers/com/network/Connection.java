@@ -264,7 +264,7 @@ public class Connection extends Service{
         }
     }
 
-    private static MessageListener messageListener = new MessageListener() {
+    private MessageListener messageListener = new MessageListener() {
         @Override
         public void processMessage(Chat chat, Message message) {
             List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
@@ -281,27 +281,32 @@ public class Connection extends Service{
                     Gson gson = new Gson();
                     AMessage aMessage = null;
                     TextMessage text = gson.fromJson(message.getBody(), TextMessage.class);
-                    switch (message.getLanguage()) {
-                        case "Painting":
-                            aMessage = gson.fromJson(message.getBody(), Painting.class);
-                            break;
-                        case "TextMessage":
-                            String body =  message.getBody();
-                            NetworkMessage<String> networkMessage = gson.fromJson(body, NetworkMessage.class);
-                            TextMessage textMessage = (TextMessage)networkMessage.convertFromNetworkMessage(message, c);
-                            c.addMessage(textMessage);
-                            System.out.println(textMessage.getMessage());
-                            break;
-                        case "Emoticon":
-                            aMessage = gson.fromJson(message.getBody(), Emoticon.class);
-                            break;
-                        default:
-                            aMessage = gson.fromJson(message.getBody(), AMessage.class);
-                            break;
-                    }
+                    c.addMessage(getMessage(message.getBody(), message.getLanguage()));
                 }
             }
         }
     };
+
+    private AMessage getMessage(String body, String type){
+        AMessage message = null;
+        Gson gson = new Gson();
+        switch (type) {
+            case "Painting":
+                message = gson.fromJson(body, Painting.class);
+                break;
+            case "TextMessage":
+                NetworkMessage<String> networkMessage = gson.fromJson(body, NetworkMessage.class);
+                TextMessage textMessage = (TextMessage)networkMessage.convertFromNetworkMessage(type);
+                System.out.println(textMessage.getMessage());
+                return textMessage;
+            case "Emoticon":
+                message = gson.fromJson(body, Emoticon.class);
+                break;
+            default:
+                message = gson.fromJson(body, AMessage.class);
+                break;
+        }
+        return message;
+    }
 }
 
