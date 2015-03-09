@@ -24,14 +24,14 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String CREATE_TABLE = "CREATE TABLE ";
     private static final String COMMA = ", ";
     private static final String PRIMARY_KEY = "PRIMARY KEY ";
-    private static final String TEXT = "TEXT ";
+    private static final String TEXT = " TEXT ";
     private static final String INTEGER = "INTEGER ";
     private static final String DATABASE_NAME ="Sketchagram.db";
 
-    private static final String  CONTACT_TABLE_CREATE = CREATE_TABLE + ContactTable.TABLE_NAME +"( " +
-            ContactTable.COLUM_NAME_CONTACT_ID + TEXT + PRIMARY_KEY + COMMA +
-            ContactTable.COLUM_NAME_CONTACT_NAME + TEXT + COMMA +
-            ContactTable.COLUM_NAME_CONTACT_EMAIL + TEXT + ") ";
+    private static final String  CONTACT_TABLE_CREATE = CREATE_TABLE + ContactTable.TABLE_NAME +" (" +
+            ContactTable.COLUMN_NAME_CONTACT_ID + TEXT + PRIMARY_KEY + COMMA +
+            ContactTable.COLUMN_NAME_CONTACT_NAME + TEXT + COMMA +
+            ContactTable.COLUMN_NAME_CONTACT_EMAIL + TEXT + ") ";
 
     public DBHelper(Context context)
     {
@@ -40,13 +40,11 @@ public class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // TODO Auto-generated method stub
         db.execSQL( CONTACT_TABLE_CREATE  );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO Auto-generated method stub
         dropTable(db, ContactTable.TABLE_NAME);
         onCreate(db);
     }

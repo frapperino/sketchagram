@@ -13,8 +13,8 @@ public final class DataContract {
 
     public static abstract class ContactTable implements BaseColumns{
         public static final String TABLE_NAME = "contacts";
-        public static final String COLUM_NAME_CONTACT_ID = "contactid";
-        public static final String COLUM_NAME_CONTACT_NAME = "contactname";
-        public static final String COLUM_NAME_CONTACT_EMAIL = "contactemail";
+        public static final String COLUMN_NAME_CONTACT_ID = "contactid";
+        public static final String COLUMN_NAME_CONTACT_NAME = "contactname";
+        public static final String COLUMN_NAME_CONTACT_EMAIL = "contactemail";
     }
 }

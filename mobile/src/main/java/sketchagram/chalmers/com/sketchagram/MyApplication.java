@@ -11,7 +11,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  */
 public class MyApplication extends Application {
     private static MyApplication ourInstance;
-    private static SketchagramDb db;
+    private static SketchagramDb db = null;
     public static MyApplication getInstance(){
         return ourInstance;
     }
@@ -35,6 +35,9 @@ public class MyApplication extends Application {
     }
 
     public SketchagramDb getDatabase(){
+        if(db == null){
+            db = new SketchagramDb(getApplicationContext());
+        }
         return db;
     }
 

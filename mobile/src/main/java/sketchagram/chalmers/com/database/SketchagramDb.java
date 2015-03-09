@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.database.DataContract.*;
 import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * Created by Alex on 2015-03-06.
@@ -28,7 +29,9 @@ public class SketchagramDb {
         dbh = new DBHelper(context);
         try {
             db = dbh.getWritableDatabase();
+            dbh.onCreate(db);
         }catch (SQLiteException e){
+            System.out.println(e.getMessage());
 
         }
     }
@@ -36,17 +39,17 @@ public class SketchagramDb {
     public boolean insertContact  (String name, String email, String text)
     {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("email", email);
-        contentValues.put("text", text);
-        db.insert("contacts", null, contentValues);
+        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_ID, name);
+        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_NAME, email);
+        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_EMAIL, text);
+        db.insert(ContactTable.TABLE_NAME, null, contentValues);
         return true;
     }
 
     public Integer deleteContact (String id)
     {
         return db.delete(ContactTable.TABLE_NAME,
-                ContactTable.COLUM_NAME_CONTACT_ID + " = " + id,
+                ContactTable.COLUMN_NAME_CONTACT_ID + " = " + id,
                 new String[] { id });
     }
 
@@ -56,8 +59,8 @@ public class SketchagramDb {
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
         contentValues.put("email", email);
-        contentValues.put("id", id);
-        db.update("contacts", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
+        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_ID, id);
+        db.update(ContactTable.TABLE_NAME, contentValues, "id = ? ", new String[] { Integer.toString(id) } );
         return true;
     }
 
@@ -68,9 +71,9 @@ public class SketchagramDb {
         Cursor res =  db.rawQuery( "select * from contacts", null );
         res.moveToFirst();
         while(res.isAfterLast() == false){
-            String name = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUM_NAME_CONTACT_NAME));
-            String email = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUM_NAME_CONTACT_EMAIL));
-            String id = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUM_NAME_CONTACT_ID));
+            String name = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_NAME));
+            String email = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_EMAIL));
+            String id = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_ID));
             Profile profile = new Profile();
             profile.setNickName(email);
             profile.setFirstName(name);
