@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.AMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Emoticon;
@@ -165,16 +166,16 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onFragmentInteraction(String id) {
-        Log.e("FRAGMENT", id);
+        Log.e("FRAGMENTINTERACTION", id);
         if (id.contains("conversation")) {
 
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
             t.replace(R.id.fragmentlayout, inConversationFragment)
                     .commit();
-        } else {
-            List<ADigitalPerson> receivers = new ArrayList<>();
-            for(String contact : id.split(" ")) {
+        } else if (id.contains("massmessage")) {
+            String temp = id.replace(", massmessage", "");
+            for(String contact : temp.split(" ")) {
                 if(contact.contains("[") ){
                     contact = contact.substring(1,contact.length()-1);
                 } else if(contact.contains("]")){
@@ -184,18 +185,23 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 }
 
                 for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
-                    if (c.getUsername().equals(contact))
-                        receivers.add(c);
+                    if (c.getUsername().equals(contact)) {
+                        List list = new ArrayList<String>();
+                        list.add(contact);
+                        postNewConversation(list.toString(), null);
+                    }
                 }
             }
 
-            List<ADigitalPerson> participants = receivers;
-            participants.add(SystemUser.getInstance().getUser());
-            Emoticon emoticon = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
+            postNotifications();
+            conversationFragment = new ConversationFragment();
+            //Create a new fragment and replace the old fragment in layout.
+            FragmentTransaction t = getFragmentManager().beginTransaction();
+            t.replace(R.id.fragmentlayout, conversationFragment)
+                    .commit();
+        } else {
 
-            Conversation conversation = new Conversation(participants);
-            conversation.addMessage(emoticon);
-            SystemUser.getInstance().getUser().addConversation(conversation);
+            postNewConversation(id, null);
 
             postNotifications();
             conversationFragment = new ConversationFragment();
@@ -206,6 +212,41 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
         }
     }
+
+    /**
+     *
+     * @param participants should be in the form of a list.toString()
+     * @param msg isn't used at the moment, but should be implemented.
+     */
+    private void postNewConversation(String participants, AMessage msg) {
+        List<ADigitalPerson> receivers = new ArrayList<>();
+        for(String contact : participants.split(" ")) {
+            if(contact.contains("[") ){
+                contact = contact.substring(1,contact.length()-1);
+            } else if(contact.contains("]")){
+                contact = contact.substring(0,contact.length()-1);
+            } else {
+                contact = contact.substring(0,contact.length()-1);
+            }
+
+            for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
+                if (c.getUsername().equals(contact))
+                    receivers.add(c);
+            }
+        }
+
+        receivers.add(SystemUser.getInstance().getUser());
+
+        //just for now
+        msg = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
+
+        Conversation newConversation = new Conversation(receivers);
+        newConversation.addMessage(msg);
+        SystemUser.getInstance().getUser().addConversation(newConversation);
+
+    }
+
+
     //Below code is for connecting and communicating with Wear
 
 
@@ -324,12 +365,11 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().contains("contacts")) {
-            sendContacts();
+            sendToWatch(SystemUser.getInstance().getUser().getContactList().toString());
         } else if(messageEvent.getPath().contains("clockversations")) {
-            Log.e("Phone", "sending convo's");
-            sendConversations();
+            sendToWatch(SystemUser.getInstance().getUser().getConversationList().toString());
         } else if(messageEvent.getPath().contains("username")) {
-            sendUsername();
+            sendToWatch(SystemUser.getInstance().getUser().getUsername());
         } else {
             Log.e("CLOCK", "Click");
             onFragmentInteraction(messageEvent.getPath());
@@ -357,15 +397,13 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     }
 
 
+
     /**
      * This method will generate all the nodes that are attached to a Google Api Client.
-     * Now, theoretically, only one should be: the phone. However, they return us more
-     * a list. In the case where the phone happens to not be the first/only, I decided to
-     * make a List of all the nodes and we'll loop through them and send each of them
-     * a message. After getting the list of nodes, it sends a message to each of them telling
-     * it to start. One the last successful node, it saves it as our one peerNode.
+     * There should only be one node however, which should be the watch.
      */
-    private void sendContacts(){
+    private void sendToWatch(String msg){
+        getSharedPreferences("WATCHMSG", 0).edit().putString("WATCHMSG", msg).commit();
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -382,89 +420,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
-                            SystemUser.getInstance().getUser().getContactList().toString(),
-                            null
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.v("DEVELOPER", "......Clock: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * Now, theoretically, only one should be: the phone. However, they return us more
-     * a list. In the case where the phone happens to not be the first/only, I decided to
-     * make a List of all the nodes and we'll loop through them and send each of them
-     * a message. After getting the list of nodes, it sends a message to each of them telling
-     * it to start. One the last successful node, it saves it as our one peerNode.
-     */
-    private void sendConversations(){
-
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.v(TAG, "......Phone: Sending Msg:  to node:  " + node.getId());
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            SystemUser.getInstance().getUser().getConversationList().toString(),
-                            null
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.v("DEVELOPER", "......Clock: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * Now, theoretically, only one should be: the phone. However, they return us more
-     * a list. In the case where the phone happens to not be the first/only, I decided to
-     * make a List of all the nodes and we'll loop through them and send each of them
-     * a message. After getting the list of nodes, it sends a message to each of them telling
-     * it to start. One the last successful node, it saves it as our one peerNode.
-     */
-    private void sendUsername(){
-
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.v(TAG, "username = " + SystemUser.getInstance().getUser().getUsername());
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            SystemUser.getInstance().getUser().getUsername(),
+                            getSharedPreferences("WATCHMSG",0).getString("WATCHMSG", ""),
                             null
                     );
 

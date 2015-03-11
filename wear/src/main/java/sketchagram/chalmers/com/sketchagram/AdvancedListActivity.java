@@ -151,8 +151,12 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        Toast.makeText(this, viewHolder.getPosition() + " : " + contactChoices.size(), Toast.LENGTH_SHORT).show();
-        if(viewHolder.getPosition() == contactChoices.size()-1){
+        if(viewHolder.getPosition() == contactChoices.size()-2){
+            messagePhone(receivers);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else if (viewHolder.getPosition() == contactChoices.size()-1) {
+            receivers.add("massmessage");
             messagePhone(receivers);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -211,6 +215,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
         }
         contactChoices.add("  Send  ");
+        contactChoices.add("  Send MassMSG  ");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
