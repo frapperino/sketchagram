@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,12 +9,12 @@ import java.util.List;
 public abstract class AMessage {
     private final long TIMESTAMP;
     private final ADigitalPerson SENDER;
-    private final List<ADigitalPerson> RECEIVER;
+    private final List<ADigitalPerson> RECEIVER = new ArrayList<ADigitalPerson>();
 
     protected AMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
         this.TIMESTAMP = timestamp;
         this.SENDER = sender;
-        this.RECEIVER = receiver;
+        this.RECEIVER.addAll(receiver);
     }
 
     public abstract  <T> T getMessage();
@@ -21,5 +22,6 @@ public abstract class AMessage {
     public ADigitalPerson getSENDER(){
         return SENDER;
     }
+    public List<ADigitalPerson> getRECEIVER(){return RECEIVER;}
 
 }

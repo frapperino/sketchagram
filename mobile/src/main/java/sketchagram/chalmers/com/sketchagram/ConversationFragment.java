@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
@@ -76,8 +75,10 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ConversationListAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList());
+        // TODO: Change Adapter to display your content
+        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1,
+                    SystemUser.getInstance().getUser().getConversationList());
     }
 
     @Override
@@ -140,10 +141,6 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
-    }
-
-    public void notifyAdapter(){
-        mAdapter = new ConversationListAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList());
     }
 
     /**
