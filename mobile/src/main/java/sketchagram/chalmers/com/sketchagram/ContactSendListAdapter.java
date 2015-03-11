@@ -10,17 +10,16 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import sketchagram.chalmers.com.model.AMessage;
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.Contact;
 
 /**
- * Created by Bosch on 24/02/15.
+ * Created by Bosch and Alexander Harenstam on 20/02/15.
+ * Tutorial: https://www.airpair.com/android/list-fragment-android-studio
  */
-public class InConversationListAdapter extends ArrayAdapter<AMessage> {
+public class ContactSendListAdapter extends ArrayAdapter<Contact>{
     private Context context;
-    private boolean useList = true;
 
-    public InConversationListAdapter(Context context, List items) {
+    public ContactSendListAdapter(Context context, List items) {
         super(context, android.R.layout.simple_list_item_1, items);
         this.context = context;
     }
@@ -41,7 +40,7 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
      */
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        AMessage item = (AMessage)getItem(position);
+        Contact item = (Contact)getItem(position);
         View viewToUse = null;
 
         // This block exists to inflate the settings list item conditionally based on whether
@@ -49,7 +48,7 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
         LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
-            viewToUse = mInflater.inflate(R.layout.inconversation_list_item, null);
+            viewToUse = mInflater.inflate(R.layout.contact_send_list_item, null);
             holder = new ViewHolder();
             holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
             viewToUse.setTag(holder);
@@ -58,12 +57,7 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
 
-        holder.titleText.setText(item.getSENDER().getUsername() + ": " + item.getMessage().toString());
-        if(item.getSENDER().getUsername().equals(SystemUser.getInstance().getUser().getUsername()))
-            holder.titleText.setText("Me: " + item.getMessage().toString());
-
+        holder.titleText.setText(item.getUsername());
         return viewToUse;
     }
 }
-
-

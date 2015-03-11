@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
