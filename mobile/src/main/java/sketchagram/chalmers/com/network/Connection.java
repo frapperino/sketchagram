@@ -27,11 +27,14 @@ import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
+import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,10 +62,15 @@ import sketchagram.chalmers.com.sketchagram.MainActivity;
  * Created by Olliver on 15-02-18.
  */
 public class Connection extends Service implements IConnection{
-    ConnectionConfiguration config;
-    XMPPTCPConnection connection;
-    AccountManager manager;
-    List<Chat> chatList;
+    private ConnectionConfiguration config;
+    private XMPPTCPConnection connection;
+    private AccountManager manager;
+    private List<Chat> chatList;
+    private List<MultiUserChat> groupChatList;
+    private final String HOST = "83.254.68.47";
+    private final String DOMAIN = "@raspberrypi";
+
+
     private final IBinder binder = new Binder();
 
     public Connection() {
@@ -86,10 +94,11 @@ public class Connection extends Service implements IConnection{
 
     public void init(){
         //SmackAndroid.init()
-        config = new ConnectionConfiguration("83.254.68.47", 5222);
+        config = new ConnectionConfiguration(HOST, 5222);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         chatList = new ArrayList<>();
+        groupChatList = new ArrayList<>();
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy =
                     new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -191,6 +200,23 @@ public class Connection extends Service implements IConnection{
                                 }
                             }
                         });
+                        MultiUserChat.addInvitationListener(connection, new InvitationListener() {
+                            @Override
+                            public void invitationReceived(XMPPConnection xmppConnection, String room, String inviter, String reason, String password, Message message) {
+                                MultiUserChat muc = new MultiUserChat(connection, room);
+                                try {
+                                    muc.join(SystemUser.getInstance().getUser().getUsername());
+                                    groupChatList.add(muc);
+                                } catch (SmackException.NoResponseException e) {
+                                    e.printStackTrace();
+                                } catch (XMPPException.XMPPErrorException e) {
+                                    e.printStackTrace();
+                                } catch (SmackException.NotConnectedException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
                        }
                 } catch (XMPPException e) {
                     e.printStackTrace();
@@ -218,8 +244,34 @@ public class Connection extends Service implements IConnection{
 
     public void createConversation(ADigitalPerson recipient){
         ChatManager chatManager = getChatManager();
-        Chat chat = chatManager.createChat(recipient.getUsername()+ "@raspberrypi", messageListener);
+        Chat chat = chatManager.createChat(recipient.getUsername()+ DOMAIN, messageListener);
         chatList.add(chat);
+    }
+
+    @Override
+    public void createGroupConversation(List<ADigitalPerson> recipients, String name) {
+        MultiUserChat muc = null;
+        if(name.isEmpty()){
+            String newName = SystemUser.getInstance().getUser().getUsername() + ", ";
+            for(ADigitalPerson recipient: recipients){
+                newName += recipient.getUsername() + ", ";
+            }
+            muc = new MultiUserChat(connection, newName);
+            groupChatList.add(muc);
+        }else {
+            muc = new MultiUserChat(connection, name);
+            groupChatList.add(muc);
+        }
+        for(ADigitalPerson recipient : recipients){
+            try {
+                muc.invite(recipient.getUsername() + DOMAIN, "chatting");
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        }
+        Conversation c = new Conversation(recipients);
+        SystemUser.getInstance().getUser().addConversation(c);
+
     }
 
     public void sendMessage(AMessage aMessage, String type) {
