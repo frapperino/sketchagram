@@ -26,4 +26,9 @@ public abstract class ADigitalPerson extends Observable{
     public Profile getProfile() {
         return profile;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        return this.username.equals(((ADigitalPerson)obj).getUsername());
+    }
 }

@@ -16,12 +16,15 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.AMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.MessageTypes;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.TextMessage;
 
@@ -127,20 +130,11 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            List<ADigitalPerson> receiverList = new ArrayList<ADigitalPerson>();
+            Set<ADigitalPerson> receiverList = new HashSet<>();
             receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
-            boolean create = true;
-            for(Conversation conversation : SystemUser.getInstance().getUser().getConversationList()){
-                if(conversation.getParticipants().equals(receiverList)){
-                    create = false;
-                }
-            }
-            if(create){
-                SystemUser.getInstance().getConnection().createConversation(receiverList.get(0));
-            }
             TextMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
             message.setTextMessage(":D");
-            SystemUser.getInstance().getConnection().sendMessage(message, "TextMessage");
+            SystemUser.getInstance().getUser().sendMessage(message, MessageTypes.TEXTMESSAGE);
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }

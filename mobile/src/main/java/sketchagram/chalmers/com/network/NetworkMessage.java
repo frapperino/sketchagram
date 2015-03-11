@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import org.jivesoftware.smack.packet.Message;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.AMessage;
@@ -54,7 +56,7 @@ public class NetworkMessage<T> {
 
     public AMessage convertFromNetworkMessage(String type){
         List<String> receivers = getReceivers();
-        List<ADigitalPerson> personReceivers = new ArrayList<>();
+        Set<ADigitalPerson> personReceivers = new HashSet<>();
         for(String user : receivers){
             if(SystemUser.getInstance().getUser().getUsername().equals(user)){
                 personReceivers.add(SystemUser.getInstance().getUser());
@@ -68,7 +70,7 @@ public class NetworkMessage<T> {
             }
 
         }
-        List<ADigitalPerson> allUsers = new ArrayList<>();
+        Set<ADigitalPerson> allUsers = new HashSet<>();
         allUsers.addAll(SystemUser.getInstance().getUser().getContactList());
         allUsers.add(SystemUser.getInstance().getUser());
         ADigitalPerson sender = null;

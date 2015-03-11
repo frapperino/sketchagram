@@ -3,6 +3,7 @@ package sketchagram.chalmers.com.model;
 import android.graphics.drawable.Drawable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Bosch on 10/02/15.
@@ -10,7 +11,7 @@ import java.util.List;
 public class Emoticon extends AMessage {
 
 
-    public Emoticon(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver) {
+    public Emoticon(long timestamp, ADigitalPerson sender, Set<ADigitalPerson> receiver) {
         super(timestamp, sender, receiver);
     }
 

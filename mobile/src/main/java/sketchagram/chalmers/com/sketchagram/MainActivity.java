@@ -20,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
@@ -63,9 +65,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         addContactFragment = new AddContactFragment();
-        User user = new User(pref.getString("username", "User"), new Profile());
-        SystemUser.getInstance().setUser(user);
-        DummyData.injectData();
+        //DummyData.injectData();
 
         fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -119,7 +119,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
             prefs.apply();
-            SystemUser.getInstance().getConnection().logout();
+            SystemUser.getInstance().logout();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -162,13 +162,13 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             t.replace(R.id.fragment_frame, inConversationFragment)
                     .commit();
         } else {
-            List<ADigitalPerson> receivers = new ArrayList<>();
+            Set<ADigitalPerson> receivers = new HashSet<>();
             for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
                 if (c.getUsername().equals(id))
                     receivers.add(c);
             }
 
-            List<ADigitalPerson> participants = receivers;
+            Set<ADigitalPerson> participants = receivers;
             participants.add(SystemUser.getInstance().getUser());
             Emoticon emoticon = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
 
@@ -185,7 +185,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", ""+position);
+        Log.d("NavDraw", "" + position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -213,5 +213,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.fragment_frame, addContactFragment);
         ft.commit();
+    }
+
+    public void addContact(View view) {
+        SystemUser.getInstance().getUser().addContact("alleballe");
+        Log.d("Add_Contact", "Button pressed!");
     }
 }

@@ -5,7 +5,9 @@ import android.os.SystemClock;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
@@ -40,7 +42,7 @@ public class DummyData {
         contact = new Contact("asdasd", new Profile());
         user.addContact(contact);
 
-        List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
+        Set<ADigitalPerson> participants = new HashSet<>();
         participants.add(user.getContactList().get(0));
         participants.add(user.getContactList().get(5));
         participants.add(user.getContactList().get(1));

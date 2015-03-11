@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -24,6 +25,9 @@ import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackAndroid;
 import org.jivesoftware.smack.SmackException;
@@ -43,8 +47,11 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Handler;
 
@@ -53,9 +60,12 @@ import sketchagram.chalmers.com.model.AMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Emoticon;
+import sketchagram.chalmers.com.model.MessageTypes;
 import sketchagram.chalmers.com.model.Painting;
+import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.TextMessage;
+import sketchagram.chalmers.com.model.MessageTypes;
 import sketchagram.chalmers.com.sketchagram.MainActivity;
 
 /**
@@ -69,6 +79,7 @@ public class Connection extends Service implements IConnection{
     private List<MultiUserChat> groupChatList;
     private final String HOST = "83.254.68.47";
     private final String DOMAIN = "@raspberrypi";
+    private final String GROUP = "Friends";
 
 
     private final IBinder binder = new Binder();
@@ -106,6 +117,8 @@ public class Connection extends Service implements IConnection{
         }
         SASLAuthentication.supportSASLMechanism("PLAIN", 0);
         connect();
+        Roster roster = connection.getRoster();
+        roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
     }
 
     private void connect(){
@@ -140,6 +153,10 @@ public class Connection extends Service implements IConnection{
             chatManager = ChatManager.getInstanceFor(connection);
         }
         return chatManager;
+    }
+
+    private Roster getRoster(){
+        return connection.getRoster();
     }
 
     public void logout(){
@@ -217,6 +234,28 @@ public class Connection extends Service implements IConnection{
 
                             }
                         });
+
+                        getRoster().addRosterListener(new RosterListener() {
+                               @Override
+                               public void entriesAdded(Collection<String> strings) {
+
+                               }
+
+                               @Override
+                               public void entriesUpdated(Collection<String> strings) {
+
+                               }
+
+                               @Override
+                               public void entriesDeleted(Collection<String> strings) {
+
+                               }
+
+                               @Override
+                               public void presenceChanged(Presence presence) {
+                                   Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
+                               }
+                       });
                        }
                 } catch (XMPPException e) {
                     e.printStackTrace();
@@ -242,14 +281,8 @@ public class Connection extends Service implements IConnection{
         return success;
     }
 
-    public void createConversation(ADigitalPerson recipient){
-        ChatManager chatManager = getChatManager();
-        Chat chat = chatManager.createChat(recipient.getUsername()+ DOMAIN, messageListener);
-        chatList.add(chat);
-    }
-
     @Override
-    public void createGroupConversation(List<ADigitalPerson> recipients, String name) {
+    public void createGroupConversation(Set<ADigitalPerson> recipients, String name) {
         MultiUserChat muc = null;
         if(name.isEmpty()){
             String newName = SystemUser.getInstance().getUser().getUsername() + ", ";
@@ -274,13 +307,13 @@ public class Connection extends Service implements IConnection{
 
     }
 
-    public void sendMessage(AMessage aMessage, String type) {
+    public void sendMessage(AMessage aMessage, MessageTypes type) {
         Message message = new Message();
         switch (type){
-            case "TextMessage":
+            case TEXTMESSAGE:
                 NetworkMessage<String> networkMessage = new NetworkMessage<>();
                 networkMessage.convertToNetworkMessage(aMessage);
-                message.setLanguage(type);
+                message.setLanguage(type.getType());
                 Gson gson = new Gson();
                 String object = gson.toJson(networkMessage);
                 message.setBody(object);
@@ -289,16 +322,47 @@ public class Connection extends Service implements IConnection{
         }
 
     }
+
+    public void addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
+        Roster roster = connection.getRoster();
+        Collection<RosterEntry> entries  = roster.getEntries();
+        roster.createEntry(userName + DOMAIN, userName, null);
+    }
+
+    public List<Contact> getContacts(){
+        List<Contact> list = new ArrayList<>();
+        Collection<RosterEntry> entries = getRoster().getEntries();
+        for(RosterEntry entry : entries){
+            list.add(new Contact(entry.getUser().split("@")[0], new Profile()));
+        }
+        return list;
+    }
+
     private void sendMessageToContacts(NetworkMessage networkMessage,  Message message){
+        boolean exists = false;
         for(Chat c : chatList) {
             List<String> receivers = networkMessage.getReceivers();
             for(Object recipient : receivers){
                 if(c.getParticipant().split("@")[0].equals(recipient.toString())) {
+                    exists = true;
                     try {
                         c.sendMessage(message);
                     } catch (SmackException.NotConnectedException e) {
                         e.printStackTrace();
                     }
+                }
+            }
+
+        }
+        if(!exists){
+            ChatManager chatManager = getChatManager();
+            for(Object receiver : networkMessage.getReceivers()){
+                Chat chat = chatManager.createChat((String)receiver + DOMAIN, messageListener);
+                chatList.add(chat);
+                try {
+                    chat.sendMessage(message);
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -323,7 +387,7 @@ public class Connection extends Service implements IConnection{
                     c.addMessage(getMessage(message.getBody(), message.getLanguage()));
                 }else{
                     String participant = chat.getParticipant();
-                    List<ADigitalPerson> participants = new ArrayList<ADigitalPerson>();
+                    Set<ADigitalPerson> participants = new HashSet<>();
                     for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
                         if(contact.getUsername().equals(participant.split("@")[0])){
                             participants.add(contact);
@@ -337,22 +401,38 @@ public class Connection extends Service implements IConnection{
                     con.addMessage(getMessage(message.getBody(), message.getLanguage()));
                 }
             }
+            if(conversationList.isEmpty()){
+                String participant = chat.getParticipant();
+                Set<ADigitalPerson> participants = new HashSet<>();
+                for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
+                    if(contact.getUsername().equals(participant.split("@")[0])){
+                        participants.add(contact);
+                    }
+                }
+
+                participants.add(SystemUser.getInstance().getUser());
+
+                Conversation con = new Conversation(participants);
+                SystemUser.getInstance().getUser().addConversation(con);
+                con.addMessage(getMessage(message.getBody(), message.getLanguage()));
+            }
         }
     };
 
     private AMessage getMessage(String body, String type){
         AMessage message = null;
         Gson gson = new Gson();
-        switch (type) {
-            case "Painting":
+        MessageTypes messageType = MessageTypes.valueOf(type);
+        switch (messageType) {
+            case PAINTING:
                 message = gson.fromJson(body, Painting.class);
                 break;
-            case "TextMessage":
+            case TEXTMESSAGE:
                 NetworkMessage<String> networkMessage = gson.fromJson(body, NetworkMessage.class);
                 TextMessage textMessage = (TextMessage)networkMessage.convertFromNetworkMessage(type);
                 System.out.println(textMessage.getMessage());
                 return textMessage;
-            case "Emoticon":
+            case EMOTICON:
                 message = gson.fromJson(body, Emoticon.class);
                 break;
             default:

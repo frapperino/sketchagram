@@ -138,11 +138,6 @@ public class AddContactFragment extends ListFragment implements AbsListView.OnIt
         }
     }
 
-    public void addContact() {
-        //TODO: Start add_contact fragment/activity.
-        Log.d("Add_Contact", "Button pressed!");
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

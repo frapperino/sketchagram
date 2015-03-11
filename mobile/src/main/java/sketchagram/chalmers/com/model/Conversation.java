@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
@@ -12,9 +13,9 @@ import sketchagram.chalmers.com.sketchagram.MyApplication;
  */
 public class Conversation {
     private List<AMessage> history;
-    private List<ADigitalPerson> participants;
+    private Set<ADigitalPerson> participants;
 
-    public Conversation(List<ADigitalPerson> participants){
+    public Conversation(Set<ADigitalPerson> participants){
         history = new ArrayList<AMessage>();
         this.participants = participants;
     }
@@ -23,7 +24,7 @@ public class Conversation {
         return history;
     }
 
-    public List<ADigitalPerson> getParticipants() {
+    public Set<ADigitalPerson> getParticipants() {
         return participants;
     }
 

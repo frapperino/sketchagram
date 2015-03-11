@@ -33,4 +33,16 @@ public class SystemUser {
         this.connection = new Connection();
         this.connection.init();
     }
+
+    public boolean login(String userName, String password) {
+        if(this.connection.login(userName,password)){
+            setUser(new User(userName, new Profile()));
+            return true;
+        }
+        return false;
+    }
+
+    public void logout(){
+        this.connection.logout();
+    }
 }

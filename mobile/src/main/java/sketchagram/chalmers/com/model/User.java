@@ -2,9 +2,15 @@ package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
 
+import com.google.gson.Gson;
+
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
@@ -54,8 +60,13 @@ public class User extends ADigitalPerson  {
         handler.post(runnable);
     }
 
+    /**
+     * Gets contacts from database which is synced with server.
+     * @return the contactlist
+     */
     public List<Contact> getContactList() {
-        return contactList;
+        //TODO: get contacts from database instead of server
+        return SystemUser.getInstance().getConnection().getContacts();
     }
 
     public List<Conversation> getConversationList() {
@@ -67,5 +78,37 @@ public class User extends ADigitalPerson  {
         return getUsername();
     }
 
+    public void addContact(String userName){
+        try {
+            SystemUser.getInstance().getConnection().addContact(userName);
+        } catch (SmackException.NotLoggedInException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(AMessage aMessage, MessageTypes type){
+        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
+        boolean exist = false;
+        Conversation conversation = null;
+        for(Conversation c : conversationList){
+            if(c.getParticipants().equals(aMessage.getRECEIVER())){
+                exist = true;
+                conversation = c;
+            }
+        }
+        if(!exist) {
+            conversation = new Conversation(aMessage.getRECEIVER());
+            conversationList.add(conversation);
+        }
+        SystemUser.getInstance().getConnection().sendMessage(aMessage, type);
+        conversation.addMessage(aMessage);
+
+    }
 
 }

@@ -225,8 +225,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            IConnection conn = SystemUser.getInstance().getConnection();
-            boolean success = conn.login(email, password);
+            boolean success = SystemUser.getInstance().login(email, password);
             if (success){
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
