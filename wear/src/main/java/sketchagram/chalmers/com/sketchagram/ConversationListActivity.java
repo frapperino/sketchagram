@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,16 +35,15 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvancedListActivity extends Activity implements WearableListView.ClickListener,
+public class ConversationListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
 
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
-    private List<String> contactChoices;
-    private List<String> receivers;
-    private final List<String> MSGTAG = new ArrayList<>();
+    private List<String> conversations;
+    private final List<String> CONVTAG = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +57,9 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                contactChoices = new ArrayList<>();
-                receivers = new ArrayList<>();
-                MSGTAG.add("contacts");
-                messagePhone(MSGTAG);
+                conversations = new ArrayList<>();
+                CONVTAG.add("clockversations");
+                messagePhone(CONVTAG);
                 loadAdapter();
 
             }
@@ -89,10 +86,10 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     }
 
     private void loadAdapter(){
-        Log.e("ADAPTER", contactChoices.toString());
-        mAdapter = new MyListAdapter(this, contactChoices);
+        Log.e("ADAPTER", conversations.toString());
+        mAdapter = new MyListAdapter(this, conversations);
         mListView.setAdapter(mAdapter);
-        mListView.setClickListener(AdvancedListActivity.this);
+        mListView.setClickListener(ConversationListActivity.this);
     }
 
 
@@ -117,7 +114,6 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             protected void onPostExecute(List<Node> nodeList) {
                 for(Node node : nodeList) {
                     Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
-                    Log.e("WATCH", "Sending to: " + message.toString());
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
@@ -151,18 +147,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == contactChoices.size()-2){
-            messagePhone(receivers);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else if (viewHolder.getPosition() == contactChoices.size()-1) {
-            receivers.add("massmessage");
-            messagePhone(receivers);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else {
-            receivers.add(contactChoices.get(viewHolder.getPosition()));
-        }
+
     }
 
     @Override
@@ -201,28 +186,27 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
+        Log.e("WATCH", "Conversation here");
         String s = messageEvent.getPath();
-        contactChoices.clear();
-        for(String contact : s.split(" ")) {
-            if(contact.contains("[") ){
-                contact = contact.substring(1,contact.length()-1);
-            } else if(contact.contains("]")){
-                contact = contact.substring(0,contact.length()-1);
-            } else {
-                contact = contact.substring(0,contact.length()-1);
-            }
-            contactChoices.add(contact);
+        conversations.clear();
+        String username = getSharedPreferences("user",0).getString("username", null);
+        Log.e("WATCH", "username=" + username);
+        for(String conversation : s.split("]")) {
+            conversation = conversation.substring(2,conversation.length());
+            if(conversation.contains("["))
+                conversation = conversation.substring(1,conversation.length());
+            if(username != null)
+                conversation = conversation.replace(username, "Me");
+            conversations.add(conversation);
 
         }
-        contactChoices.add("  Send  ");
-        contactChoices.add("  Send MassMSG  ");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mAdapter.notifyDataSetChanged();
             }
         });
-        Log.e("WATCH", contactChoices.toString());
+        Log.e("WATCH", conversations.toString());
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
@@ -236,7 +220,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         }
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            return new WearableListView.ViewHolder(new MyItemView(AdvancedListActivity.this));
+            return new WearableListView.ViewHolder(new MyItemView(ConversationListActivity.this));
         }
 
         @Override
@@ -246,10 +230,6 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i == items.size()-1) {
-                txt.setBackgroundColor(Color.GREEN);
-                txt.setTextColor(Color.BLACK);
-            }
 
 
         }
