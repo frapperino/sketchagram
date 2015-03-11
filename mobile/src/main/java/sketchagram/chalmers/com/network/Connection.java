@@ -58,7 +58,7 @@ import sketchagram.chalmers.com.sketchagram.MainActivity;
 /**
  * Created by Olliver on 15-02-18.
  */
-public class Connection extends Service{
+public class Connection extends Service implements IConnection{
     ConnectionConfiguration config;
     XMPPTCPConnection connection;
     AccountManager manager;
