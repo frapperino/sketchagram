@@ -1,7 +1,11 @@
 package sketchagram.chalmers.com.model;
 
+import android.os.Handler;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Bosch on 10/02/15.
@@ -24,7 +28,16 @@ public class Conversation {
     }
 
     public void addMessage(AMessage message) {
+
         history.add(message);
+        Handler handler = new Handler(MyApplication.getContext().getMainLooper());
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
+        handler.post(runnable);
     }
 
     @Override

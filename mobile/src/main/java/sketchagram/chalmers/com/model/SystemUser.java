@@ -7,7 +7,7 @@ import sketchagram.chalmers.com.network.*;
 public class SystemUser {
     private static SystemUser ourInstance;
     private User user;
-    private Connection connection = new Connection();
+    private IConnection connection = new Connection();
 
     public static SystemUser getInstance() {
         return ourInstance;
@@ -28,7 +28,7 @@ public class SystemUser {
     public void setUser(User user) {
         this.user = user;
     }
-    public Connection getConnection() {return connection;}
+    public IConnection getConnection() {return connection;}
     public void newConnection() {
         this.connection = new Connection();
         this.connection.init();

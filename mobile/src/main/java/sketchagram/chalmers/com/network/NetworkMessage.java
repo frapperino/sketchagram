@@ -52,7 +52,7 @@ public class NetworkMessage<T> {
         this.message = m;
     }
 
-    public AMessage convertFromNetworkMessage(Message mess, Conversation c){
+    public AMessage convertFromNetworkMessage(String type){
         List<String> receivers = getReceivers();
         List<ADigitalPerson> personReceivers = new ArrayList<>();
         for(String user : receivers){
@@ -77,7 +77,7 @@ public class NetworkMessage<T> {
                 sender = person;
             }
         }
-        switch (mess.getLanguage()){
+        switch (type){
             case "TextMessage":
                 TextMessage tMessage = new TextMessage(getTimestamp(), sender, personReceivers);
                 tMessage.setTextMessage((String)getMessage());
