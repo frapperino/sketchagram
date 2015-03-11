@@ -1,8 +1,9 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.AMessage;
 import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.TextMessage;
 
 /**
  * A fragment representing a list of Items.
@@ -32,7 +28,7 @@ import sketchagram.chalmers.com.model.TextMessage;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ContactFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class AddContactFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,8 +53,8 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static ContactFragment newInstance(String param1, String param2) {
-        ContactFragment fragment = new ContactFragment();
+    public static AddContactFragment newInstance(String param1, String param2) {
+        AddContactFragment fragment = new AddContactFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -70,7 +66,7 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ContactFragment() {
+    public AddContactFragment() {
     }
 
     @Override
@@ -83,13 +79,14 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
         }
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
+        //TODO: replace with real found contacts.
+        mAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<>(Arrays.asList("Contact 1", "Contact 2")));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_contact, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
@@ -124,20 +121,6 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            List<ADigitalPerson> receiverList = new ArrayList<ADigitalPerson>();
-            receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
-            boolean create = true;
-            for(Conversation conversation : SystemUser.getInstance().getUser().getConversationList()){
-                if(conversation.getParticipants().equals(receiverList)){
-                    create = false;
-                }
-            }
-            if(create){
-                SystemUser.getInstance().getConnection().createConversation(receiverList.get(0));
-            }
-            TextMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
-            message.setTextMessage(":D");
-            SystemUser.getInstance().getConnection().sendMessage(message, "TextMessage");
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }
@@ -153,6 +136,11 @@ public class ContactFragment extends Fragment implements AbsListView.OnItemClick
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
+    }
+
+    public void addContact() {
+        //TODO: Start add_contact fragment/activity.
+        Log.d("Add_Contact", "Button pressed!");
     }
 
     /**

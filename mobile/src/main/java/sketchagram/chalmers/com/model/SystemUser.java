@@ -5,7 +5,7 @@ import sketchagram.chalmers.com.network.*;
  * Created by Bosch on 20/02/15.
  */
 public class SystemUser {
-    private static SystemUser ourInstance = new SystemUser();
+    private static SystemUser ourInstance;
     private User user;
     private Connection connection = new Connection();
 

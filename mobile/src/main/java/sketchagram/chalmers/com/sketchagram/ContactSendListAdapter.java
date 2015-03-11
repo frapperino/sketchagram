@@ -16,11 +16,10 @@ import sketchagram.chalmers.com.model.Contact;
  * Created by Bosch and Alexander Harenstam on 20/02/15.
  * Tutorial: https://www.airpair.com/android/list-fragment-android-studio
  */
-public class ContactListAdapter extends ArrayAdapter<Contact>{
+public class ContactSendListAdapter extends ArrayAdapter<Contact>{
     private Context context;
-    private boolean useList = true;
 
-    public ContactListAdapter(Context context, List items) {
+    public ContactSendListAdapter(Context context, List items) {
         super(context, android.R.layout.simple_list_item_1, items);
         this.context = context;
     }
@@ -49,12 +48,7 @@ public class ContactListAdapter extends ArrayAdapter<Contact>{
         LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
-            if(useList){
-                viewToUse = mInflater.inflate(R.layout.contact_list_item, null);
-            } else {
-                viewToUse = mInflater.inflate(R.layout.contact_grid_item, null);
-            }
-
+            viewToUse = mInflater.inflate(R.layout.contact_send_list_item, null);
             holder = new ViewHolder();
             holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
             viewToUse.setTag(holder);

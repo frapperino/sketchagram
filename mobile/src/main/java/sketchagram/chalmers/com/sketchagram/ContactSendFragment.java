@@ -10,16 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.TextMessage;
 
 /**
  * A fragment representing a list of Items.
@@ -30,7 +34,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ContactSendFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,8 +59,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static ConversationFragment newInstance(String param1, String param2) {
-        ConversationFragment fragment = new ConversationFragment();
+    public static ContactSendFragment newInstance(String param1, String param2) {
+        ContactSendFragment fragment = new ContactSendFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -68,7 +72,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ConversationFragment() {
+    public ContactSendFragment() {
     }
 
     @Override
@@ -80,18 +84,17 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
-                android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getConversationList());
+        // Sets the adapter to customized one which enables our layout of items.
+        mAdapter = new ContactSendListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+        View view = inflater.inflate(R.layout.fragment_contact_send_list, container, false);
 
         // Set the adapter
-        mListView = (AbsListView) view.findViewById(R.id.conversation_list);
+        mListView = (AbsListView) view.findViewById(R.id.contact_send_list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -117,20 +120,28 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         mListener = null;
     }
 
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("ITEM_CLICK", "ITEM_CLICK");
+        Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            String participants = SystemUser.getInstance().getUser().
-                    getConversationList().get(position).getParticipants().toString();
-            getActivity().getSharedPreferences("Participants", 0)
-                    .edit()
-                    .clear()
-                    .putString("Participants", participants)
-                    .commit();
-            mListener.onFragmentInteraction("conversation " + participants); //TODO: how to find right conversation.
+            List<ADigitalPerson> receiverList = new ArrayList<ADigitalPerson>();
+            receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
+            boolean create = true;
+            for(Conversation conversation : SystemUser.getInstance().getUser().getConversationList()){
+                if(conversation.getParticipants().equals(receiverList)){
+                    create = false;
+                }
+            }
+            if(create){
+                SystemUser.getInstance().getConnection().createConversation(receiverList.get(0));
+            }
+            TextMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
+            message.setTextMessage(":D");
+            SystemUser.getInstance().getConnection().sendMessage(message, "TextMessage");
+            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }
 
