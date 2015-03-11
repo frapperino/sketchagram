@@ -119,6 +119,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
             prefs.apply();
+            SystemUser.getInstance().getConnection().logout();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
