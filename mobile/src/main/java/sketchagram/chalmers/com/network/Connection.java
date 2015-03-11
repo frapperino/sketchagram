@@ -104,7 +104,7 @@ public class Connection extends Service implements IConnection{
                     new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        SASLAuthentication.supportSASLMechanism("PLAIN");
+        SASLAuthentication.supportSASLMechanism("PLAIN", 0);
         connect();
     }
 
