@@ -90,6 +90,15 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         SystemUser.getInstance().setUser(user);
         DummyData.injectData();
 
+        // Check if logged in, else start LoginActivity
+        String userName= pref.getString("username", null);
+        if(userName == null) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            startActivity(intent);
+            finish();
+        }
+
         //  Needed for communication between watch and device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -170,6 +179,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, emoticonFragment);
+            t.addToBackStack(null);
             t.commit();
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
@@ -194,7 +204,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         //Create a new fragment and replace the old fragment in layout.
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, contactSendFragment)
-                .commit();
+                .addToBackStack(null).commit();
     }
 
     @Override
@@ -203,7 +213,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         if (id.contains("conversation")) {
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = fragmentManager.beginTransaction();
-            t.replace(R.id.fragment_frame, inConversationFragment)
+            t.replace(R.id.fragment_frame, inConversationFragment).addToBackStack(null)
                     .commit();
         } else if (id.contains("massmessage")) {
             String temp = id.replace(", massmessage", "");
@@ -215,7 +225,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 } else {
                     contact = contact.substring(0,contact.length()-1);
                 }
-
                 for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
                     if (c.getUsername().equals(contact)) {
                         List list = new ArrayList<String>();
@@ -229,17 +238,16 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             conversationFragment = new ConversationFragment();
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = getFragmentManager().beginTransaction();
-            t.replace(R.id.fragment_frame, conversationFragment)
+            t.replace(R.id.fragment_frame, conversationFragment).addToBackStack(null)
                     .commit();
         } else {
-
             postNewConversation(id, null);
 
             postNotifications();
             conversationFragment = new ConversationFragment();
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = fragmentManager.beginTransaction();
-            t.replace(R.id.fragment_frame, conversationFragment)
+            t.replace(R.id.fragment_frame, conversationFragment).addToBackStack(null)
                     .commit();
 
         }
@@ -247,7 +255,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", ""+position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -262,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         }
         if(fragment != null) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_frame, fragment)
+                    .replace(R.id.fragment_frame, fragment).addToBackStack(null)
                     .commit();
         }
     }
@@ -274,6 +281,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     public void startAddContactFragment(View view) {
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.fragment_frame, addContactFragment);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -312,8 +320,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
 
     //Below code is for connecting and communicating with Wear
-
-
     private void tellWatchConnectedState(final String state){
 
         new AsyncTask<Void, Void, List<Node>>(){
@@ -498,5 +504,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             }
         }.execute();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        fragmentManager.popBackStack();
     }
 }
