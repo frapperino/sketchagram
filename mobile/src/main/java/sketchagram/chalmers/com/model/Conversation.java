@@ -2,29 +2,30 @@ package sketchagram.chalmers.com.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Bosch on 10/02/15.
  */
 public class Conversation {
-    private List<AMessage> history;
-    private List<ADigitalPerson> participants;
+    private List<ClientMessage> history;
+    private Set<ADigitalPerson> otherParticipants;
 
-    public Conversation(List<ADigitalPerson> participants){
-        history = new ArrayList<AMessage>();
-        this.participants = participants;
+    public Conversation(Set<ADigitalPerson> participants){
+        history = new ArrayList<ClientMessage>();
+        this.otherParticipants = participants;
     }
 
-    public List<AMessage> getHistory() {
+    public List<ClientMessage> getHistory() {
         return history;
     }
 
-    public List<ADigitalPerson> getParticipants() {
-        return participants;
+    public Set<ADigitalPerson> getParticipants() {
+        return otherParticipants;
     }
 
-    public void addMessage(AMessage message) {
-        history.add(message);
+    public void addMessage(ClientMessage clientMessage) {
+        history.add(clientMessage);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.Notification;
@@ -34,14 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.Emoticon;
-import sketchagram.chalmers.com.model.test.DummyData;
 import sketchagram.chalmers.com.model.Profile;
+import android.widget.Button;
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener,
@@ -86,9 +86,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         addContactFragment = new AddContactFragment();
-        User user = new User(pref.getString("username", "User"), new Profile());
-        SystemUser.getInstance().setUser(user);
-        DummyData.injectData();
+        //DummyData.injectData();
 
         //  Needed for communication between watch and device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -162,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
             prefs.apply();
-            SystemUser.getInstance().getConnection().logout();
+            SystemUser.getInstance().logout();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -205,38 +203,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, inConversationFragment)
                     .commit();
-        } else if (id.contains("massmessage")) {
-            String temp = id.replace(", massmessage", "");
-            for(String contact : temp.split(" ")) {
-                if(contact.contains("[") ){
-                    contact = contact.substring(1,contact.length()-1);
-                } else if(contact.contains("]")){
-                    contact = contact.substring(0,contact.length()-1);
-                } else {
-                    contact = contact.substring(0,contact.length()-1);
-                }
-
-                for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
-                    if (c.getUsername().equals(contact)) {
-                        List list = new ArrayList<String>();
-                        list.add(contact);
-                        postNewConversation(list.toString(), null);
-                    }
-                }
-            }
-
-            postNotifications();
-            conversationFragment = new ConversationFragment();
-            //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = getFragmentManager().beginTransaction();
-            t.replace(R.id.fragment_frame, conversationFragment)
-                    .commit();
         } else {
-
-            postNewConversation(id, null);
-
-            postNotifications();
-            conversationFragment = new ConversationFragment();
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, conversationFragment)
@@ -247,7 +214,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", ""+position);
+        Log.d("NavDraw", "" + position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -275,6 +242,11 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.fragment_frame, addContactFragment);
         ft.commit();
+    }
+
+    public void addContact(View view) {
+        SystemUser.getInstance().getUser().addContact("alleballe");
+        Log.d("Add_Contact", "Button pressed!");
     }
 
     /**

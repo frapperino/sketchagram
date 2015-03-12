@@ -43,7 +43,7 @@ import java.util.List;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
-import sketchagram.chalmers.com.network.Connection;
+import sketchagram.chalmers.com.network.IConnection;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -159,7 +159,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     public void register(View view){
-        Connection conn = SystemUser.getInstance().getConnection();
+        IConnection conn = SystemUser.getInstance().getConnection();
         Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
         if(e != null){
             if(e.getMessage().toString().equals("conflict")){
@@ -225,8 +225,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            Connection conn = SystemUser.getInstance().getConnection();
-            boolean success = conn.login(email, password);
+            boolean success = SystemUser.getInstance().login(email, password);
             if (success){
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
