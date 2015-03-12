@@ -94,7 +94,7 @@ public class User extends ADigitalPerson  {
         Conversation conversation = null;
         conversation = conversationExists(clientMessage.getReceivers());
         if(conversation == null){
-            Set<ADigitalPerson> otherParticipants = new HashSet<>();
+            List<ADigitalPerson> otherParticipants = new ArrayList<>();
             otherParticipants.addAll(clientMessage.getReceivers());
             otherParticipants.add(clientMessage.getSender());
             //Remove yourself from participants
@@ -114,7 +114,7 @@ public class User extends ADigitalPerson  {
         Conversation conversation = null;
         conversation = conversationExists(clientMessage.getReceivers());
         if(conversation == null) {
-            Set<ADigitalPerson> otherParticipants = new HashSet<>();
+            List<ADigitalPerson> otherParticipants = new ArrayList<>();
             otherParticipants.addAll(clientMessage.getReceivers());
             otherParticipants.add(clientMessage.getSender());
             //Remove yourself from participants

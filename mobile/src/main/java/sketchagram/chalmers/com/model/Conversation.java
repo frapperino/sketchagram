@@ -9,9 +9,9 @@ import java.util.Set;
  */
 public class Conversation {
     private List<ClientMessage> history;
-    private Set<ADigitalPerson> otherParticipants;
+    private List<ADigitalPerson> otherParticipants;
 
-    public Conversation(Set<ADigitalPerson> participants){
+    public Conversation(List<ADigitalPerson> participants){
         history = new ArrayList<ClientMessage>();
         this.otherParticipants = participants;
     }
@@ -20,7 +20,7 @@ public class Conversation {
         return history;
     }
 
-    public Set<ADigitalPerson> getParticipants() {
+    public List<ADigitalPerson> getParticipants() {
         return otherParticipants;
     }
 

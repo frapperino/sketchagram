@@ -257,7 +257,7 @@ public class Connection extends Service implements IConnection{
     }
 
     @Override
-    public void createGroupConversation(Set<ADigitalPerson> recipients, String name) {
+    public void createGroupConversation(List<ADigitalPerson> recipients, String name) {
         MultiUserChat muc = null;
         if(name.isEmpty()){
             String newName = SystemUser.getInstance().getUser().getUsername() + ", ";

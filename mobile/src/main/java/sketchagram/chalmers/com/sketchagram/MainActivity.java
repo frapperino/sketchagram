@@ -249,43 +249,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         Log.d("Add_Contact", "Button pressed!");
     }
 
-    /**
-     *
-     * @param participants should be in the form of a list.toString()
-     * @param msg isn't used at the moment, but should be implemented.
-     */
-    private void postNewConversation(String participants, AMessage msg) {
-        List<ADigitalPerson> receivers = new ArrayList<>();
-        for(String contact : participants.split(" ")) {
-            if(contact.contains("[") ){
-                contact = contact.substring(1,contact.length()-1);
-            } else if(contact.contains("]")){
-                contact = contact.substring(0,contact.length()-1);
-            } else {
-                contact = contact.substring(0,contact.length()-1);
-            }
-
-            for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
-                if (c.getUsername().equals(contact))
-                    receivers.add(c);
-            }
-        }
-
-        receivers.add(SystemUser.getInstance().getUser());
-
-        //just for now
-        msg = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
-
-        Conversation newConversation = new Conversation(receivers);
-        newConversation.addMessage(msg);
-        SystemUser.getInstance().getUser().addConversation(newConversation);
-
-    }
-
-
     //Below code is for connecting and communicating with Wear
-
-
     private void tellWatchConnectedState(final String state){
 
         new AsyncTask<Void, Void, List<Node>>(){
