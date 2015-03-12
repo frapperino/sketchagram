@@ -29,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -57,14 +58,6 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
 public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world", "asd@smth.com:asd123"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -163,7 +156,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
         if(e != null){
             if(e.getMessage().toString().equals("conflict")){
-                //TODO: Tell user to pick another name
+                Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
+                toast.show();
             }
         } else {
             boolean success = conn.login(mEmailView.getText().toString(), mPasswordView.getText().toString());
