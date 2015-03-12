@@ -1,7 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -21,12 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.AMessage;
-import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.MessageTypes;
+import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.TextMessage;
 
 /**
  * A fragment representing a list of Items.
@@ -130,11 +125,10 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            Set<ADigitalPerson> receiverList = new HashSet<>();
+            List<ADigitalPerson> receiverList = new ArrayList<>();
             receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
-            TextMessage message = new TextMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList);
-            message.setTextMessage(":D");
-            SystemUser.getInstance().getUser().sendMessage(message, MessageTypes.TEXTMESSAGE);
+            ClientMessage<String> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList, ":D", MessageType.TEXTMESSAGE);
+            SystemUser.getInstance().getUser().sendMessage(message, MessageType.TEXTMESSAGE);
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }

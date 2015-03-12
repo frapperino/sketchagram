@@ -1,6 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,26 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.Emoticon;
-import sketchagram.chalmers.com.model.test.DummyData;
-import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener
@@ -162,20 +146,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             t.replace(R.id.fragment_frame, inConversationFragment)
                     .commit();
         } else {
-            Set<ADigitalPerson> receivers = new HashSet<>();
-            for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
-                if (c.getUsername().equals(id))
-                    receivers.add(c);
-            }
-
-            Set<ADigitalPerson> participants = receivers;
-            participants.add(SystemUser.getInstance().getUser());
-            Emoticon emoticon = new Emoticon(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers);
-
-            Conversation conversation = new Conversation(participants);
-            conversation.addMessage(emoticon);
-            SystemUser.getInstance().getUser().addConversation(conversation);
-
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = fragmentManager.beginTransaction();
             t.replace(R.id.fragment_frame, conversationFragment)

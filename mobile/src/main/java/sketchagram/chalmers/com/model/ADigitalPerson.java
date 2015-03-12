@@ -31,4 +31,8 @@ public abstract class ADigitalPerson extends Observable{
     public boolean equals(Object obj){
         return this.username.equals(((ADigitalPerson)obj).getUsername());
     }
+    @Override
+    public int hashCode(){
+        return (int) username.hashCode() * profile.hashCode() * 17;
+    }
 }

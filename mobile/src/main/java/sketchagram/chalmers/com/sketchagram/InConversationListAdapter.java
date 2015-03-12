@@ -10,13 +10,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * Created by Bosch on 24/02/15.
  */
-public class InConversationListAdapter extends ArrayAdapter<AMessage> {
+public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
     private Context context;
     private boolean useList = true;
 
@@ -41,7 +41,7 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
      */
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        AMessage item = (AMessage)getItem(position);
+        ClientMessage item = (ClientMessage)getItem(position);
         View viewToUse = null;
 
         // This block exists to inflate the settings list item conditionally based on whether
@@ -58,9 +58,9 @@ public class InConversationListAdapter extends ArrayAdapter<AMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
 
-        holder.titleText.setText(item.getSENDER().getUsername() + ": " + item.getMessage().toString());
-        if(item.getSENDER().getUsername().equals(SystemUser.getInstance().getUser().getUsername()))
-            holder.titleText.setText("Me: " + item.getMessage().toString());
+        holder.titleText.setText(item.getSender().getUsername() + ": " + item.getContent().toString());
+        if(item.getSender().getUsername().equals(SystemUser.getInstance().getUser().getUsername()))
+            holder.titleText.setText("Me: " + item.getContent().toString());
 
         return viewToUse;
     }

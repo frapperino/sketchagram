@@ -1,44 +1,31 @@
 package sketchagram.chalmers.com.model;
 
-import android.os.Handler;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Bosch on 10/02/15.
  */
 public class Conversation {
-    private List<AMessage> history;
-    private Set<ADigitalPerson> participants;
+    private List<ClientMessage> history;
+    private Set<ADigitalPerson> otherParticipants;
 
     public Conversation(Set<ADigitalPerson> participants){
-        history = new ArrayList<AMessage>();
-        this.participants = participants;
+        history = new ArrayList<ClientMessage>();
+        this.otherParticipants = participants;
     }
 
-    public List<AMessage> getHistory() {
+    public List<ClientMessage> getHistory() {
         return history;
     }
 
     public Set<ADigitalPerson> getParticipants() {
-        return participants;
+        return otherParticipants;
     }
 
-    public void addMessage(AMessage message) {
-
-        history.add(message);
-        Handler handler = new Handler(MyApplication.getContext().getMainLooper());
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-        handler.post(runnable);
+    public void addMessage(ClientMessage clientMessage) {
+        history.add(clientMessage);
     }
 
     @Override
