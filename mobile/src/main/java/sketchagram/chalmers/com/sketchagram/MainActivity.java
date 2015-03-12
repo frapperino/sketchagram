@@ -42,6 +42,7 @@ import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Profile;
 import android.widget.Button;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener,
@@ -80,13 +81,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences pref = getSharedPreferences(FILENAME, 0);
-        emoticonFragment = new EmoticonFragment();
-        contactSendFragment = new ContactSendFragment();
-        conversationFragment = new ConversationFragment();
-        inConversationFragment = new InConversationFragment();
-        contactManagementFragment = new ContactManagementFragment();
-        addContactFragment = new AddContactFragment();
-        //DummyData.injectData();
 
         // Check if logged in, else start LoginActivity
         String userName= pref.getString("username", null);
@@ -95,7 +89,16 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             startActivity(intent);
             finish();
+        }else {
+            SystemUser.getInstance().login(userName, pref.getString("password", null));
         }
+
+        emoticonFragment = new EmoticonFragment();
+        contactSendFragment = new ContactSendFragment();
+        conversationFragment = new ConversationFragment();
+        inConversationFragment = new InConversationFragment();
+        contactManagementFragment = new ContactManagementFragment();
+        addContactFragment = new AddContactFragment();
 
         //  Needed for communication between watch and device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
