@@ -47,7 +47,6 @@ public class User extends ADigitalPerson  {
         }
         if(!exist)
             conversationList.add(conversation);
-        setChanged();
         updateObservers();
     }
 
@@ -151,6 +150,7 @@ public class User extends ADigitalPerson  {
     }
 
     private void updateObservers(){
+        setChanged();
         Handler handler = new Handler(MyApplication.getContext().getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
