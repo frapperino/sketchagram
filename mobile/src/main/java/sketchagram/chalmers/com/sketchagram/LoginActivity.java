@@ -36,7 +36,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
 import org.apache.http.conn.params.ConnConnectionParamBean;
-import org.jivesoftware.smack.XMPPException;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.Notification;
@@ -34,15 +32,11 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.Profile;
-import android.widget.Button;
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener,
@@ -50,7 +44,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         InConversationFragment.OnFragmentInteractionListener, MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
-        ContactManagementFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
+        ContactManagementFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks, Observer{
 
 
     private static final int MSG_POST_NOTIFICATIONS = 0;
@@ -60,8 +54,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     private final String TAG = "Sketchagram";
     private Fragment emoticonFragment;
     private Fragment contactSendFragment;
-    private Fragment conversationFragment;
-    private Fragment inConversationFragment;
+    private ConversationFragment conversationFragment;
+    private InConversationFragment inConversationFragment;
     private Fragment contactManagementFragment;
     private Fragment addContactFragment;
     private FragmentManager fragmentManager; 
@@ -134,7 +128,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         ft.commit();
 
         /*
-        Navigation drawer
+         * Navigation drawer
          */
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -146,6 +140,9 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        //Set observer
+        SystemUser.getInstance().getUser().addObserver(this);
     }
 
     @Override
@@ -194,8 +191,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        Log.d("EMOTICON", uri.getPath());
-
         SharedPreferences preferences = getSharedPreferences(MESSAGE, 0);
         preferences.edit()
                 .clear()
@@ -210,7 +205,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onFragmentInteraction(String id) {
-        Log.e("FRAGMENTINTERACTION", id);
         if (id.contains("conversation")) {
             //Create a new fragment and replace the old fragment in layout.
             FragmentTransaction t = fragmentManager.beginTransaction();
@@ -227,7 +221,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", ""+position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -260,7 +253,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     public void addContact(View view) {
         SystemUser.getInstance().getUser().addContact("alleballe");
-        Log.d("Add_Contact", "Button pressed!");
     }
 
     //Below code is for connecting and communicating with Wear
@@ -447,11 +439,19 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 }
             }
         }.execute();
-
     }
 
     @Override
     public void onBackPressed() {
         fragmentManager.popBackStack();
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        conversationFragment.updateList();
+        if(data != null) {
+            //Update relevant ListAdapters.
+            inConversationFragment.updateList((ClientMessage)data, this);
+        }
     }
 }
