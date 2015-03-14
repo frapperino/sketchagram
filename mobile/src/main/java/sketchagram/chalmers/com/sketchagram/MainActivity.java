@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.Notification;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -41,6 +44,8 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Profile;
 import android.widget.Button;
+import android.widget.SearchView;
+
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 
@@ -152,6 +157,18 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        /*
+         * Setup search.
+         */
+        //TODO: Not working properly.
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        //SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        // Assumes current activity is the searchable activity
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
         return true;
     }
 
@@ -185,8 +202,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
+        } else if(id == R.id.search_button) {
+            //TODO: Handle search queries.
         } else {
-            throw new IllegalStateException("Forbidden item selected in menu!");
+            //throw new IllegalStateException("Forbidden item selected in menu!");
         }
 
         return super.onOptionsItemSelected(item);

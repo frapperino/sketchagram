@@ -7,19 +7,15 @@
 
     <FrameLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="sketchagram.chalmers.com.sketchagram.ContactManagementFragment">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        tools:context="sketchagram.chalmers.com.sketchagram.AddContactFragment">
 
         <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:id="@android:id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center" />
+            android:layout_height="wrap_content" />
 
     </FrameLayout>
 
@@ -34,4 +30,14 @@
         android:clickable="true"
         android:text="@string/add_contact"
         android:onClick="addContact" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:id="@+id/search_field"
+        android:gravity="top"
+        android:enabled="true"
+        android:hint="@string/search_hint"
+        android:editable="true" />
 </RelativeLayout>
