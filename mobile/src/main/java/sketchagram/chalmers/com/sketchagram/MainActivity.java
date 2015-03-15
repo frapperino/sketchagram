@@ -24,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -66,6 +67,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     private FragmentManager fragmentManager; 
     private Handler mHandler;
     private int postedNotificationCount = 0;
+
+    private DataMap dataMap;
 
     // used to store app title
     private CharSequence mTitle;
@@ -136,6 +139,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        dataMap = new DataMap();
     }
 
     @Override
@@ -429,13 +434,18 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().contains("contacts")) {
-            sendToWatch(SystemUser.getInstance().getUser().getContactList().toString());
-        } else if(messageEvent.getPath().contains("clockversations")) {
-            sendToWatch(SystemUser.getInstance().getUser().getConversationList().toString());
+            ContactsSync cs = new ContactsSync(SystemUser.getInstance().getUser().getContactList());
+            sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
+        } else if(messageEvent.getPath().contains("massmessageTo")) {
+            ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
+            //TODO: pull from dev because of new conversationCreation.
+        } else if(messageEvent.getPath().contains("messageTo")) {
+
+//            sendToWatch(SystemUser.getInstance().getUser().getConversationList().toString());
         } else if(messageEvent.getPath().contains("username")) {
-            sendToWatch(SystemUser.getInstance().getUser().getUsername());
+            dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
+            sendToWatch("username", dataMap.toByteArray());
         } else {
-            Log.e("CLOCK", "Click");
             onFragmentInteraction(messageEvent.getPath());
         }
     }
@@ -466,7 +476,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
      * This method will generate all the nodes that are attached to a Google Api Client.
      * There should only be one node however, which should be the watch.
      */
-    private void sendToWatch(String msg){
+    private void sendToWatch(String msg, final byte[] data){
         getSharedPreferences("WATCHMSG", 0).edit().putString("WATCHMSG", msg).commit();
 
         new AsyncTask<Void, Void, List<Node>>(){
@@ -485,7 +495,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                             mGoogleApiClient,
                             node.getId(),
                             getSharedPreferences("WATCHMSG",0).getString("WATCHMSG", ""),
-                            null
+                            data
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {

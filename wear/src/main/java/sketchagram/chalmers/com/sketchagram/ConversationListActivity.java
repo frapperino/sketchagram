@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -43,7 +44,6 @@ public class ConversationListActivity extends Activity implements WearableListVi
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
     private List<String> conversations;
-    private final List<String> CONVTAG = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +58,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
                 conversations = new ArrayList<>();
-                CONVTAG.add("clockversations");
-                messagePhone(CONVTAG);
+                messagePhone("conversations", null);
                 loadAdapter();
 
             }
@@ -101,7 +100,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void messagePhone(final List<String> message){
+    private void messagePhone(final String message, final DataMap dataMap){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -118,7 +117,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
                             mGoogleApiClient,
                             node.getId(),
                             message.toString(),
-                            null
+                            dataMap.toByteArray()
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
