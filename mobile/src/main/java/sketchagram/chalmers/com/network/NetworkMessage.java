@@ -1,18 +1,15 @@
 package sketchagram.chalmers.com.network;
 
-import com.google.gson.Gson;
-
-import org.jivesoftware.smack.packet.Message;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.AMessage;
+import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.TextMessage;
 
 /**
  * Created by Olliver on 15-03-06.
@@ -20,46 +17,43 @@ import sketchagram.chalmers.com.model.TextMessage;
 public class NetworkMessage<T> {
     private String sender;
     private List<String> receivers;
-    private T message;
+    private T content;
     private long timestamp;
 
     public NetworkMessage(){
 
     }
 
-    public NetworkMessage(long timestamp,String sender, List<String> receivers, T message){
+    public NetworkMessage(long timestamp,String sender, List<String> receivers, T content){
         this.timestamp = timestamp;
         this.sender = sender;
         this.receivers = receivers;
-        this.message = message;
+        this.content = content;
     }
 
     public String getSender(){return this.sender;}
     public List<String> getReceivers(){return this.receivers;}
     public long getTimestamp(){return this.timestamp;}
-    public T getMessage(){return this.message;}
+    public T getContent(){return this.content;}
 
-    public void convertToNetworkMessage(AMessage aMessage){
-        T m = aMessage.getMessage();
-        String sender = aMessage.getSENDER().getUsername();
+    public void convertToNetworkMessage(ClientMessage clientMessage){
+
+        T m = (T)clientMessage.getContent();
+        String sender = clientMessage.getSender().getUsername();
         List<String> receivers = new ArrayList<>();
-        for(ADigitalPerson person : aMessage.getRECEIVER()){
-            receivers.add(person.getUsername());
+        for(Object person : clientMessage.getReceivers()){
+            receivers.add(((ADigitalPerson) person).getUsername());
         }
         this.timestamp = System.currentTimeMillis();
         this.sender = sender;
         this.receivers = receivers;
-        this.message = m;
+        this.content = m;
     }
 
-    public AMessage convertFromNetworkMessage(Message mess, Conversation c){
+    public ClientMessage convertFromNetworkMessage(MessageType type){
         List<String> receivers = getReceivers();
         List<ADigitalPerson> personReceivers = new ArrayList<>();
         for(String user : receivers){
-            if(SystemUser.getInstance().getUser().getUsername().equals(user)){
-                personReceivers.add(SystemUser.getInstance().getUser());
-                break;
-            }
             for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
                 if(user.equals(contact.getUsername())){
                     personReceivers.add(contact);
@@ -68,7 +62,7 @@ public class NetworkMessage<T> {
             }
 
         }
-        List<ADigitalPerson> allUsers = new ArrayList<>();
+        Set<ADigitalPerson> allUsers = new HashSet<>();
         allUsers.addAll(SystemUser.getInstance().getUser().getContactList());
         allUsers.add(SystemUser.getInstance().getUser());
         ADigitalPerson sender = null;
@@ -77,11 +71,11 @@ public class NetworkMessage<T> {
                 sender = person;
             }
         }
-        switch (mess.getLanguage()){
-            case "TextMessage":
-                TextMessage tMessage = new TextMessage(getTimestamp(), sender, personReceivers);
-                tMessage.setTextMessage((String)getMessage());
-                return tMessage;
+
+        switch (type){
+            case TEXTMESSAGE:
+                ClientMessage<String> clientMessage = new ClientMessage<String>(getTimestamp(), sender, personReceivers, (String)getContent(), MessageType.TEXTMESSAGE);
+                return clientMessage;
 
         }
         return null;

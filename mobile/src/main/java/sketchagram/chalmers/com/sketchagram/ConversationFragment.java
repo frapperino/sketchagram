@@ -11,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -30,7 +33,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,6 +86,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<Conversation>(getActivity(),
                 android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getConversationList());
+        SystemUser.getInstance().getUser().addObserver(this);
     }
 
     @Override
@@ -132,6 +136,12 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                     .commit();
             mListener.onFragmentInteraction("conversation " + participants); //TODO: how to find right conversation.
         }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        BaseAdapter adapter = (BaseAdapter)mAdapter;
+        adapter.notifyDataSetChanged();
     }
 
     /**

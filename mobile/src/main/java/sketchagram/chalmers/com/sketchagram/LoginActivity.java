@@ -29,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -43,7 +44,7 @@ import java.util.List;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
-import sketchagram.chalmers.com.network.Connection;
+import sketchagram.chalmers.com.network.IConnection;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -57,14 +58,6 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
 public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world", "asd@smth.com:asd123"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -159,8 +152,9 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     public void register(View view){
-        Connection conn = SystemUser.getInstance().getConnection();
+        IConnection conn = SystemUser.getInstance().getConnection();
         Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
+<<<<<<< HEAD
         if(isPasswordValid(mPasswordView.getText().toString())) {
             if (e != null) {
                 if (e.getMessage().toString().equals("conflict")) {
@@ -173,6 +167,19 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                     intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
                     startActivity(intent);
                 }
+=======
+        if(e != null){
+            if(e.getMessage().toString().equals("conflict")){
+                Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        } else {
+            boolean success = conn.login(mEmailView.getText().toString(), mPasswordView.getText().toString());
+            if(success){
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                startActivity(intent);
+>>>>>>> Dev
             }
         }
 
@@ -227,8 +234,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            Connection conn = SystemUser.getInstance().getConnection();
-            boolean success = conn.login(email, password);
+            boolean success = SystemUser.getInstance().login(email, password);
             if (success){
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
