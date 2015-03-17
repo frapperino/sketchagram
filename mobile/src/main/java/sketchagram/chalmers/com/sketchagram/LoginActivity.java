@@ -2,10 +2,9 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 
+import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -13,11 +12,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -35,9 +32,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
-import org.apache.http.conn.params.ConnConnectionParamBean;
-import org.jivesoftware.smack.XMPPException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,9 +39,6 @@ import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 import sketchagram.chalmers.com.network.IConnection;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-
 
 /**
  * A login screen that offers login via email/password and via Google+ sign in.
@@ -58,9 +49,6 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
 public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -70,15 +58,13 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     private SignInButton mPlusSignInButton;
     private View mSignOutButtons;
     private View mLoginFormView;
+
     private final String FILENAME = "user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
-        setupActionBar();
 
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
@@ -131,16 +117,9 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
+     * Saves the parameters for login and attempts to do a login.
+     * @param view
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setupActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            // Show the Up button in the action bar.
-//            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
     public void emailLogin(View view){
         SharedPreferences prefs = getSharedPreferences(FILENAME, 0);
         Editor editor = prefs.edit();
@@ -151,6 +130,10 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         attemptLogin();
     }
 
+    /**
+     * Registers a user on the server and logs in.
+     * @param view
+     */
     public void register(View view){
         IConnection conn = SystemUser.getInstance().getConnection();
         Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
@@ -230,12 +213,12 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+        //TODO: Replace this with your logic
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+        //TODO: Replace this with your logic
         return password.length() > 4;
     }
 
@@ -276,6 +259,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     @Override
+    protected void onPlusClientRevokeAccess() {
+
+    }
+
+    @Override
     protected void onPlusClientSignIn() {
         //Set up sign out and disconnect buttons.
         Button signOutButton = (Button) findViewById(R.id.plus_sign_out_button);
@@ -295,6 +283,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     @Override
+    protected void onPlusClientSignOut() {
+
+    }
+
+    @Override
     protected void onPlusClientBlockingUI(boolean show) {
         showProgress(show);
     }
@@ -307,17 +300,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mSignOutButtons.setVisibility(connected ? View.VISIBLE : View.GONE);
         mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
         mEmailLoginFormView.setVisibility(connected ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    protected void onPlusClientRevokeAccess() {
-        // TODO: Access to the user's G+ account has been revoked.  Per the developer terms, delete
-        // any stored user data here.
-    }
-
-    @Override
-    protected void onPlusClientSignOut() {
-
     }
 
     /**
