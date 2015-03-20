@@ -110,16 +110,24 @@ public class Connection extends Service implements IConnection{
         }
 
     }
-    private void disconnect(Presence presence){
-        try {
-            if (presence != null){
-                connection.disconnect(presence);
-            }else {
-                connection.disconnect();
+    private void disconnect(final Presence presence){
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                try {
+                    if (presence != null){
+                        connection.disconnect(presence);
+                    }else {
+                        connection.disconnect();
+                    }
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        }
+        };
+        task.execute();
+
     }
 
     private ChatManager getChatManager(){

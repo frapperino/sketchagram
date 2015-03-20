@@ -205,5 +205,10 @@
     <!-- Content Description -->
     <string name="navigation_drawer_open">Navigation opened!</string>
     <string name="navigation_drawer_close">Navigation closed!</string>
+    <string name="choose_username">Choose a username</string>
+    <string name="choose_password">Choose a password</string>
+    <string name="reenter_password">Re-enter password</string>
+    <string name="enter_email">Enter e-mail address</string>
+    <string name="create_account">Create account</string>
 
 </resources>

@@ -86,9 +86,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         String userName= pref.getString("username", null);
         if(userName == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             startActivity(intent);
-            finish();
             return;
         }else {
             SystemUser.getInstance().login(userName, pref.getString("password", null));
@@ -453,6 +451,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onBackPressed() {
-        fragmentManager.popBackStack();
+        if(fragmentManager != null) {
+            fragmentManager.popBackStack();
+        }
     }
 }

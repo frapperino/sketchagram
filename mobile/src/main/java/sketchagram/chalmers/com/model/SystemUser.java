@@ -42,6 +42,10 @@ public class SystemUser {
         return false;
     }
 
+    public Exception createAccount(String userName, String password) {
+        return this.connection.createAccount(userName, password);
+    }
+
     public void logout(){
         this.connection.logout();
     }
