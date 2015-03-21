@@ -27,10 +27,15 @@ import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.search.ReportedData;
+import org.jivesoftware.smackx.search.UserSearchManager;
+import org.jivesoftware.smackx.xdata.Form;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -53,7 +58,7 @@ public class Connection extends Service implements IConnection{
     private List<Chat> chatList;
     private List<MultiUserChat> groupChatList;
     private final String HOST = "83.254.68.47";
-    private final String DOMAIN = "@raspberrypi";
+    private final String DOMAIN = "@datorn";
     private final String GROUP = "Friends";
 
 
@@ -80,7 +85,7 @@ public class Connection extends Service implements IConnection{
 
     public void init(){
         //SmackAndroid.init()
-        config = new ConnectionConfiguration(HOST, 5222);
+        config = new ConnectionConfiguration(HOST, 5333);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         chatList = new ArrayList<>();
@@ -306,10 +311,51 @@ public class Connection extends Service implements IConnection{
 
     }
 
-    public void addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
+    /**
+     * Adds the specified user if it exists
+     * @param userName the user to be added
+     * @return true if user exists false otherwise
+     * @throws SmackException.NotLoggedInException
+     * @throws XMPPException.XMPPErrorException
+     * @throws SmackException.NotConnectedException
+     * @throws SmackException.NoResponseException
+     */
+    public boolean addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
         Roster roster = connection.getRoster();
-        Collection<RosterEntry> entries  = roster.getEntries();
-        roster.createEntry(userName + DOMAIN, userName, null);
+        List<String> matchingUsers = searchUser(userName);
+        for(String user : matchingUsers) {
+            if(userName.equals(user)) {
+                roster.createEntry(userName + DOMAIN, "Username", null);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the matching users from the server.
+     * @return matching users
+     */
+    private List<String> searchUser(String userName) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+        UserSearchManager search = new UserSearchManager(connection);
+
+        Form searchForm = search.getSearchForm("search." + connection.getServiceName());
+
+        Form answerForm = searchForm.createAnswerForm();
+        answerForm.setAnswer("Username", true);
+
+        answerForm.setAnswer("search", userName);
+
+        ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
+
+        if (data.getRows() != null) {
+            Iterator<ReportedData.Row> it = data.getRows().iterator();
+            while (it.hasNext()) {
+                ReportedData.Row row = it.next();
+                return row.getValues("Username");
+            }
+        }
+        return new LinkedList<>();
     }
 
     public List<Contact> getContacts(){

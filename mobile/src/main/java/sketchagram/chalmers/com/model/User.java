@@ -25,7 +25,8 @@ public class User extends ADigitalPerson  {
     public User(String username, Profile profile) {
         super(username, profile);
         conversationList = new ArrayList<Conversation>();
-        contactList = new ArrayList<Contact>();
+        //TODO: get contacts from database instead of server
+        contactList = SystemUser.getInstance().getConnection().getContacts();
     }
 
     public void addContact(Contact contact){
@@ -55,8 +56,7 @@ public class User extends ADigitalPerson  {
      * @return the contactlist
      */
     public List<Contact> getContactList() {
-        //TODO: get contacts from database instead of server
-        return SystemUser.getInstance().getConnection().getContacts();
+        return contactList;
     }
 
     public List<Conversation> getConversationList() {
@@ -70,7 +70,10 @@ public class User extends ADigitalPerson  {
 
     public boolean addContact(String userName){
         try {
-            SystemUser.getInstance().getConnection().addContact(userName);
+            boolean success = SystemUser.getInstance().getConnection().addContact(userName);
+            if(success) {
+                contactList.add(new Contact(userName, new Profile()));
+            }
         } catch (SmackException.NotLoggedInException e) {
             e.printStackTrace();
             return false;

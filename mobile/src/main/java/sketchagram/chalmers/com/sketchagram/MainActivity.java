@@ -90,6 +90,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         if(userName == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
             return;
         }else {
             SystemUser.getInstance().login(userName, pref.getString("password", null));
