@@ -68,18 +68,24 @@ public class User extends ADigitalPerson  {
         return getUsername();
     }
 
-    public void addContact(String userName){
+    public boolean addContact(String userName){
         try {
             SystemUser.getInstance().getConnection().addContact(userName);
         } catch (SmackException.NotLoggedInException e) {
             e.printStackTrace();
+            return false;
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
+            return false;
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
+            return false;
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
+            return false;
         }
+        updateObservers();
+        return true;
     }
 
     /**

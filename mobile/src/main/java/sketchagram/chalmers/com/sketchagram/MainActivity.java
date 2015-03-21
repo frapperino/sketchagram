@@ -41,6 +41,9 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Profile;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 
@@ -164,7 +167,15 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_about) {
-            return true;
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.about_dialog);
+            ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
         } else if (id == R.id.action_logout) {
             //Delete saved user
             SharedPreferences pref = getSharedPreferences(FILENAME, 0);
@@ -258,8 +269,29 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     }
 
     public void addContact(View view) {
-        SystemUser.getInstance().getUser().addContact("alleballe");
-        Log.d("Add_Contact", "Button pressed!");
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.add_contact_dialog);
+        ((Button) dialog.findViewById(R.id.add_contact_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Toast toast;
+                String user = ((EditText)dialog.findViewById(R.id.user_name_dialog)).getText().toString();
+                if(SystemUser.getInstance().getUser().addContact(user)) {
+                    toast = Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG);
+                } else {
+                    toast = Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG);
+                }
+                toast.show();
+            }
+        });
+        ((Button) dialog.findViewById(R.id.cancel_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     //Below code is for connecting and communicating with Wear
