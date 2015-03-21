@@ -1,6 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -35,17 +34,11 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.Profile;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import sketchagram.chalmers.com.model.SystemUser;
-import sketchagram.chalmers.com.model.User;
 
 
 public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener,
@@ -132,9 +125,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         mHandler = new Handler(this);
 
         fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.fragment_frame, conversationFragment);
-        ft.commit();
+        displayFragment(conversationFragment);
 
         /*
         Navigation drawer
@@ -170,6 +161,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         } else if (id == R.id.action_about) {
             final Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.about_dialog);
+            dialog.setTitle("About");
             ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -188,11 +180,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             startActivity(intent);
             finish();
         } else if (id == R.id.action_new_message) {
-            //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = fragmentManager.beginTransaction();
-            t.replace(R.id.fragment_frame, emoticonFragment);
-            t.addToBackStack(null);
-            t.commit();
+            displayFragment(emoticonFragment);
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
@@ -212,11 +200,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 .clear()
                 .putString(MESSAGE, ":D")
                 .apply();
-
-        //Create a new fragment and replace the old fragment in layout.
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_frame, contactSendFragment)
-                .addToBackStack(null).commit();
+        displayFragment(contactSendFragment);
     }
 
     @Override
@@ -224,21 +208,25 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         Log.e("FRAGMENTINTERACTION", id);
         if (id.contains("conversation")) {
             //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = fragmentManager.beginTransaction();
-            t.replace(R.id.fragment_frame, inConversationFragment).addToBackStack(null)
-                    .commit();
+            displayFragment(inConversationFragment);
         } else {
-            //Create a new fragment and replace the old fragment in layout.
-            FragmentTransaction t = fragmentManager.beginTransaction();
-            t.replace(R.id.fragment_frame, conversationFragment).addToBackStack(null)
-                    .commit();
-
+            displayFragment(conversationFragment);
         }
+    }
+
+    /**
+     * Change fragment displayed in the fragment frame.
+     * @param fragment
+     */
+    private void displayFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_frame, fragment)
+                .addToBackStack(null).commit();
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", ""+position);
+        Log.d("NavDraw", "" + position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch(position) {
@@ -252,9 +240,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 throw new IllegalStateException("Illegal option chosen in NavigationDrawer!");
         }
         if(fragment != null) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_frame, fragment).addToBackStack(null)
-                    .commit();
+            displayFragment(fragment);
         }
     }
 
@@ -263,22 +249,20 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
      * @param view
      */
     public void startAddContactFragment(View view) {
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.fragment_frame, addContactFragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        displayFragment(addContactFragment);
     }
 
     public void addContact(View view) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_contact_dialog);
+        dialog.setTitle("Add new contact");
         ((Button) dialog.findViewById(R.id.add_contact_dialog_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
                 Toast toast;
-                String user = ((EditText)dialog.findViewById(R.id.user_name_dialog)).getText().toString();
-                if(SystemUser.getInstance().getUser().addContact(user)) {
+                String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
+                if (SystemUser.getInstance().getUser().addContact(user)) {
                     toast = Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG);
                 } else {
                     toast = Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG);
