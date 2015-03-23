@@ -58,7 +58,7 @@ public class Connection extends Service implements IConnection{
     private List<Chat> chatList;
     private List<MultiUserChat> groupChatList;
     private final String HOST = "83.254.68.47";
-    private final String DOMAIN = "@datorn";
+    private final String DOMAIN = "@raspberrypi";
     private final String GROUP = "Friends";
 
 
@@ -85,7 +85,7 @@ public class Connection extends Service implements IConnection{
 
     public void init(){
         //SmackAndroid.init()
-        config = new ConnectionConfiguration(HOST, 5333);
+        config = new ConnectionConfiguration(HOST, 5222);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         chatList = new ArrayList<>();
@@ -321,15 +321,16 @@ public class Connection extends Service implements IConnection{
      * @throws SmackException.NoResponseException
      */
     public boolean addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
+        //Roster roster = connection.getRoster();
+        //List<String> matchingUsers = searchUser(userName);
+        //for(String user : matchingUsers) {
+          //  if(userName.equals(user)) {
         Roster roster = connection.getRoster();
-        List<String> matchingUsers = searchUser(userName);
-        for(String user : matchingUsers) {
-            if(userName.equals(user)) {
                 roster.createEntry(userName + DOMAIN, "Username", null);
                 return true;
-            }
-        }
-        return false;
+            //}
+        //}
+        //return false;
     }
 
     /**
