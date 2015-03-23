@@ -40,6 +40,7 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import android.widget.Button;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -388,7 +389,13 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("massmessageTo")) {
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
-            //TODO: pull from dev because of new conversationCreation.
+            for(Contact c : cs.getContacts()) {
+                List<ADigitalPerson> ls = new ArrayList<>();
+                ls.add(c);
+                ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
+                        ls, "Massmessage from wear", MessageType.TEXTMESSAGE);
+                SystemUser.getInstance().getUser().sendMessage(clientMessage, MessageType.TEXTMESSAGE);
+            }
         } else if(messageEvent.getPath().contains("messageTo")) {
 
 //            sendToWatch(SystemUser.getInstance().getUser().getConversationList().toString());

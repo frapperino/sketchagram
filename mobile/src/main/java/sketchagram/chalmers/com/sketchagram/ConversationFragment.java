@@ -57,7 +57,6 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      */
     private ListAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
     public static ConversationFragment newInstance(String param1, String param2) {
         ConversationFragment fragment = new ConversationFragment();
         Bundle args = new Bundle();
@@ -83,8 +82,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
+        mAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getConversationList());
         SystemUser.getInstance().getUser().addObserver(this);
     }

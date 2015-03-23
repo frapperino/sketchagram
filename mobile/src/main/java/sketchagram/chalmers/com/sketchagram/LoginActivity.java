@@ -154,20 +154,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     public void register(View view){
         IConnection conn = SystemUser.getInstance().getConnection();
         Exception e = conn.createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
-<<<<<<< HEAD
-        if(isPasswordValid(mPasswordView.getText().toString())) {
-            if (e != null) {
-                if (e.getMessage().toString().equals("conflict")) {
-                    //TODO: Tell user to pick another name
-                }
-            } else {
-                boolean success = conn.login(mEmailView.getText().toString(), mPasswordView.getText().toString());
-                if (success) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-                    startActivity(intent);
-                }
-=======
+
         if(e != null){
             if(e.getMessage().toString().equals("conflict")){
                 Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
@@ -179,7 +166,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
                 startActivity(intent);
->>>>>>> Dev
             }
         }
 

@@ -27,6 +27,10 @@ public class ContactsSync {
         }
     }
 
+    public List<Contact> getContacts(){
+        return contacts;
+    }
+
     public DataMap putToDataMap(DataMap dataMap) {
         ArrayList<String> ls = new ArrayList<>();
         for(Contact c : contacts)
