@@ -41,12 +41,15 @@ import android.widget.Toast;
 import sketchagram.chalmers.com.model.SystemUser;
 
 
-public class MainActivity extends ActionBarActivity implements EmoticonFragment.OnFragmentInteractionListener,
+public class MainActivity extends ActionBarActivity
+        implements SendFragment.OnFragmentInteractionListener,
         ConversationFragment.OnFragmentInteractionListener,
         InConversationFragment.OnFragmentInteractionListener, MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
-        ContactManagementFragment.OnFragmentInteractionListener, AddContactFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
+        ContactManagementFragment.OnFragmentInteractionListener,
+        AddContactFragment.OnFragmentInteractionListener,
+        DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
 
 
     private static final int MSG_POST_NOTIFICATIONS = 0;
@@ -54,12 +57,12 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
     private final String TAG = "Sketchagram";
-    private Fragment emoticonFragment;
+    private Fragment sendFragment;
     private Fragment contactSendFragment;
     private Fragment conversationFragment;
     private Fragment inConversationFragment;
     private Fragment contactManagementFragment;
-    private Fragment addContactFragment;
+    private Fragment drawingFragment;
     private FragmentManager fragmentManager; 
     private Handler mHandler;
     private int postedNotificationCount = 0;
@@ -89,12 +92,12 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             SystemUser.getInstance().login(userName, pref.getString("password", null));
         }
 
-        emoticonFragment = new EmoticonFragment();
+        sendFragment = new SendFragment();
         contactSendFragment = new ContactSendFragment();
         conversationFragment = new ConversationFragment();
         inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
-        addContactFragment = new AddContactFragment();
+        drawingFragment = new DrawingFragment();
 
         //  Needed for communication between watch and device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -142,6 +145,10 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+    public void startDrawingFragment(View v) {
+        displayFragment(drawingFragment);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -180,7 +187,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             startActivity(intent);
             finish();
         } else if (id == R.id.action_new_message) {
-            displayFragment(emoticonFragment);
+            displayFragment(sendFragment);
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
@@ -205,7 +212,7 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
 
     @Override
     public void onFragmentInteraction(String id) {
-        Log.e("FRAGMENTINTERACTION", id);
+        Log.d("FRAGMENTINTERACTION", id);
         if (id.contains("conversation")) {
             //Create a new fragment and replace the old fragment in layout.
             displayFragment(inConversationFragment);
@@ -242,14 +249,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         if(fragment != null) {
             displayFragment(fragment);
         }
-    }
-
-    /**
-     * Start the add contact fragment on responding button-press.
-     * @param view
-     */
-    public void startAddContactFragment(View view) {
-        displayFragment(addContactFragment);
     }
 
     public void addContact(View view) {
@@ -341,29 +340,6 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
             }.execute();
         }
     };
-
-    /**
-     * Begin to re-post the sample notification(s).
-     */
-    private void updateNotifications(boolean cancelExisting) {
-        // Disable messages to skip notification deleted messages during cancel.
-        sendBroadcast(new Intent(NotificationIntentReceiver.ACTION_DISABLE_MESSAGES)
-                .setClass(this, NotificationIntentReceiver.class));
-
-        if (cancelExisting) {
-            // Cancel all existing notifications to trigger fresh-posting behavior: For example,
-            // switching from HIGH to LOW priority does not cause a reordering in Notification Shade.
-            NotificationManagerCompat.from(this).cancelAll();
-            postedNotificationCount = 0;
-
-            // Post the updated notifications on a delay to avoid a cancel+post race condition
-            // with notification manager.
-            mHandler.removeMessages(MSG_POST_NOTIFICATIONS);
-            mHandler.sendEmptyMessageDelayed(MSG_POST_NOTIFICATIONS, POST_NOTIFICATIONS_DELAY_MS);
-        } else {
-            postNotifications();
-        }
-    }
 
     /**
      * Post the sample notification(s) using current options.
