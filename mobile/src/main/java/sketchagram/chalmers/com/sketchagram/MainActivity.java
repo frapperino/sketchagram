@@ -76,24 +76,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences pref = getSharedPreferences(FILENAME, 0);
 
         // Check if logged in, else start LoginActivity
-        String userName= pref.getString("username", null);
-        if(userName == null) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }else {
-            boolean success = SystemUser.getInstance().login(userName, pref.getString("password", null));
-            if(!success) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        }
 
         emoticonFragment = new EmoticonFragment();
         contactSendFragment = new ContactSendFragment();
