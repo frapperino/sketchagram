@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -150,8 +151,12 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        Toast.makeText(this, viewHolder.getPosition() + " : " + contactChoices.size(), Toast.LENGTH_SHORT).show();
-        if(viewHolder.getPosition() == contactChoices.size()-1){
+        if(viewHolder.getPosition() == contactChoices.size()-2){
+            messagePhone(receivers);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else if (viewHolder.getPosition() == contactChoices.size()-1) {
+            receivers.add("massmessage");
             messagePhone(receivers);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -209,7 +214,8 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             contactChoices.add(contact);
 
         }
-        contactChoices.add("Send");
+        contactChoices.add("  Send  ");
+        contactChoices.add("  Send MassMSG  ");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -240,6 +246,10 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
+            if(i == items.size()-1) {
+                txt.setBackgroundColor(Color.GREEN);
+                txt.setTextColor(Color.BLACK);
+            }
 
 
         }

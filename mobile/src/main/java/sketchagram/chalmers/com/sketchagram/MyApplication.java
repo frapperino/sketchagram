@@ -9,7 +9,7 @@ import com.google.android.gms.internal.ge;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
- * Created by Alle on 2015-02-26.
+ * Created by Alexander Härenstam on 2015-02-26.
  */
 public class MyApplication extends Application {
     private static MyApplication ourInstance;
@@ -31,6 +31,9 @@ public class MyApplication extends Application {
         initSingletons();
     }
 
+    /**
+     * Initiate singletons for whole application.
+     */
     protected void initSingletons()
     {
         // Initialize the instance of MySingleton
