@@ -14,6 +14,7 @@ import android.view.MotionEvent;
  * Created by Alexander on 2015-03-25.
  *
  * See tutorial. http://code.tutsplus.com/series/create-a-drawing-app-on-android--cms-704
+ *
  * Potential color pickers:
  * https://github.com/LarsWerkman/HoloColorPicker
  * https://code.google.com/p/color-picker-view/
@@ -24,7 +25,7 @@ public class DrawingView extends View {
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint;
     //initial color
-    private int paintColor = 0xFF660000;
+    private int paintColor = 0xff00304e;    //http://colrd.com/color/
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
