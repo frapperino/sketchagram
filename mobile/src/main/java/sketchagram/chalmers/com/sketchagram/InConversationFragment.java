@@ -1,7 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import sketchagram.chalmers.com.model.AMessage;
+import java.util.Observable;
+import java.util.Observer;
+
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
 
@@ -27,7 +28,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class InConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class InConversationFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -85,7 +86,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         }
         if(conversation == null)
             conversation = SystemUser.getInstance().getUser().getConversationList().get(0);
-
+        SystemUser.getInstance().getUser().addObserver(this);
         mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
     }
 
@@ -141,6 +142,12 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        BaseAdapter adapter = (BaseAdapter)mAdapter;
+        adapter.notifyDataSetChanged();
     }
 
     /**

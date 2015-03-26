@@ -1,18 +1,15 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import sketchagram.chalmers.com.model.Emoticon;
-
+import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,7 +68,7 @@ public class EmoticonFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.emoticonfragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_emoticon, container, false);
 
         messageButton = (Button) view.findViewById(R.id.messageButton);
         messageButton.setOnClickListener(this);
@@ -99,6 +96,7 @@ public class EmoticonFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Uri uri = Uri.EMPTY;
+
         newMessage(uri.buildUpon().path(":D").build());
     }
 
