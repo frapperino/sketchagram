@@ -69,8 +69,9 @@ public class User extends ADigitalPerson  {
     }
 
     public boolean addContact(String userName){
+        boolean success = false;
         try {
-            boolean success = SystemUser.getInstance().getConnection().addContact(userName);
+            success = SystemUser.getInstance().getConnection().addContact(userName);
             if(success) {
                 contactList.add(new Contact(userName, new Profile()));
             }
@@ -88,7 +89,7 @@ public class User extends ADigitalPerson  {
             return false;
         }
         updateObservers();
-        return true;
+        return success;
     }
 
     /**
