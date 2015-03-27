@@ -27,16 +27,16 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:noHistory="true"
             android:excludeFromRecents="true">
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:noHistory="false">
         </activity>
         <service
             android:name="sketchagram.chalmers.com.network.Connection"

@@ -36,6 +36,17 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+
+        String userName= pref.getString("username", null);
+        if(userName != null) {
+            if(SystemUser.getInstance().login(userName, pref.getString("password", null))) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+
         registrationFragment = new RegistrationFragment();
         loginFragment = new LoginFragment();
 
@@ -117,6 +128,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         if (success){
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
