@@ -7,35 +7,32 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A {@link Fragment} subclass. Used for allowing user to draw.
  * Activities that contain this fragment must implement the
  * {@link DrawingFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class DrawingFragment extends Fragment {
+public class DrawingFragment extends Fragment implements Observer {
 
     private OnFragmentInteractionListener mListener;
 
     private DrawingView drawView;
-    private ImageButton currPaint;
+
+    private DrawingHelper helper;
 
     public DrawingFragment() {
-        // Required empty public constructor
+        //android requires empty constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Get view that is displayed in the Activity on which we can call
-        //the methods in the DrawingView class.
-        drawView = (DrawingView)getActivity().findViewById(R.id.drawing);
     }
 
     @Override
@@ -43,6 +40,12 @@ public class DrawingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_drawing, container, false);
+        //Get view that is displayed in the Activity on which we can call
+        //the methods in the DrawingView class.
+        drawView = (DrawingView) view.findViewById(R.id.drawing);
+        helper = new DrawingHelper();
+        drawView.setHelper(helper);
+        helper.addObserver(this);
         return view;
     }
 
@@ -61,6 +64,11 @@ public class DrawingFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        drawView.startNew();
     }
 
     /**

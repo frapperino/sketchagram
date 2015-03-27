@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity
     private Fragment conversationFragment;
     private Fragment inConversationFragment;
     private Fragment contactManagementFragment;
-    private Fragment drawingFragment;
+    private DrawingFragment drawingFragment;
     private FragmentManager fragmentManager; 
     private Handler mHandler;
 
@@ -420,9 +420,5 @@ public class MainActivity extends ActionBarActivity
         if(fragmentManager != null) {
             fragmentManager.popBackStack();
         }
-    }
-    public void reDisplayDrawing() {
-        drawingFragment = new DrawingFragment();
-        displayFragment(drawingFragment);
     }
 }

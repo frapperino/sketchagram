@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -40,7 +41,6 @@ public class DrawingView extends View {
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
-        helper = new DrawingHelper();
     }
 
     /**
@@ -126,5 +126,20 @@ public class DrawingView extends View {
         }
         invalidate();   //Will cause the onDraw method to execute.
         return true;
+    }
+
+    /**
+     * Start a new drawing.
+     */
+    public void startNew(){
+        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        invalidate();
+    }
+
+    /**
+     * Set the Drawing helper in the fragment that uses the view.
+     */
+    public void setHelper(DrawingHelper helper) {
+        this.helper = helper;
     }
 }

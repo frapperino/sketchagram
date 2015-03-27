@@ -4,12 +4,14 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.widget.Toast;
 
+import java.util.Observable;
+
 /**
  * Helpclass for drawing. Tracking time passed since last action on drawing.
  * If the maximum awaited time has passed, an action is made.
  * Created by Alexander on 2015-03-27.
  */
-public class DrawingHelper {
+public class DrawingHelper extends Observable{
     private long lastActionTime;
     private Handler handler;
     private boolean isRunning;
@@ -34,8 +36,10 @@ public class DrawingHelper {
                                 @Override
                                 public void run() {
                                     Toast toast;
-                                    toast = Toast.makeText(MyApplication.getContext(), "RESETTING DRAWING!", Toast.LENGTH_LONG);
+                                    toast = Toast.makeText(MyApplication.getContext(), "RESETTING DRAWING!", Toast.LENGTH_SHORT);
                                     toast.show();
+                                    setChanged();
+                                    notifyObservers();
                                 }
                             });
                             isRunning = false;
