@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.graphics.Bitmap;
@@ -8,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 /**
  * Defines a view which the user can draw upon using touch gestures.
@@ -25,15 +28,19 @@ public class DrawingView extends View {
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint;
     //initial color
-    private int paintColor = 0xff00304e;    //http://colrd.com/color/
+    private static int BRUSH_COLOR = 0xff00304e;    //http://colrd.com/color/
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
 
+    //Tracking last time a drawing action was made.
+    DrawingHelper helper;
+
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
+        helper = new DrawingHelper();
     }
 
     /**
@@ -44,7 +51,7 @@ public class DrawingView extends View {
         drawPath = new Path();
         drawPaint = new Paint();
 
-        drawPaint.setColor(paintColor); //set the initial color
+        drawPaint.setColor(BRUSH_COLOR); //set the initial color
 
         //set the initial path properties:
         drawPaint.setAntiAlias(true);
@@ -96,6 +103,9 @@ public class DrawingView extends View {
         //Retrieve the X and Y positions of the user touch:
         float touchX = event.getX();
         float touchY = event.getY();
+
+        helper.startMeasuring();
+        helper.setAccessed();
 
         //The MotionEvent parameter to the onTouchEvent method will
         // let us respond to particular touch events.

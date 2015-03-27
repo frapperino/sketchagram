@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.SystemUser;
 
 
@@ -51,9 +53,6 @@ public class MainActivity extends ActionBarActivity
         AddContactFragment.OnFragmentInteractionListener,
         DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks{
 
-
-    private static final int MSG_POST_NOTIFICATIONS = 0;
-    private static final long POST_NOTIFICATIONS_DELAY_MS = 200;
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
     private final String TAG = "Sketchagram";
@@ -65,10 +64,6 @@ public class MainActivity extends ActionBarActivity
     private Fragment drawingFragment;
     private FragmentManager fragmentManager; 
     private Handler mHandler;
-    private int postedNotificationCount = 0;
-
-    // used to store app title
-    private CharSequence mTitle;
 
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -143,7 +138,6 @@ public class MainActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 fragmentManager.findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -347,33 +341,6 @@ public class MainActivity extends ActionBarActivity
         }
     };
 
-    /**
-     * Post the sample notification(s) using current options.
-     */
-    private void postNotifications() {
-        sendBroadcast(new Intent(NotificationIntentReceiver.ACTION_ENABLE_MESSAGES)
-                .setClass(this, NotificationIntentReceiver.class));
-
-        NotificationPreset preset = NotificationPresets.PRESETS[
-                0];
-        CharSequence titlePreset = "Notifikation";
-        CharSequence textPreset = "Det här är en notifikation!!! Wiiiie! :D";
-        NotificationPreset.BuildOptions options = new NotificationPreset.BuildOptions(
-                titlePreset,
-                textPreset);
-        Notification[] notifications = preset.buildNotifications(this, options);
-
-        // Post new notifications
-        for (int i = 0; i < notifications.length; i++) {
-            NotificationManagerCompat.from(this).notify(i, notifications[i]);
-        }
-        // Cancel any that are beyond the current count.
-        for (int i = notifications.length; i < postedNotificationCount; i++) {
-            NotificationManagerCompat.from(this).cancel(i);
-        }
-        postedNotificationCount = notifications.length;
-    }
-
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().contains("contacts")) {
@@ -453,5 +420,9 @@ public class MainActivity extends ActionBarActivity
         if(fragmentManager != null) {
             fragmentManager.popBackStack();
         }
+    }
+    public void reDisplayDrawing() {
+        drawingFragment = new DrawingFragment();
+        displayFragment(drawingFragment);
     }
 }

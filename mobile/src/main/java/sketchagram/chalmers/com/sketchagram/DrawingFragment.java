@@ -77,5 +77,4 @@ public class DrawingFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
 }
