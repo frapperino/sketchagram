@@ -2,9 +2,13 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Observable;
+
+import sketchagram.chalmers.com.model.Drawing;
 
 /**
  * Helpclass for drawing. Tracking time passed since last action on drawing.
@@ -15,6 +19,7 @@ public class DrawingHelper extends Observable{
     private long lastActionTime;
     private Handler handler;
     private boolean isRunning;
+    private Drawing drawing;
 
     //Max nano-time allowed while awaiting input.
     private static final long MAX_AWAIT_TIME = 2000000000;
@@ -22,6 +27,7 @@ public class DrawingHelper extends Observable{
     public DrawingHelper() {
         handler = new Handler();
         isRunning = false;
+        drawing = new Drawing();
     }
 
     public void startMeasuring() {
@@ -54,5 +60,17 @@ public class DrawingHelper extends Observable{
 
     public void setAccessed() {
         lastActionTime = System.nanoTime();
+    }
+
+    public void addMotion(MotionEvent event) {
+        drawing.addMotion(event);
+    }
+
+    public List<MotionEvent> getMotions() {
+        return drawing.getMotions();
+    }
+
+    public Drawing getDrawing() {
+        return drawing;
     }
 }

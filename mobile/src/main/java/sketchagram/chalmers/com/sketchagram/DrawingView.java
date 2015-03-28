@@ -13,6 +13,10 @@ import android.graphics.Path;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import java.util.List;
+
+import sketchagram.chalmers.com.model.Drawing;
+
 /**
  * Defines a view which the user can draw upon using touch gestures.
  * Created by Alexander on 2015-03-25.
@@ -100,12 +104,22 @@ public class DrawingView extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        helper.startMeasuring();
+        helper.setAccessed();
+
+        helper.addMotion(MotionEvent.obtain(event));    //Must use a copy since android recycles.
+
+        return handleMotionEvent(event);
+    }
+
+    /**
+     * Takes care of drawing.
+     * @param event
+     */
+    public boolean handleMotionEvent(MotionEvent event) {
         //Retrieve the X and Y positions of the user touch:
         float touchX = event.getX();
         float touchY = event.getY();
-
-        helper.startMeasuring();
-        helper.setAccessed();
 
         //The MotionEvent parameter to the onTouchEvent method will
         // let us respond to particular touch events.
@@ -134,6 +148,7 @@ public class DrawingView extends View {
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
+        //TODO: Animations that will make graphics fade.
     }
 
     /**
@@ -141,5 +156,19 @@ public class DrawingView extends View {
      */
     public void setHelper(DrawingHelper helper) {
         this.helper = helper;
+    }
+
+    /**
+     * Displays the provided drawing.
+     * @param drawing
+     */
+    public void displayDrawing(Drawing drawing) {
+        //TODO: Draw at certain time intervals
+        //http://stackoverflow.com/questions/4544197/how-do-i-schedule-a-task-to-run-at-periodic-intervals
+        List<MotionEvent> motions = drawing.getMotions();
+        for(MotionEvent e: motions) {
+            handleMotionEvent(e);
+        }
+        //TODO: Animations that make the drawing seem alive.
     }
 }

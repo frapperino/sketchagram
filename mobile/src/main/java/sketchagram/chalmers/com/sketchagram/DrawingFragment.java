@@ -69,6 +69,7 @@ public class DrawingFragment extends Fragment implements Observer {
     @Override
     public void update(Observable observable, Object data) {
         drawView.startNew();
+        drawView.displayDrawing(helper.getDrawing());
     }
 
     /**

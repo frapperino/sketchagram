@@ -1,17 +1,23 @@
 package sketchagram.chalmers.com.model;
 
-import android.graphics.Path;
+import android.view.MotionEvent;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Holds the properties of a graphical drawing in order to allow it to be redrawn, at will.
  * Created by Alexander on 2015-03-26.
  */
 public class Drawing {
-    Path path;
-    public Drawing(Path path) {
-        this.path = path;
+    List<MotionEvent> events;
+    public Drawing() {
+        events = new LinkedList<MotionEvent>();
     }
-    public Path getPath() {
-        return path;
+    public List<MotionEvent> getMotions() {
+        return events;
+    }
+    public void addMotion(MotionEvent event) {
+        events.add(event);
     }
 }
