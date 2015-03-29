@@ -10,14 +10,19 @@ import java.util.List;
  * Created by Alexander on 2015-03-26.
  */
 public class Drawing {
-    List<MotionEvent> events;
+    List<DrawingEvent> events;
     public Drawing() {
-        events = new LinkedList<MotionEvent>();
+        events = new LinkedList<>();
     }
-    public List<MotionEvent> getMotions() {
+    public List<DrawingEvent> getMotions() {
         return events;
     }
+
+    /**
+     * Adds a DrawingEvent to the queue by converting the MotionEvent.
+     * @param event
+     */
     public void addMotion(MotionEvent event) {
-        events.add(event);
+        events.add(new DrawingEvent(System.nanoTime(), event));
     }
 }

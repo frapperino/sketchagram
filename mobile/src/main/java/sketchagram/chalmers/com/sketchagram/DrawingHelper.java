@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Observable;
 
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.DrawingEvent;
 
 /**
  * Helpclass for drawing. Tracking time passed since last action on drawing.
@@ -66,7 +67,7 @@ public class DrawingHelper extends Observable{
         drawing.addMotion(event);
     }
 
-    public List<MotionEvent> getMotions() {
+    public List<DrawingEvent> getMotions() {
         return drawing.getMotions();
     }
 
