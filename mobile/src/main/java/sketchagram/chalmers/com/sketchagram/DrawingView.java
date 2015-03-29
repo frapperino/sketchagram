@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.DrawingEvent;
 
 /**
  * Defines a view which the user can draw upon using touch gestures.
@@ -165,10 +166,55 @@ public class DrawingView extends View {
     public void displayDrawing(Drawing drawing) {
         //TODO: Draw at certain time intervals
         //http://stackoverflow.com/questions/4544197/how-do-i-schedule-a-task-to-run-at-periodic-intervals
-        List<MotionEvent> motions = drawing.getMotions();
-        for(MotionEvent e: motions) {
-            handleMotionEvent(e);
-        }
+        //Create new thread which sleeps if necessary and sends calls to main GUI thread.
+        //http://java.dzone.com/articles/how-schedule-task-run-interval
+        CountdownTask task = new CountdownTask(drawing);
+        task.execute();
         //TODO: Animations that make the drawing seem alive.
+    }
+
+    /**
+     * Runs the DrawingEvent.
+     */
+    private class EventRunnable implements Runnable {
+        private DrawingEvent event;
+        public EventRunnable(DrawingEvent event) {
+            this.event = event;
+        }
+
+        @Override
+        public void run() {
+            handleMotionEvent(event.getMotionEvent());
+        }
+    }
+
+    /**
+     * Uses a different thread to count time-deltas between user input, i.e. MotionEvents.
+     * Allowing each motion to be drawn identical to the original.
+     * Created by Alexander on 2015-03-28.
+     */
+    private class CountdownTask extends AsyncTask<Void, Void, Void> {
+        private Drawing drawing;
+        private Handler handler;
+
+        public CountdownTask(Drawing drawing) {
+            this.drawing = drawing;
+            handler = new Handler();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            DrawingEvent curr;
+            long timeDeltaInMilli;
+            List<DrawingEvent> events = drawing.getMotions();
+            DrawingEvent first = events.get(0);
+            handler.post(new EventRunnable(first));
+            for (int i = 1; i < events.size(); i++) {
+                curr = events.get(i);
+                timeDeltaInMilli = ((curr.getTime() - first.getTime()) / 1000000);
+                handler.postDelayed(new EventRunnable(curr), timeDeltaInMilli);
+            }
+            return null;
+        }
     }
 }
