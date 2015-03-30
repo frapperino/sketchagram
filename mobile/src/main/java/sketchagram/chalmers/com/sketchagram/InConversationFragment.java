@@ -1,8 +1,14 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +18,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.SystemUser;
 
@@ -28,18 +36,9 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class InConversationFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+public class InConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
     private OnFragmentInteractionListener mListener;
+    private Conversation conversation;
 
     /**
      * The fragment's ListView/GridView.
@@ -52,16 +51,6 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
      */
     private ListAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
-    public static InConversationFragment newInstance(String param1, String param2) {
-        InConversationFragment fragment = new InConversationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -73,20 +62,14 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         String participants = getActivity().getSharedPreferences("Participants", 0).getString("Participants", "");
-        Conversation conversation = null;
+        conversation = null;
         for(Conversation c : SystemUser.getInstance().getUser().getConversationList()){
             if(c.getParticipants().toString().equals(participants))
                 conversation = c;
         }
         if(conversation == null)
             conversation = SystemUser.getInstance().getUser().getConversationList().get(0);
-        SystemUser.getInstance().getUser().addObserver(this);
         mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
     }
 
@@ -144,10 +127,50 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         }
     }
 
-    @Override
-    public void update(Observable observable, Object data) {
-        BaseAdapter adapter = (BaseAdapter)mAdapter;
-        adapter.notifyDataSetChanged();
+    /**
+     * Update list graphically when model has changed.
+     */
+    public void updateList(ClientMessage message, MainActivity mainActivity) {
+        if(mAdapter != null) {
+            ((BaseAdapter)mAdapter).notifyDataSetChanged();
+        }
+        pushNewMessageNotification(message, mainActivity);
+    }
+
+    /**
+     * Creates a notification displaying that a new message has been received.
+     */
+    int mId = 0;
+    private void pushNewMessageNotification(ClientMessage message, MainActivity mainActivity) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mainActivity)
+                        .setSmallIcon(R.drawable.sketchagram_logo)  //TODO: Provide photo of sender.
+                        .setContentTitle(message.getSender().getUsername())
+                        .setContentText(message.getContent().toString());  //TODO: Display message content.
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(mainActivity, MainActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mainActivity);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) MyApplication.getContext()
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(mId, mBuilder.build());
     }
 
     /**

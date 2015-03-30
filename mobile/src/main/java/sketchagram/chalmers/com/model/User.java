@@ -29,26 +29,21 @@ public class User extends ADigitalPerson  {
         contactList = SystemUser.getInstance().getConnection().getContacts();
     }
 
-    public void addContact(Contact contact){
-        if(contact == null) {
-            throw new IllegalArgumentException("contact is invalid!");
-        }
-        contactList.add(contact);
-    }
-
+    /**
+     * Adds a new conversation.
+     *
+     * @param conversation the conversation to be added.
+     */
     public void addConversation(Conversation conversation){
         boolean exist = false;
         for(Conversation c : conversationList){
             if(c.getParticipants().equals(conversation.getParticipants())) {
-                for (ClientMessage msg : conversation.getHistory())
-                    c.addMessage(msg);
                 exist = true;
             }
-
         }
         if(!exist)
             conversationList.add(conversation);
-        updateObservers();
+        updateObservers(null);
     }
 
     /**
@@ -68,6 +63,11 @@ public class User extends ADigitalPerson  {
         return getUsername();
     }
 
+    /**
+     * Adds a contacts.
+     *
+     * @param userName contact to be added.
+     */
     public boolean addContact(String userName){
         boolean success = false;
         try {
@@ -95,9 +95,8 @@ public class User extends ADigitalPerson  {
     /**
      * Sends the specified message
      * @param clientMessage The message to be sent contains receivers
-     * @param type The type of the message
      */
-    public void sendMessage(ClientMessage clientMessage, MessageType type){
+    public void sendMessage(ClientMessage clientMessage){
         List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
         boolean exist = false;
         Conversation conversation = null;
@@ -115,8 +114,14 @@ public class User extends ADigitalPerson  {
         SystemUser.getInstance().getConnection().sendMessage(clientMessage);
         conversation.addMessage(clientMessage);
 
+
     }
 
+    /**
+     * Adds a message that was received from the server to the proper conversation.
+     *
+     * @param clientMessage The message received.
+     */
     public void addMessage(ClientMessage clientMessage){
         List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
         boolean exist = false;
@@ -132,7 +137,7 @@ public class User extends ADigitalPerson  {
             this.addConversation(conversation);
         }
         conversation.addMessage(clientMessage);
-        updateObservers();
+        updateObservers(clientMessage);
 
     }
 
@@ -159,13 +164,13 @@ public class User extends ADigitalPerson  {
         return null;
     }
 
-    private void updateObservers(){
+    private void updateObservers(final ClientMessage message){
         setChanged();
         Handler handler = new Handler(MyApplication.getContext().getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                notifyObservers();
+                notifyObservers(message);
             }
         };
         handler.post(runnable);

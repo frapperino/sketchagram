@@ -14,6 +14,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.SignInButton;
+
+import org.apache.http.conn.params.ConnConnectionParamBean;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
 
 
