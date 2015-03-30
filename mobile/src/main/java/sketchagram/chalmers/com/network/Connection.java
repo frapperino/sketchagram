@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.network;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Network;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
@@ -101,20 +102,16 @@ public class Connection extends Service implements IConnection{
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
     }
 
-    private void connect(){
+    private void connect() {
         try {
             if(!connection.isConnected()){
                 connection.connect();
             }
-        } catch (SmackException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XMPPException e) {
+        } catch (SmackException | IOException | XMPPException e) {
             e.printStackTrace();
         }
-
     }
+
     private void disconnect(final Presence presence){
         AsyncTask task = new AsyncTask() {
             @Override
@@ -157,12 +154,12 @@ public class Connection extends Service implements IConnection{
 
     }
 
-    public Exception createAccount(String userName, String password) {
+    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException{
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params){
                 try {
-                        if(connection.isConnected()){
+                    if(connection.isConnected()){
                         manager = AccountManager.getInstance(connection);
                         manager.createAccount(params[0].toString(), params[1].toString());
                     }
@@ -170,6 +167,7 @@ public class Connection extends Service implements IConnection{
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
                     e.printStackTrace();
+                    return new NetworkException.ServerNotRespondingException(e.getMessage());
                 } catch (SmackException e) {
                     e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
@@ -186,7 +184,12 @@ public class Connection extends Service implements IConnection{
         } catch (ExecutionException e1) {
             e1.printStackTrace();
         }
-        return e;
+        if(e != null) {
+            switch(e.getMessage().toString()) {
+                case "conflict":
+                    throw new NetworkException.UsernameAlreadyTakenException(e.getMessage());
+            }
+        }
     }
 
     public boolean login(final String userName, final String password){

@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.accounts.NetworkErrorException;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.network.NetworkException;
 
 
 /**
@@ -87,13 +89,8 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
             Toast toast = Toast.makeText(getApplicationContext(), "Passwords does not match.", Toast.LENGTH_SHORT);
             toast.show();
         } else {
-            Exception e = SystemUser.getInstance().createAccount(mUserName, mPassword);
-            if(e != null){
-                if(e.getMessage().toString().equals("conflict")){
-                    Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            } else {
+            try {
+                SystemUser.getInstance().createAccount(mUserName, mPassword);
                 //TODO: Get entered email and check if correct.
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_frame, loginFragment);
@@ -104,6 +101,9 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
                 InputMethodManager imm = (InputMethodManager)getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            } catch(NetworkException.UsernameAlreadyTakenException e) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
         ((EditText) findViewById(R.id.user_name)).setText("");
@@ -139,6 +139,10 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
+        } else {
+            //TODO: More detailed feedback handled from network package.
+            Toast toast = Toast.makeText(getApplicationContext(), "Failed to login.", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
