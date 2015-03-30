@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_floating_material_light"
-    tools:context="sketchagram.chalmers.com.sketchagram.EmoticonFragment">
+    tools:context="sketchagram.chalmers.com.sketchagram.SendFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -22,5 +22,15 @@
         android:clickable="true"
         android:focusableInTouchMode="false"
         android:enabled="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/paint"
+        android:id="@+id/paint_button"
+        android:layout_gravity="center_horizontal|bottom"
+        android:clickable="true"
+        android:enabled="true"
+        android:onClick="startDrawingFragment" />
 
 </FrameLayout>
