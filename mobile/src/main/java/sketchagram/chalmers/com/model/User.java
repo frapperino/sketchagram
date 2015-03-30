@@ -88,7 +88,6 @@ public class User extends ADigitalPerson  {
             e.printStackTrace();
             return false;
         }
-        updateObservers();
         return success;
     }
 
