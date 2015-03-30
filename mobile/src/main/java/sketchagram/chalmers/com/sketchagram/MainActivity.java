@@ -147,7 +147,8 @@ public class MainActivity extends ActionBarActivity implements EmoticonFragment.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            MainActivity.this.startActivity(myIntent);
         } else if (id == R.id.action_about) {
             final Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.about_dialog);
