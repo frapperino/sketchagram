@@ -107,10 +107,12 @@ public class SketchagramDb {
                 new String[] { id });
     }
 
+
     public ArrayList<ClientMessage> getAllMessages(List<Contact> contacts)
     {
+        throw new UnsupportedOperationException();
         //TODO: finish this method
-        ArrayList<ClientMessage> messages = new ArrayList();
+        /*ArrayList<ClientMessage> messages = new ArrayList();
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME , null );
         res.moveToFirst();
         while(res.isAfterLast() == false){
@@ -120,7 +122,7 @@ public class SketchagramDb {
             messages.add(null);
             res.moveToNext();
         }
-        return messages;
+        return messages;*/
     }
     public ArrayList<ClientMessage> getAllMessagesFromAContact(Contact contact) {
         ArrayList<ClientMessage> messages = new ArrayList();
@@ -145,9 +147,6 @@ public class SketchagramDb {
                     //TODO: decode here
                     break;
                 case PAINTING:
-                    //TODO: decode here
-                    break;
-                case PICTURE:
                     //TODO: decode here
                     break;
 
