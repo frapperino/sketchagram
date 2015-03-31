@@ -1,4 +1,6 @@
 package sketchagram.chalmers.com.model;
+import android.net.Network;
+
 import sketchagram.chalmers.com.network.*;
 
 /**
@@ -40,6 +42,10 @@ public class SystemUser {
             return true;
         }
         return false;
+    }
+
+    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException {
+        this.connection.createAccount(userName, password);
     }
 
     public void logout(){

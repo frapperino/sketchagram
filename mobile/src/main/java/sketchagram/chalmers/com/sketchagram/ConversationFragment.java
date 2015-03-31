@@ -33,16 +33,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     private OnFragmentInteractionListener mListener;
 
@@ -57,6 +48,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      */
     private ListAdapter mAdapter;
 
+<<<<<<< HEAD
     public static ConversationFragment newInstance(String param1, String param2) {
         ConversationFragment fragment = new ConversationFragment();
         Bundle args = new Bundle();
@@ -66,6 +58,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         return fragment;
     }
 
+=======
+>>>>>>> Dev
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -77,14 +71,18 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+<<<<<<< HEAD
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
         mAdapter = new ArrayAdapter<>(getActivity(),
+=======
+        // TODO: Change Adapter to display your content
+        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
+>>>>>>> Dev
                 android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getConversationList());
-        SystemUser.getInstance().getUser().addObserver(this);
     }
 
     @Override
@@ -127,6 +125,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             // fragment is attached to one) that an item has been selected.
             String participants = SystemUser.getInstance().getUser().
                     getConversationList().get(position).getParticipants().toString();
+            participants = participants.substring(1, participants.length()-1); //Remove [].
             getActivity().getSharedPreferences("Participants", 0)
                     .edit()
                     .clear()
@@ -136,8 +135,10 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         }
     }
 
-    @Override
-    public void update(Observable observable, Object data) {
+    /**
+     * Update list graphically when model has changed.
+     */
+    public void updateList() {
         BaseAdapter adapter = (BaseAdapter)mAdapter;
         adapter.notifyDataSetChanged();
     }
