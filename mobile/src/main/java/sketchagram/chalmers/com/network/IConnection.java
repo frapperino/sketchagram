@@ -18,10 +18,10 @@ public interface IConnection {
     public void init();
     public boolean login(String userName, String password);
     public void logout();
-    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException;
+    public Exception createAccount(String userName, String password);
     public void createGroupConversation(List<ADigitalPerson> recipients, String name);
     public void sendMessage(ClientMessage clientMessage);
-    public boolean addContact(String userName)throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException;
+    public void addContact(String userName)throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException;
     public List<Contact> getContacts();
 
 }

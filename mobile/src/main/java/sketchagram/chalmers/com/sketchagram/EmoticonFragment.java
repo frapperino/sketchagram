@@ -1,25 +1,25 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import sketchagram.chalmers.com.model.SystemUser;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SendFragment.OnFragmentInteractionListener} interface
+ * {@link sketchagram.chalmers.com.sketchagram.EmoticonFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SendFragment#newInstance} factory method to
+ * Use the {@link EmoticonFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SendFragment extends Fragment implements View.OnClickListener {
+public class EmoticonFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,8 +42,8 @@ public class SendFragment extends Fragment implements View.OnClickListener {
      * @return A new instance of fragment BlankFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SendFragment newInstance(String param1, String param2) {
-        SendFragment fragment = new SendFragment();
+    public static EmoticonFragment newInstance(String param1, String param2) {
+        EmoticonFragment fragment = new EmoticonFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -51,7 +51,7 @@ public class SendFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    public SendFragment() {
+    public EmoticonFragment() {
         // Required empty public constructor
     }
 
@@ -68,7 +68,7 @@ public class SendFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_send, container, false);
+        View view = inflater.inflate(R.layout.fragment_emoticon, container, false);
 
         messageButton = (Button) view.findViewById(R.id.messageButton);
         messageButton.setOnClickListener(this);
@@ -95,15 +95,9 @@ public class SendFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Log.d("Press", "CLICK");
-        if(v.getId() == R.id.messageButton) {
-            Uri uri = Uri.EMPTY;
-            newMessage(uri.buildUpon().path(":D").build());
-        } else if(v.getId() == R.id.paint_button){
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_frame, new DrawingFragment())
-                    .addToBackStack(null).commit();
-        }
+        Uri uri = Uri.EMPTY;
+
+        newMessage(uri.buildUpon().path(":D").build());
     }
 
 

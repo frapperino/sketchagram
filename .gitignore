@@ -108,9 +108,7 @@ hs_err_pid*
 
 # Own ignores
 .DS_STORE
-workspace.xml
+.workspace.xml
 *.bin
 *.properties
 *.iml
-.idea/
-

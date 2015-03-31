@@ -25,25 +25,29 @@ public class User extends ADigitalPerson  {
     public User(String username, Profile profile) {
         super(username, profile);
         conversationList = new ArrayList<Conversation>();
-        //TODO: get contacts from database instead of server
-        contactList = SystemUser.getInstance().getConnection().getContacts();
+        contactList = new ArrayList<Contact>();
     }
 
-    /**
-     * Adds a new conversation.
-     *
-     * @param conversation the conversation to be added.
-     */
+    public void addContact(Contact contact){
+        if(contact == null) {
+            throw new IllegalArgumentException("contact is invalid!");
+        }
+        contactList.add(contact);
+    }
+
     public void addConversation(Conversation conversation){
         boolean exist = false;
         for(Conversation c : conversationList){
             if(c.getParticipants().equals(conversation.getParticipants())) {
+                for (ClientMessage msg : conversation.getHistory())
+                    c.addMessage(msg);
                 exist = true;
             }
+
         }
         if(!exist)
             conversationList.add(conversation);
-        updateObservers(null);
+        updateObservers();
     }
 
     /**
@@ -51,7 +55,8 @@ public class User extends ADigitalPerson  {
      * @return the contactlist
      */
     public List<Contact> getContactList() {
-        return contactList;
+        //TODO: get contacts from database instead of server
+        return SystemUser.getInstance().getConnection().getContacts();
     }
 
     public List<Conversation> getConversationList() {
@@ -63,39 +68,26 @@ public class User extends ADigitalPerson  {
         return getUsername();
     }
 
-    /**
-     * Adds a contacts.
-     *
-     * @param userName contact to be added.
-     */
-    public boolean addContact(String userName){
-        boolean success = false;
+    public void addContact(String userName){
         try {
-            success = SystemUser.getInstance().getConnection().addContact(userName);
-            if(success) {
-                contactList.add(new Contact(userName, new Profile()));
-            }
+            SystemUser.getInstance().getConnection().addContact(userName);
         } catch (SmackException.NotLoggedInException e) {
             e.printStackTrace();
-            return false;
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
-            return false;
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
-            return false;
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
-            return false;
         }
-        return success;
     }
 
     /**
      * Sends the specified message
      * @param clientMessage The message to be sent contains receivers
+     * @param type The type of the message
      */
-    public void sendMessage(ClientMessage clientMessage){
+    public void sendMessage(ClientMessage clientMessage, MessageType type){
         List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
         boolean exist = false;
         Conversation conversation = null;
@@ -113,14 +105,8 @@ public class User extends ADigitalPerson  {
         SystemUser.getInstance().getConnection().sendMessage(clientMessage);
         conversation.addMessage(clientMessage);
 
-
     }
 
-    /**
-     * Adds a message that was received from the server to the proper conversation.
-     *
-     * @param clientMessage The message received.
-     */
     public void addMessage(ClientMessage clientMessage){
         List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
         boolean exist = false;
@@ -136,7 +122,7 @@ public class User extends ADigitalPerson  {
             this.addConversation(conversation);
         }
         conversation.addMessage(clientMessage);
-        updateObservers(clientMessage);
+        updateObservers();
 
     }
 
@@ -163,13 +149,13 @@ public class User extends ADigitalPerson  {
         return null;
     }
 
-    private void updateObservers(final ClientMessage message){
+    private void updateObservers(){
         setChanged();
         Handler handler = new Handler(MyApplication.getContext().getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                notifyObservers(message);
+                notifyObservers();
             }
         };
         handler.post(runnable);

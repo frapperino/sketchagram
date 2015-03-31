@@ -2,7 +2,6 @@ package sketchagram.chalmers.com.network;
 
 import android.app.Service;
 import android.content.Intent;
-import android.net.Network;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
@@ -28,15 +27,10 @@ import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.search.ReportedData;
-import org.jivesoftware.smackx.search.UserSearchManager;
-import org.jivesoftware.smackx.xdata.Form;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -58,8 +52,8 @@ public class Connection extends Service implements IConnection{
     private AccountManager manager;
     private List<Chat> chatList;
     private List<MultiUserChat> groupChatList;
-    private final String HOST = "129.16.23.202";
-    private final String DOMAIN = "@sketchagram";
+    private final String HOST = "83.254.68.47";
+    private final String DOMAIN = "@raspberrypi";
     private final String GROUP = "Friends";
 
 
@@ -102,34 +96,30 @@ public class Connection extends Service implements IConnection{
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
     }
 
-    private void connect() {
+    private void connect(){
         try {
             if(!connection.isConnected()){
                 connection.connect();
             }
-        } catch (SmackException | IOException | XMPPException e) {
+        } catch (SmackException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XMPPException e) {
             e.printStackTrace();
         }
+
     }
-
-    private void disconnect(final Presence presence){
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                try {
-                    if (presence != null){
-                        connection.disconnect(presence);
-                    }else {
-                        connection.disconnect();
-                    }
-                } catch (SmackException.NotConnectedException e) {
-                    e.printStackTrace();
-                }
-                return null;
+    private void disconnect(Presence presence){
+        try {
+            if (presence != null){
+                connection.disconnect(presence);
+            }else {
+                connection.disconnect();
             }
-        };
-        task.execute();
-
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
     }
 
     private ChatManager getChatManager(){
@@ -154,12 +144,12 @@ public class Connection extends Service implements IConnection{
 
     }
 
-    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException{
+    public Exception createAccount(String userName, String password) {
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params){
                 try {
-                    if(connection.isConnected()){
+                        if(connection.isConnected()){
                         manager = AccountManager.getInstance(connection);
                         manager.createAccount(params[0].toString(), params[1].toString());
                     }
@@ -167,7 +157,6 @@ public class Connection extends Service implements IConnection{
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
                     e.printStackTrace();
-                    return new NetworkException.ServerNotRespondingException(e.getMessage());
                 } catch (SmackException e) {
                     e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
@@ -184,12 +173,7 @@ public class Connection extends Service implements IConnection{
         } catch (ExecutionException e1) {
             e1.printStackTrace();
         }
-        if(e != null) {
-            switch(e.getMessage().toString()) {
-                case "conflict":
-                    throw new NetworkException.UsernameAlreadyTakenException(e.getMessage());
-            }
-        }
+        return e;
     }
 
     public boolean login(final String userName, final String password){
@@ -314,51 +298,10 @@ public class Connection extends Service implements IConnection{
 
     }
 
-    /**
-     * Adds the specified user if it exists
-     * @param userName the user to be added
-     * @return true if user exists false otherwise
-     * @throws SmackException.NotLoggedInException
-     * @throws XMPPException.XMPPErrorException
-     * @throws SmackException.NotConnectedException
-     * @throws SmackException.NoResponseException
-     */
-    public boolean addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
+    public void addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
         Roster roster = connection.getRoster();
-        List<String> matchingUsers = searchUser(userName);
-        for(String user : matchingUsers) {
-            if(userName.equals(user)) {
-                roster.createEntry(userName + DOMAIN, "Username", null);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Gets the matching users from the server.
-     * @return matching users
-     */
-    private List<String> searchUser(String userName) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
-        UserSearchManager search = new UserSearchManager(connection);
-
-        Form searchForm = search.getSearchForm("search." + connection.getServiceName());
-
-        Form answerForm = searchForm.createAnswerForm();
-        answerForm.setAnswer("Username", true);
-
-        answerForm.setAnswer("search", userName);
-
-        ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
-
-        if (data.getRows() != null) {
-            Iterator<ReportedData.Row> it = data.getRows().iterator();
-            while (it.hasNext()) {
-                ReportedData.Row row = it.next();
-                return row.getValues("Username");
-            }
-        }
-        return new LinkedList<>();
+        Collection<RosterEntry> entries  = roster.getEntries();
+        roster.createEntry(userName + DOMAIN, userName, null);
     }
 
     public List<Contact> getContacts(){

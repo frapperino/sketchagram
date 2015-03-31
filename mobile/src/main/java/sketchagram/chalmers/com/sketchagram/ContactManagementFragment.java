@@ -11,13 +11,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.Observable;
-import java.util.Observer;
 
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -31,7 +27,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ContactManagementFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
+public class ContactManagementFragment extends Fragment implements AbsListView.OnItemClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,7 +79,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
         // Sets the adapter to customized one which enables our layout of items.
         mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getContactList());
-        SystemUser.getInstance().getUser().addObserver(this);
     }
 
     @Override
@@ -139,12 +134,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }
-    }
-
-    @Override
-    public void update(Observable observable, Object data) {
-        BaseAdapter adapter = (BaseAdapter)mAdapter;
-        adapter.notifyDataSetChanged();
     }
 
     /**
