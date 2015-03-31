@@ -21,7 +21,7 @@ public interface IConnection {
     public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException;
     public void createGroupConversation(List<ADigitalPerson> recipients, String name);
     public void sendMessage(ClientMessage clientMessage);
-    public boolean addContact(String userName)throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException;
+    public boolean addContact(String userName);
     public List<Contact> getContacts();
 
 }

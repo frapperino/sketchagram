@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.database.DataContract.*;
@@ -24,8 +25,8 @@ import sketchagram.chalmers.com.model.User;
  */
 public class SketchagramDb {
 
-    private static final String WHERE = "WHERE ";
-    private static final String FROM = "FROM ";
+    private static final String WHERE = " WHERE ";
+    private static final String FROM = " FROM ";
     private static final String SELECT_ALL = "SELECT * ";
     private static final String EQUALS = " = ";
     private SQLiteDatabase db;
@@ -33,15 +34,19 @@ public class SketchagramDb {
 
     public SketchagramDb (Context context) {
         dbh = new DBHelper(context);
+
         try {
             db = dbh.getWritableDatabase();
-            dbh.onCreate(db);
+            update();
         }catch (SQLiteException e){
             System.out.println(e.getMessage());
 
         }
     }
 
+    public void update() {
+        dbh.onUpgrade(db);
+    }
     public boolean insertContact  (Contact contact)
     {
         ContentValues contentValues = new ContentValues();
@@ -89,10 +94,11 @@ public class SketchagramDb {
         return contacts;
     }
 
-    public boolean insertMessage  (ClientMessage message)
-    {
+    public boolean insertMessage (ClientMessage message) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MessagesTable.COLUMN_NAME_CONTACT_USERNAME, message.getSender().getUsername());
+        ADigitalPerson receiver = (ADigitalPerson)message.getReceivers().get(0);
+        contentValues.put(MessagesTable.COLUMN_NAME_SENDER, message.getSender().getUsername());
+        contentValues.put(MessagesTable.COLUMN_NAME_RECEIVER, receiver.getUsername());
         contentValues.put(MessagesTable.COLUMN_NAME_TIMESTAMP, message.getTimestamp());
         contentValues.put(MessagesTable.COLUMN_NAME_TYPE, message.getType().toString());
         contentValues.put(MessagesTable.COLUMN_NAME_CONTENT, new Gson().toJson(message.getContent()));
@@ -100,15 +106,16 @@ public class SketchagramDb {
         return true;
     }
 
-    public Integer deleteMessage (String id)
+    public Integer deleteMessage (long timestamp, String sender, String receiver)
     {
         return db.delete(MessagesTable.TABLE_NAME,
-                MessagesTable.COLUMN_NAME_MESSAGE_ID + " = " + id,
-                new String[] { id });
+                (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + timestamp + " AND " + MessagesTable.COLUMN_NAME_SENDER + EQUALS + sender + " AND " +
+                MessagesTable.COLUMN_NAME_RECEIVER + EQUALS + receiver),
+                new String[] { sender });
     }
 
 
-    public ArrayList<ClientMessage> getAllMessages(List<Contact> contacts)
+    public ArrayList<ClientMessage> getAllMessagesFromContacts(List<Contact> contacts)
     {
         throw new UnsupportedOperationException();
         //TODO: finish this method
@@ -126,11 +133,10 @@ public class SketchagramDb {
     }
     public ArrayList<ClientMessage> getAllMessagesFromAContact(Contact contact) {
         ArrayList<ClientMessage> messages = new ArrayList();
-        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_CONTACT_USERNAME
-                + EQUALS + contact.getUsername(), null );
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_SENDER
+                + EQUALS + "'" + contact.getUsername() + "'", null );
         res.moveToFirst();
         while(res.isAfterLast() == false){
-            int messsageId = res.getInt(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_MESSAGE_ID));
             String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
             String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
             long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
@@ -146,7 +152,7 @@ public class SketchagramDb {
                 case EMOTICON:
                     //TODO: decode here
                     break;
-                case PAINTING:
+                case PICTURE:
                     //TODO: decode here
                     break;
 
