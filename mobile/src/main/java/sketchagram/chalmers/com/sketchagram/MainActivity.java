@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -41,8 +42,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
 
 
@@ -67,6 +71,7 @@ public class MainActivity extends ActionBarActivity
     private DrawingFragment drawingFragment;
     private FragmentManager fragmentManager;
     private Handler mHandler;
+    private DataMap dataMap;
 
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -131,6 +136,8 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        dataMap = new DataMap();
 
         //Set observer
         SystemUser.getInstance().getUser().addObserver(this);
@@ -331,16 +338,29 @@ public class MainActivity extends ActionBarActivity
         }
     };
 
+
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if (messageEvent.getPath().contains("contacts")) {
-            sendToWatch(SystemUser.getInstance().getUser().getContactList().toString());
-        } else if (messageEvent.getPath().contains("clockversations")) {
-            sendToWatch(SystemUser.getInstance().getUser().getConversationList().toString());
-        } else if (messageEvent.getPath().contains("username")) {
-            sendToWatch(SystemUser.getInstance().getUser().getUsername());
+        if(messageEvent.getPath().contains("contacts")) {
+            ContactsSync cs = new ContactsSync(SystemUser.getInstance().getUser().getContactList());
+            sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
+        } else if(messageEvent.getPath().contains("massmessageTo")) {
+            ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
+            for(Contact c : cs.getContacts()) {
+                List<ADigitalPerson> ls = new ArrayList<>();
+                ls.add(c);
+                ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
+                        ls, "Massmessage from wear", MessageType.TEXTMESSAGE);
+                SystemUser.getInstance().getUser().sendMessage(clientMessage);
+            }
+        } else if(messageEvent.getPath().contains("conversations")) {
+
+            ConversationsSync cs = new ConversationsSync();
+            sendToWatch("conversations", cs.putToDataMap(dataMap).toByteArray());
+        } else if(messageEvent.getPath().contains("username")) {
+            dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
+            sendToWatch("username", dataMap.toByteArray());
         } else {
-            Log.e("CLOCK", "Click");
             onFragmentInteraction(messageEvent.getPath());
         }
     }
@@ -366,14 +386,15 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+
     /**
      * This method will generate all the nodes that are attached to a Google Api Client.
      * There should only be one node however, which should be the watch.
      */
-    private void sendToWatch(String msg) {
+    private void sendToWatch(String msg, final byte[] data){
         getSharedPreferences("WATCHMSG", 0).edit().putString("WATCHMSG", msg).commit();
 
-        new AsyncTask<Void, Void, List<Node>>() {
+        new AsyncTask<Void, Void, List<Node>>(){
 
             @Override
             protected List<Node> doInBackground(Void... params) {
@@ -382,14 +403,14 @@ public class MainActivity extends ActionBarActivity
 
             @Override
             protected void onPostExecute(List<Node> nodeList) {
-                for (Node node : nodeList) {
+                for(Node node : nodeList) {
                     Log.v(TAG, "......Phone: Sending Msg:  to node:  " + node.getId());
 
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
-                            getSharedPreferences("WATCHMSG", 0).getString("WATCHMSG", ""),
-                            null
+                            getSharedPreferences("WATCHMSG",0).getString("WATCHMSG", ""),
+                            data
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
@@ -401,6 +422,7 @@ public class MainActivity extends ActionBarActivity
                 }
             }
         }.execute();
+
     }
 
     @Override

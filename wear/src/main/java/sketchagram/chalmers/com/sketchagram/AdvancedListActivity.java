@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -43,9 +44,10 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
-    private List<String> contactChoices;
-    private List<String> receivers;
-    private final List<String> MSGTAG = new ArrayList<>();
+    private ArrayList<String> receivers;
+    private DataMap dataMap;
+    private ContactSync contactSync;
+    private ArrayList<String> choices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +55,18 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_stub);
 
+        dataMap = new DataMap();
+        contactSync = new ContactSync();
+        choices = new ArrayList<>();
+
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                contactChoices = new ArrayList<>();
                 receivers = new ArrayList<>();
-                MSGTAG.add("contacts");
-                messagePhone(MSGTAG);
+                messagePhone("contacts", null);
                 loadAdapter();
 
             }
@@ -89,8 +93,8 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     }
 
     private void loadAdapter(){
-        Log.e("ADAPTER", contactChoices.toString());
-        mAdapter = new MyListAdapter(this, contactChoices);
+        choices = contactSync.getContactChoices();
+        mAdapter = new MyListAdapter(this, choices);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(AdvancedListActivity.this);
     }
@@ -104,7 +108,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void messagePhone(final List<String> message){
+    private void messagePhone(final String message, final byte[] byteMap){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -122,7 +126,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
                             mGoogleApiClient,
                             node.getId(),
                             message.toString(),
-                            null
+                            byteMap
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
@@ -151,18 +155,19 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == contactChoices.size()-2){
-            messagePhone(receivers);
+        if(viewHolder.getPosition() == choices.size()-2){
+            dataMap.putStringArrayList("RECEIVERS", receivers);
+            messagePhone("messageTo", dataMap.toByteArray());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-        } else if (viewHolder.getPosition() == contactChoices.size()-1) {
-            receivers.add("massmessage");
-            messagePhone(receivers);
+        } else if (viewHolder.getPosition() == choices.size()-1) {
+            messagePhone("massmessageTo", dataMap.toByteArray());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
-            receivers.add(contactChoices.get(viewHolder.getPosition()));
+            receivers.add(choices.get(viewHolder.getPosition()));
         }
+        Log.e("contacts", viewHolder.getPosition() + " : " + choices.size());
     }
 
     @Override
@@ -201,28 +206,15 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        String s = messageEvent.getPath();
-        contactChoices.clear();
-        for(String contact : s.split(" ")) {
-            if(contact.contains("[") ){
-                contact = contact.substring(1,contact.length()-1);
-            } else if(contact.contains("]")){
-                contact = contact.substring(0,contact.length()-1);
-            } else {
-                contact = contact.substring(0,contact.length()-1);
-            }
-            contactChoices.add(contact);
-
-        }
-        contactChoices.add("  Send  ");
-        contactChoices.add("  Send MassMSG  ");
+        dataMap = DataMap.fromByteArray(messageEvent.getData());
+        contactSync = new ContactSync(dataMap);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mAdapter.notifyDataSetChanged();
+                loadAdapter();
             }
         });
-        Log.e("WATCH", contactChoices.toString());
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
@@ -246,7 +238,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i == items.size()-1) {
+            if(i >= items.size()-2) {
                 txt.setBackgroundColor(Color.GREEN);
                 txt.setTextColor(Color.BLACK);
             }

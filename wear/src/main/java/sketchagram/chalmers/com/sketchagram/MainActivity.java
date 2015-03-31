@@ -28,6 +28,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -50,6 +51,7 @@ public class MainActivity extends Activity implements
     private Node peerNode;
     public static final String KEY_REPLY = "reply";
     private static final int SAMPLE_NOTIFICATION_ID = 0;
+    private DataMap dataMap;
 
 
     @Override
@@ -73,9 +75,9 @@ public class MainActivity extends Activity implements
                 .build();
         mGoogleApiClient.connect();
 
-        List<String> ls = new ArrayList<>();
-        ls.add("username");
-        messagePhone(ls);
+        dataMap = new DataMap();
+
+        messagePhone("username", null);
 
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -156,8 +158,9 @@ public class MainActivity extends Activity implements
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.e("WATCH","username = " + messageEvent.getPath());
-        getSharedPreferences("user",0).edit().putString("username", messageEvent.getPath()).commit();
+        dataMap = DataMap.fromByteArray(messageEvent.getData());
+        Log.e("WATCH","username = " + dataMap.getString("username"));
+        getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
 
     }
 
@@ -175,7 +178,7 @@ public class MainActivity extends Activity implements
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void messagePhone(final List<String> message){
+    private void messagePhone(final String message, final byte[] byteMap){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -192,8 +195,8 @@ public class MainActivity extends Activity implements
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
-                            message.toString(),
-                            null
+                            message,
+                            byteMap
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
