@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import sketchagram.chalmers.com.model.SystemUser;
@@ -64,10 +65,17 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         String mUserName = ((EditText) findViewById(R.id.enter_username_id)).getText().toString();
         String mPassword = ((EditText) findViewById(R.id.choose_password_id)).getText().toString();
         String mReEnterPassword = ((EditText) findViewById(R.id.re_enter_password_id)).getText().toString();
-        if(!mPassword.equals(mReEnterPassword)) {
+        if (!mPassword.equals(mReEnterPassword)) {
             Toast toast = Toast.makeText(getApplicationContext(), "Passwords does not match.", Toast.LENGTH_SHORT);
             toast.show();
-        } else {
+        }
+
+        else if (mPassword.equals("") || mReEnterPassword.equals("")){
+            Toast toast = Toast.makeText(getApplicationContext(), "Password is empty", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+        else {
             Exception e = SystemUser.getInstance().createAccount(mUserName, mPassword);
             if(e != null){
                 if(e.getMessage().toString().equals("conflict")){
@@ -128,9 +136,17 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
     }
 
-    public void scrollToLoc(View view){
-        view.scrollTo(10,10);
+    //TODO: blur
+
+    public void scrollToTop(View view){
+        ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.fullScroll(ScrollView.FOCUS_UP);
     }
+    public void scrollToBottom(View view){
+        ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+    }
+
 }
 
 

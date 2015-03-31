@@ -68,8 +68,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                 android:hint="Username"
                 android:layout_marginBottom="20dp"
                 android:textColorHint="#ffffffff"
-                android:imeOptions="actionNext"
-                />
+                android:imeOptions="actionNext"/>
 
             <EditText
                 android:layout_width="fill_parent"
@@ -98,7 +97,9 @@ android:layout_width="match_parent" android:layout_height="match_parent">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            android:onClick="scrollToBottom">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -108,7 +109,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                 android:id="@+id/textView6"
                 android:textColor="#ffffff"
                 android:clickable="true"
-                android:onClick="scrollToLoc"
+                android:onClick="scrollToBottom"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
@@ -121,7 +122,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                 android:background="@android:drawable/arrow_down_float"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="45dp"
-                />
+                android:onClick="scrollToBottom" />
         </LinearLayout>
 
         <ScrollView
@@ -139,7 +140,9 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_height="fill_parent"
+                    android:onClick="scrollToTop"
+                    android:clickable="true">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -149,7 +152,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="20dp"
                         android:layout_marginTop="45dp"
-                        />
+                        android:onClick="scrollToTop" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -160,7 +163,8 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                         android:layout_gravity="center_horizontal"
                         android:textSize="18dp"
                         android:textColor="#ffffff"
-                        style="@style/shadow"/>
+                        style="@style/shadow"
+                        android:onClick="scrollToTop" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -215,19 +219,20 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                         android:textColor="#ffffff"
                         android:textColorHint="#ffffffff"
 />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Create account"
+                        android:id="@+id/button3"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#ffffff"
+                        android:background="#FF9800"
+                        android:onClick="createAccount" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
         //ska in i scroll viewn ovanför, får nullpointer i editorn, dock funkar appen
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create account"
-            android:id="@+id/button3"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#ffffff"
-            android:background="#FF9800"
-            android:onClick="createAccount" />
 
     </LinearLayout>
 </ScrollView>
