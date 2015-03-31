@@ -21,4 +21,13 @@
         android:layout_gravity="center_horizontal|bottom"
         android:onClick="showConversations" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Drawing"
+        android:id="@+id/drawingButton"
+        android:layout_gravity="center_horizontal|top"
+        android:onClick="sendDrawing"
+        android:singleLine="false" />
+
 </FrameLayout>
