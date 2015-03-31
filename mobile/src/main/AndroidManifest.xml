@@ -16,17 +16,17 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+        android:configChanges="keyboardHidden|orientation|screenSize"
         android:icon="@drawable/sketchagram_logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
         android:noHistory="false"
-        android:configChanges="keyboardHidden|orientation|screenSize">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".LoginActivity"
+            android:excludeFromRecents="true"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize|stateHidden"
             android:noHistory="true"
-            android:excludeFromRecents="true">
+            android:windowSoftInputMode="adjustResize|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,16 +36,25 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:noHistory="false">
+            android:noHistory="false" >
         </activity>
+
         <service
             android:name="sketchagram.chalmers.com.network.Connection"
-            android:exported="false"
-        />
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sketchagram.chalmers.com.sketchagram.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
