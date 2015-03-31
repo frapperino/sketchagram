@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent" android:layout_height="match_parent">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/scrollView"
+    android:layout_gravity="center_vertical"
+    android:background="@drawable/autumn"
+    android:focusable="false"
+    android:nestedScrollingEnabled="false">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="SKETCHAGRAM"
+                android:id="@+id/textView5"
+                android:textColor="#FFFFFF"
+                android:textSize="35sp"
+                android:layout_gravity="right"
+                android:layout_marginTop="130dp"
+                android:layout_marginRight="5dp"
+                style="@style/shadow"
+                 />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Sketch your imagination"
+                android:id="@+id/textView3"
+                android:textColor="#ffffff"
+                android:textSize="20dp"
+                android:layout_marginLeft="38dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="5dp"
+                style="@style/shadow"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingBottom="30dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="80dp">
+
+            <AutoCompleteTextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/username_id"
+                android:textColor="#ffffff"
+                android:hint="Username"
+                android:layout_marginBottom="20dp"
+                android:textColorHint="#ffffffff"
+                android:imeOptions="actionNext"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/password_id"
+                android:hint="Password"
+                android:layout_marginBottom="30dp"
+                android:textColor="#ffffff"
+                android:imeOptions="actionDone"
+                android:textColorHint="#ffffffff"
+                />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Sign in"
+                android:id="@+id/button2"
+                android:textColor="#ffffff"
+                android:background="#FF9800"
+                android:clickable="true"
+                android:onClick="attemptLogin" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            android:onClick="scrollToBottom">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Not registered yet?"
+                android:id="@+id/textView6"
+                android:textColor="#ffffff"
+                android:clickable="true"
+                android:onClick="scrollToBottom"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                style="@style/shadow"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:background="@android:drawable/arrow_down_float"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="45dp"
+                android:onClick="scrollToBottom" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="615dp"
+            android:id="@+id/scrollView2"
+            android:focusable="false">
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:onClick="scrollToTop"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageView2"
+                        android:background="@android:drawable/arrow_up_float"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginTop="45dp"
+                        android:onClick="scrollToTop" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Sign in"
+                        android:id="@+id/textView4"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="18dp"
+                        android:textColor="#ffffff"
+                        style="@style/shadow"
+                        android:onClick="scrollToTop" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="60dp"
+                    android:layout_marginRight="60dp"
+                    android:layout_marginTop="80dp">
+
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/enter_username_id"
+                        android:layout_marginBottom="20dp"
+                        android:hint="Chose a username"
+                        android:textColor="#ffffff"
+                        android:textColorHint="#ffffffff"
+/>
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:ems="10"
+                        android:id="@+id/choose_password_id"
+                        android:hint="Choose a password"
+                        android:layout_marginBottom="20dp"
+                        android:textColor="#ffffff"
+                        android:textColorHint="#ffffffff"
+/>
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:ems="10"
+                        android:id="@+id/re_enter_password_id"
+                        android:hint="Re-enter password"
+                        android:layout_marginBottom="20dp"
+                        android:textColor="#ffffff"
+                        android:textColorHint="#ffffffff"
+/>
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:ems="10"
+                        android:id="@+id/enter_email_id"
+                        android:hint="Enter e-mail address"
+                        android:layout_marginBottom="30dp"
+                        android:textColor="#ffffff"
+                        android:textColorHint="#ffffffff"
+/>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Create account"
+                        android:id="@+id/button3"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#ffffff"
+                        android:background="#FF9800"
+                        android:onClick="createAccount" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        //ska in i scroll viewn ovanför, får nullpointer i editorn, dock funkar appen
+
+    </LinearLayout>
+</ScrollView>
+
+</LinearLayout>
