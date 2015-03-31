@@ -128,7 +128,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
             List<ADigitalPerson> receiverList = new ArrayList<>();
             receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
             ClientMessage<String> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList, ":D", MessageType.TEXTMESSAGE);
-            SystemUser.getInstance().getUser().sendMessage(message, MessageType.TEXTMESSAGE);
+            SystemUser.getInstance().getUser().sendMessage(message);
             mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
         }
     }

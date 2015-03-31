@@ -30,6 +30,8 @@ public class Conversation {
 
     @Override
     public String toString(){
-        return getParticipants().toString();
+        String participants = getParticipants().toString();
+        participants = participants.substring(1, participants.length()-1); //Remove [].
+        return participants;
     }
 }
