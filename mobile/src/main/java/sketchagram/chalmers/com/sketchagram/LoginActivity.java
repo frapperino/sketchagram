@@ -54,25 +54,16 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         fragmentManager.beginTransaction().add(R.id.fragment_frame, new LoginFragment()).commit();
     }
 
-    /**
-     * Starts register fragment.
-     * @param view
-     */
-    public void register(View view){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_frame, registrationFragment);
-        ft.addToBackStack(null);
-        ft.commit();
-    }
+
 
     /**
      * Attempts to create a new account using the server.
      * @param view
      */
     public void createAccount(View view) {
-        String mUserName = ((EditText) findViewById(R.id.user_name)).getText().toString();
-        String mPassword = ((EditText) findViewById(R.id.choose_password)).getText().toString();
-        String mReEnterPassword = ((EditText) findViewById(R.id.re_enter_password)).getText().toString();
+        String mUserName = ((EditText) findViewById(R.id.enter_username_id)).getText().toString();
+        String mPassword = ((EditText) findViewById(R.id.choose_password_id)).getText().toString();
+        String mReEnterPassword = ((EditText) findViewById(R.id.re_enter_password_id)).getText().toString();
         if(!mPassword.equals(mReEnterPassword)) {
             Toast toast = Toast.makeText(getApplicationContext(), "Passwords does not match.", Toast.LENGTH_SHORT);
             toast.show();
@@ -96,9 +87,9 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
-        ((EditText) findViewById(R.id.user_name)).setText("");
-        ((EditText) findViewById(R.id.choose_password)).setText("");
-        ((EditText) findViewById(R.id.re_enter_password)).setText("");
+        ((EditText) findViewById(R.id.username_id)).setText("");
+        ((EditText) findViewById(R.id.choose_password_id)).setText("");
+        ((EditText) findViewById(R.id.re_enter_password_id)).setText("");
     }
 
     /**
@@ -108,9 +99,9 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
      */
     public void attemptLogin(View view) {
         // Set up the login form.
-        AutoCompleteTextView mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        AutoCompleteTextView mEmailView = (AutoCompleteTextView) findViewById(R.id.username_id);
 
-        EditText mPasswordView = (EditText) findViewById(R.id.password);
+        EditText mPasswordView = (EditText) findViewById(R.id.password_id);
 
         SharedPreferences prefs = getSharedPreferences(FILENAME, 0);
         SharedPreferences.Editor editor = prefs.edit();
@@ -135,6 +126,10 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void scrollToLoc(View view){
+        view.scrollTo(10,10);
     }
 }
 

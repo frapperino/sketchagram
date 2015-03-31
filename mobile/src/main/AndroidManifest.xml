@@ -26,7 +26,9 @@
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:noHistory="true"
-            android:excludeFromRecents="true">
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +38,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:noHistory="false">
+            android:noHistory="false"
+            android:screenOrientation="portrait">
+
         </activity>
         <service
             android:name="sketchagram.chalmers.com.network.Connection"
