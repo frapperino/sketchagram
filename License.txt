@@ -1,5 +1,0 @@
-This is the work of Alexander Härenstam, Olliver Mattsson, Magnus Huttu, Alexander Jaballah, Fredrik Holmdahl and Danny Lam.
-
-The code may not be used in any way without acknowledgement from the original authors.
-
-2015-03-30
