@@ -22,7 +22,9 @@ public final class DataContract {
         public static final String TABLE_NAME = "messages";
         public static final String COLUMN_NAME_MESSAGE_ID = "messageid";
         public static final String COLUMN_NAME_CONTACT_USERNAME = "contactusername";
-        public static final String COLUMN_NAME_MESSAGE = "message";
+        public static final String COLUMN_NAME_CONTENT = "content";
+        public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+        public static final String COLUMN_NAME_TYPE = "type";
     }
 
     public static abstract class ConversationTable implements BaseColumns {

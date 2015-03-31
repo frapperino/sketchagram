@@ -20,8 +20,8 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 
 public class DBHelper extends SQLiteOpenHelper{
-    private static DBHelper instance;
-    private HashMap hp;
+
+    private static final int DATABASE_VERSION = 2;
 
     private static final String CREATE_TABLE = "CREATE TABLE ";
     private static final String COMMA = ", ";
@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String REFERENCES = "REFERENCES";
     private static final String TEXT = " TEXT ";
     private static final String INTEGER = "INTEGER ";
+    private static final String AUTO_INCREMENT = "AUTO_INCREMENT ";
     private static final String DATABASE_NAME ="Sketchagram.db";
 
     private static final String  CONTACT_TABLE_CREATE = CREATE_TABLE + ContactTable.TABLE_NAME +" (" +
@@ -38,8 +39,10 @@ public class DBHelper extends SQLiteOpenHelper{
             ContactTable.COLUMN_NAME_CONTACT_EMAIL + TEXT + ") ";
 
     private static final String MESSAGE_TABLE_CREATE = CREATE_TABLE + MessagesTable.TABLE_NAME + " (" +
-            MessagesTable.COLUMN_NAME_MESSAGE_ID + INTEGER + PRIMARY_KEY + COMMA +
-            MessagesTable.COLUMN_NAME_MESSAGE + TEXT + COMMA +
+            MessagesTable.COLUMN_NAME_MESSAGE_ID + INTEGER + PRIMARY_KEY + AUTO_INCREMENT + COMMA +
+            MessagesTable.COLUMN_NAME_CONTENT + TEXT + COMMA +
+            MessagesTable.COLUMN_NAME_TIMESTAMP + INTEGER + COMMA +
+            MessagesTable.COLUMN_NAME_TYPE + TEXT + COMMA +
             MessagesTable.COLUMN_NAME_CONTACT_USERNAME + TEXT + COMMA +
             FOREIGN_KEY + "( " + MessagesTable.COLUMN_NAME_CONTACT_USERNAME + " ) " + REFERENCES + ContactTable.TABLE_NAME + "( " + ContactTable.COLUMN_NAME_CONTACT_USERNAME + "))";
 
