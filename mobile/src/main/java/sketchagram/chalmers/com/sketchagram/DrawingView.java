@@ -1,17 +1,20 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.List;
@@ -110,15 +113,19 @@ public class DrawingView extends View {
         helper.startMeasuring();
         helper.setAccessed();
         DrawingEvent drawingEvent = null;
+        WindowManager wm = (WindowManager) MyApplication.getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX(), event.getY(), DrawMotionEvents.ACTION_DOWN);
+                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_DOWN);
                 break;
             case MotionEvent.ACTION_MOVE:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX(), event.getY(), DrawMotionEvents.ACTION_MOVE);
+                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_MOVE);
                 break;
             case MotionEvent.ACTION_UP:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX(), event.getY(), DrawMotionEvents.ACTION_UP);
+                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_UP);
                 break;
         }
         if(drawingEvent != null) {
@@ -134,10 +141,15 @@ public class DrawingView extends View {
      * @param event
      */
     public boolean handleMotionEvent(DrawingEvent event) {
-
+        WindowManager wm = (WindowManager) MyApplication.getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
         //Retrieve the X and Y positions of the user touch:
-        float touchX = event.getX();
-        float touchY = event.getY();
+        float percentX = event.getX();
+        float percentY = event.getY();
+        float touchX = size.x*percentX;
+        float touchY = size.y*percentY;
 
         //The MotionEvent parameter to the onTouchEvent method will
         // let us respond to particular touch events.
