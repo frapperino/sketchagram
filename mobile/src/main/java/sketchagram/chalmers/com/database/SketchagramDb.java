@@ -17,6 +17,7 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.database.DataContract.*;
+import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.DrawingEvent;
 import sketchagram.chalmers.com.model.MessageType;
@@ -36,6 +37,8 @@ public class SketchagramDb {
     private static final String AND = " AND ";
     private static final String QUESTION_MARK = " ? ";
     private static final String OR = " OR ";
+    private static final String SELECT = "SELECT ";
+    private static final String IN = " IN ";
     private SQLiteDatabase db;
     private DBHelper dbh;
 
@@ -100,7 +103,7 @@ public class SketchagramDb {
         ContentValues contentValues = new ContentValues();
         ADigitalPerson receiver = (ADigitalPerson)message.getReceivers().get(0);
         contentValues.put(MessagesTable.COLUMN_NAME_SENDER, message.getSender().getUsername());
-        contentValues.put(MessagesTable.COLUMN_NAME_RECEIVER, receiver.getUsername());
+        contentValues.put(MessagesTable.COLUMN_NAME_CONVERSATION_ID, receiver.getUsername());
         contentValues.put(MessagesTable.COLUMN_NAME_TIMESTAMP, message.getTimestamp());
         contentValues.put(MessagesTable.COLUMN_NAME_TYPE, message.getType().toString());
         contentValues.put(MessagesTable.COLUMN_NAME_CONTENT, new Gson().toJson(message.getContent()));
@@ -108,12 +111,71 @@ public class SketchagramDb {
         return true;
     }
 
-    public Integer deleteMessage (long timestamp, String sender, String receiver)
+    public Integer deleteMessage (ClientMessage message)
     {
         return db.delete(MessagesTable.TABLE_NAME,
-                (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + QUESTION_MARK + AND + MessagesTable.COLUMN_NAME_SENDER + EQUALS + QUESTION_MARK + AND +
-                MessagesTable.COLUMN_NAME_RECEIVER + EQUALS + QUESTION_MARK),
-                new String[] { String.valueOf(timestamp), sender, receiver });
+                (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + QUESTION_MARK + AND + MessagesTable.COLUMN_NAME_SENDER + EQUALS + QUESTION_MARK ),
+                new String[] { String.valueOf(message.getTimestamp()), message.getSender().getUsername() });
+    }
+
+    private boolean insertConversation(List<ADigitalPerson> participants){
+        int i = maxValue(ConversationTable.TABLE_NAME, ConversationTable.COLUMN_NAME_PARTICIPANT);
+        for(ADigitalPerson person : participants){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ConversationTable.COLUMN_NAME_CONVERSATION_ID, i);
+            contentValues.put(ConversationTable.COLUMN_NAME_PARTICIPANT, person.getUsername());
+            db.insert(ConversationTable.TABLE_NAME, null, contentValues);
+        }
+        return true;
+
+
+    }
+
+    private int getConversation(List<ADigitalPerson> participants) {
+        String query = SELECT + ConversationTable.COLUMN_NAME_CONVERSATION_ID + FROM + ConversationTable.TABLE_NAME +
+                WHERE + ConversationTable.COLUMN_NAME_CONVERSATION_ID + IN + " (";
+        boolean first = true;
+        String[] queryParticipants = new String[participants.size()];
+        int i = 0;
+        for(ADigitalPerson participant : participants) {
+            if (first) {
+                query += SELECT + ConversationTable.COLUMN_NAME_CONVERSATION_ID + FROM + ConversationTable.TABLE_NAME +
+                        WHERE + ConversationTable.COLUMN_NAME_PARTICIPANT + EQUALS + QUESTION_MARK + " ) ";
+                first = false;
+            }else {
+                query += AND + " (" + SELECT + ConversationTable.COLUMN_NAME_CONVERSATION_ID + FROM + ConversationTable.TABLE_NAME +
+                        WHERE + ConversationTable.COLUMN_NAME_PARTICIPANT + EQUALS + QUESTION_MARK + " ) ";
+            }
+            queryParticipants[i] = participant.getUsername();
+            i++;
+
+        }
+        Cursor cur = db.rawQuery(query,  queryParticipants);
+        cur.moveToFirst();
+        return cur.getInt(cur.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_CONVERSATION_ID));
+
+    }
+
+
+    private List<Conversation> getAllConversations(){
+        ArrayList<ClientMessage> conversations = new ArrayList();
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + ConversationTable.TABLE_NAME, null);
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+                Conversation conv = new Conversation()
+
+
+            }
+            res.moveToNext();
+        }
+        return messages;
+    }
+
+    private int maxValue(String table, String column) {
+        Cursor cur = db.rawQuery("SELECT MAX(" + column + ") " + FROM + table, null);
+        cur.moveToFirst();
+        int max = cur.getInt(cur.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_CONVERSATION_ID));
+        return max;
     }
 
 
