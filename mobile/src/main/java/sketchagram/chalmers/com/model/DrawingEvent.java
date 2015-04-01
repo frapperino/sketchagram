@@ -11,7 +11,6 @@ public class DrawingEvent {
     private float x;
     private float y;
     private DrawMotionEvents action;
-    private MotionEvent motionEvent;
     private long time;
 
     public DrawingEvent(long time, float x, float y, DrawMotionEvents action) {

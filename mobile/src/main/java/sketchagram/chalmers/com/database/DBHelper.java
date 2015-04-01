@@ -30,8 +30,6 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String REFERENCES = "REFERENCES ";
     private static final String TEXT = " TEXT ";
     private static final String INTEGER = " INTEGER ";
-    private static final String BLOB = " BLOB ";
-    private static final String AUTO_INCREMENT = "AUTO_INCREMENT ";
     private static final String DATABASE_NAME ="Sketchagram.db";
 
     private static final String  CONTACT_TABLE_CREATE = CREATE_TABLE + ContactTable.TABLE_NAME +" (" +
@@ -78,18 +76,6 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public void dropTable (SQLiteDatabase db, String tbn){
         db.execSQL("DROP TABLE IF EXISTS " + tbn);
-    }
-
-
-    public Cursor getData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts where id="+id+"", null );
-        return res;
-    }
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, ContactTable.TABLE_NAME);
-        return numRows;
     }
 
 }
