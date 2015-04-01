@@ -45,6 +45,7 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -300,17 +301,24 @@ public class Connection extends Service implements IConnection{
 
     public void sendMessage(ClientMessage clientMessage) {
         org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message();
+        NetworkMessage networkMessage = null;
+        Gson gson = new Gson();
         switch (clientMessage.getType()){
             case TEXTMESSAGE:
-                NetworkMessage<String> networkMessage = new NetworkMessage<>();
-                networkMessage.convertToNetworkMessage(clientMessage);
-                message.setLanguage(clientMessage.getType().toString());
-                Gson gson = new Gson();
-                String object = gson.toJson(networkMessage);
-                message.setBody(object);
-                sendMessageToContacts(networkMessage, message);
-
+                networkMessage = new NetworkMessage<String>();
+                break;
+            case DRAWING:
+                networkMessage= new NetworkMessage<Drawing>();
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
+        networkMessage.convertToNetworkMessage(clientMessage);
+        message.setLanguage(clientMessage.getType().toString());
+        String object = gson.toJson(networkMessage);
+        message.setBody(object);
+        sendMessageToContacts(networkMessage, message);
+
 
     }
 
@@ -420,8 +428,13 @@ public class Connection extends Service implements IConnection{
             case TEXTMESSAGE:
                 NetworkMessage<String> networkMessage = gson.fromJson(body, NetworkMessage.class);
                 clientMessage = networkMessage.convertFromNetworkMessage(messageType);
-                System.out.println(clientMessage.getContent());
-                return clientMessage;
+                break;
+            case DRAWING:
+                NetworkMessage<Drawing> drawingNetworkMessage = gson.fromJson(body, NetworkMessage.class);
+                clientMessage = drawingNetworkMessage.convertFromNetworkMessage(messageType);
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
         return clientMessage;
     }

@@ -15,6 +15,7 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.database.DataContract.*;
+import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -37,7 +38,6 @@ public class SketchagramDb {
 
         try {
             db = dbh.getWritableDatabase();
-            update();
         }catch (SQLiteException e){
             System.out.println(e.getMessage());
 
@@ -101,6 +101,7 @@ public class SketchagramDb {
         contentValues.put(MessagesTable.COLUMN_NAME_RECEIVER, receiver.getUsername());
         contentValues.put(MessagesTable.COLUMN_NAME_TIMESTAMP, message.getTimestamp());
         contentValues.put(MessagesTable.COLUMN_NAME_TYPE, message.getType().toString());
+
         contentValues.put(MessagesTable.COLUMN_NAME_CONTENT, new Gson().toJson(message.getContent()));
         db.insert(MessagesTable.TABLE_NAME, null, contentValues);
         return true;
@@ -131,29 +132,71 @@ public class SketchagramDb {
         }
         return messages;*/
     }
-    public ArrayList<ClientMessage> getAllMessagesFromAContact(Contact contact) {
+
+    public ArrayList<ClientMessage> getAllMessages() {
         ArrayList<ClientMessage> messages = new ArrayList();
-        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_SENDER
-                + EQUALS + "'" + contact.getUsername() + "'", null );
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME, null);
         res.moveToFirst();
         while(res.isAfterLast() == false){
             String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
             String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
             long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
+            String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
+            String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
             Gson gson = new Gson();
             MessageType typeEnum = MessageType.valueOf(type);
             switch(typeEnum) {
                 case TEXTMESSAGE:
                     String decodedContent = gson.fromJson(content, String.class);
-                    List<User> receiver = new ArrayList<>();
-                    receiver.add(SystemUser.getInstance().getUser());
-                    messages.add(new ClientMessage(timestamp, contact, receiver, decodedContent, typeEnum));
+                    List<ADigitalPerson> receivers = new ArrayList<>();
+                    receivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), receivers, decodedContent, typeEnum));
                     break;
                 case EMOTICON:
                     //TODO: decode here
                     break;
-                case PICTURE:
+                case DRAWING:
+                    Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
+                    List<ADigitalPerson> drawingReceivers = new ArrayList<>();
+                    drawingReceivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), drawingReceivers, decodedDrawing, typeEnum));
+                    break;
+
+            }
+            res.moveToNext();
+        }
+        return messages;
+    }
+
+    public ArrayList<ClientMessage> getAllMessagesFromAContact(ADigitalPerson contact) {
+        ArrayList<ClientMessage> messages = new ArrayList();
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_SENDER
+                + EQUALS + "'" + contact.getUsername() + "' OR " + MessagesTable.COLUMN_NAME_RECEIVER +
+                EQUALS + "'" + contact.getUsername() + "'", null );
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+            String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
+            String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
+            long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
+            String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
+            String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
+            Gson gson = new Gson();
+            MessageType typeEnum = MessageType.valueOf(type);
+            switch(typeEnum) {
+                case TEXTMESSAGE:
+                    String decodedContent = gson.fromJson(content, String.class);
+                    List<ADigitalPerson> receivers = new ArrayList<>();
+                    receivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), receivers, decodedContent, typeEnum));
+                    break;
+                case EMOTICON:
                     //TODO: decode here
+                    break;
+                case DRAWING:
+                    Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
+                    List<ADigitalPerson> drawingReceivers = new ArrayList<>();
+                    drawingReceivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), drawingReceivers, decodedDrawing, typeEnum));
                     break;
 
             }

@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -8,8 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.SystemUser;
 
 
 /**
@@ -26,8 +35,22 @@ public class DrawingFragment extends Fragment implements Observer {
 
     private DrawingHelper helper;
 
+    private List<ADigitalPerson> receivers;
+    private Drawing drawing = null;
+
     public DrawingFragment() {
         //android requires empty constructor
+    }
+
+    public static DrawingFragment newInstance(List<ADigitalPerson> receivers){
+        DrawingFragment fragment = new DrawingFragment();
+        fragment.receivers = receivers;
+        return fragment;
+    }
+    public static DrawingFragment newInstance(Drawing drawing){
+        DrawingFragment fragment = new DrawingFragment();
+        fragment.drawing = drawing;
+        return fragment;
     }
 
     @Override
@@ -46,6 +69,9 @@ public class DrawingFragment extends Fragment implements Observer {
         helper = new DrawingHelper();
         drawView.setHelper(helper);
         helper.addObserver(this);
+        if(drawing != null){
+            drawView.displayDrawing(drawing);
+        }
         return view;
     }
 
@@ -68,8 +94,11 @@ public class DrawingFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        drawView.startNew();
-        drawView.displayDrawing(helper.getDrawing());
+        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers, (Drawing)data, MessageType.DRAWING);
+        SystemUser.getInstance().getUser().sendMessage(message);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                .addToBackStack(null).commit();
     }
 
     /**

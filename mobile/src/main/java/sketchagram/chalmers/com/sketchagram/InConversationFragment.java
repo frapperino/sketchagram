@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -23,7 +24,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
 
 
@@ -111,6 +115,12 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
+            ClientMessage message = conversation.getHistory().get(position);
+            if(message.getType() == MessageType.DRAWING){
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance((Drawing)message.getContent()))
+                        .addToBackStack(null).commit();
+            }
         }
     }
 

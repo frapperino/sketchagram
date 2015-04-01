@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -118,6 +119,8 @@ public class DrawingView extends View {
      * @param event
      */
     public boolean handleMotionEvent(MotionEvent event) {
+
+        Log.d("Event", "event is " + event);
         //Retrieve the X and Y positions of the user touch:
         float touchX = event.getX();
         float touchY = event.getY();
@@ -208,6 +211,7 @@ public class DrawingView extends View {
             long timeDeltaInMilli;
             List<DrawingEvent> events = drawing.getMotions();
             DrawingEvent first = events.get(0);
+            String s = "S";
             handler.post(new EventRunnable(first));
             for (int i = 1; i < events.size(); i++) {
                 curr = events.get(i);

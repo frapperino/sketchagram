@@ -25,4 +25,9 @@ public class Drawing {
     public void addMotion(MotionEvent event) {
         events.add(new DrawingEvent(System.nanoTime(), event));
     }
+
+    @Override
+    public String toString(){
+        return "Drawing";
+    }
 }

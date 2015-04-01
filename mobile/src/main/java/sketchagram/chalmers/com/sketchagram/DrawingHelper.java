@@ -31,6 +31,12 @@ public class DrawingHelper extends Observable{
         drawing = new Drawing();
     }
 
+    public DrawingHelper(Drawing drawing) {
+        handler = new Handler();
+        isRunning = false;
+        this.drawing = drawing;
+    }
+
     public void startMeasuring() {
         if(!isRunning) {
             isRunning = true;
@@ -46,7 +52,7 @@ public class DrawingHelper extends Observable{
                                     toast = Toast.makeText(MyApplication.getContext(), "RESETTING DRAWING!", Toast.LENGTH_SHORT);
                                     toast.show();
                                     setChanged();
-                                    notifyObservers();
+                                    notifyObservers(drawing);
                                 }
                             });
                             isRunning = false;

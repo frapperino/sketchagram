@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -123,13 +124,13 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
             List<ADigitalPerson> receiverList = new ArrayList<>();
             receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
-            ClientMessage<String> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList, ":D", MessageType.TEXTMESSAGE);
-            SystemUser.getInstance().getUser().sendMessage(message);
-            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
+                    .addToBackStack(null).commit();
+            // Notify the active callbacks interface (the activity, if the
+            // fragment is attached to one) that an item has been selected.
         }
     }
 

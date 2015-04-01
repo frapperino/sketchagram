@@ -179,7 +179,7 @@ public class MainActivity extends ActionBarActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.action_new_message) {
-            displayFragment(sendFragment);
+            displayFragment(contactSendFragment);
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
