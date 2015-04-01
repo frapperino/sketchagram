@@ -10,6 +10,7 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
@@ -33,6 +34,7 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.xdata.Form;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -416,7 +418,8 @@ public class Connection implements IConnection{
                 clientMessage = networkMessage.convertFromNetworkMessage(messageType);
                 break;
             case DRAWING:
-                NetworkMessage<Drawing> drawingNetworkMessage = gson.fromJson(body, NetworkMessage.class);
+                Type classType = new TypeToken<NetworkMessage<Drawing>>(){}.getType();
+                NetworkMessage<Drawing> drawingNetworkMessage = gson.fromJson(body, classType);
                 clientMessage = drawingNetworkMessage.convertFromNetworkMessage(messageType);
                 break;
             default:

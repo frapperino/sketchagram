@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Alexander on 2015-03-26.
  */
 public class Drawing {
-    List<DrawingEvent> events;
+    List<DrawingEvent> events = new LinkedList<>();
     public Drawing() {
         events = new LinkedList<>();
     }
