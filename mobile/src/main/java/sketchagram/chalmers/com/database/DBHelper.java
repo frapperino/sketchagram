@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String REFERENCES = "REFERENCES ";
     private static final String TEXT = " TEXT ";
     private static final String INTEGER = " INTEGER ";
+    private static final String BLOB = " BLOB ";
     private static final String AUTO_INCREMENT = "AUTO_INCREMENT ";
     private static final String DATABASE_NAME ="Sketchagram.db";
 
@@ -39,7 +40,7 @@ public class DBHelper extends SQLiteOpenHelper{
             ContactTable.COLUMN_NAME_CONTACT_EMAIL + TEXT + ") ";
 
     private static final String MESSAGE_TABLE_CREATE = CREATE_TABLE + MessagesTable.TABLE_NAME + " (" +
-            MessagesTable.COLUMN_NAME_CONTENT + TEXT + COMMA +
+            MessagesTable.COLUMN_NAME_CONTENT + BLOB + COMMA +
             MessagesTable.COLUMN_NAME_TIMESTAMP + INTEGER + COMMA +
             MessagesTable.COLUMN_NAME_TYPE + TEXT + COMMA +
             MessagesTable.COLUMN_NAME_SENDER + TEXT + COMMA +
