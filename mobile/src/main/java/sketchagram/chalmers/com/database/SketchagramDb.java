@@ -3,8 +3,10 @@ package sketchagram.chalmers.com.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.view.MotionEvent;
 
 import com.google.gson.Gson;
 
@@ -16,6 +18,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.database.DataContract.*;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.DrawingEvent;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -100,8 +103,7 @@ public class SketchagramDb {
         contentValues.put(MessagesTable.COLUMN_NAME_RECEIVER, receiver.getUsername());
         contentValues.put(MessagesTable.COLUMN_NAME_TIMESTAMP, message.getTimestamp());
         contentValues.put(MessagesTable.COLUMN_NAME_TYPE, message.getType().toString());
-
-        contentValues.put(MessagesTable.COLUMN_NAME_CONTENT, new Gson().toJson(message.getContent()).getBytes());
+        contentValues.put(MessagesTable.COLUMN_NAME_CONTENT, new Gson().toJson(message.getContent()));
         db.insert(MessagesTable.TABLE_NAME, null, contentValues);
         return true;
     }
@@ -174,17 +176,16 @@ public class SketchagramDb {
                 EQUALS + QUESTION_MARK, new String[] {contact.getUsername(), contact.getUsername()} );
         res.moveToFirst();
         while(res.isAfterLast() == false){
-            byte[] content = res.getBlob(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
+            String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
             String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
             long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
             String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
             String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
-            String jsonContent = new String(content);
             Gson gson = new Gson();
             MessageType typeEnum = MessageType.valueOf(type);
             switch(typeEnum) {
                 case TEXTMESSAGE:
-                    String decodedContent = gson.fromJson(jsonContent, String.class);
+                    String decodedContent = gson.fromJson(content, String.class);
                     List<ADigitalPerson> receivers = new ArrayList<>();
                     receivers.add(new Contact(receiver, new Profile()));
                     messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), receivers, decodedContent, typeEnum));
@@ -193,7 +194,7 @@ public class SketchagramDb {
                     //TODO: decode here
                     break;
                 case DRAWING:
-                    Drawing decodedDrawing = gson.fromJson(jsonContent, Drawing.class);
+                    Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
                     List<ADigitalPerson> drawingReceivers = new ArrayList<>();
                     drawingReceivers.add(new Contact(receiver, new Profile()));
                     messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), drawingReceivers, decodedDrawing, typeEnum));
@@ -203,6 +204,11 @@ public class SketchagramDb {
             res.moveToNext();
         }
         return messages;
+    }
+
+    private int numberOfRows(String tableName){
+        int numRows = (int) DatabaseUtils.queryNumEntries(db, tableName);
+        return numRows;
     }
 
 }

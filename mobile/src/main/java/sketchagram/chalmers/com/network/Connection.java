@@ -53,7 +53,7 @@ import sketchagram.chalmers.com.model.SystemUser;
 /**
  * Created by Olliver on 15-02-18.
  */
-public class Connection extends Service implements IConnection{
+public class Connection implements IConnection{
     private ConnectionConfiguration config;
     private XMPPTCPConnection connection;
     private AccountManager manager;
@@ -68,21 +68,6 @@ public class Connection extends Service implements IConnection{
 
     public Connection() {
         super();
-    }
-
-    @Override
-    public void onCreate(){
-        init();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
-        return Service.START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
     }
 
     public void init(){
@@ -106,6 +91,7 @@ public class Connection extends Service implements IConnection{
     private void connect() {
         try {
             if(!connection.isConnected()){
+                SASLAuthentication.supportSASLMechanism("PLAIN", 0);
                 connection.connect();
             }
         } catch (SmackException | IOException | XMPPException e) {

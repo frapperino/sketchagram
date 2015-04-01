@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.model;
 
 import android.view.MotionEvent;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class Drawing {
      * Adds a DrawingEvent to the queue by converting the MotionEvent.
      * @param event
      */
-    public void addMotion(MotionEvent event) {
-        events.add(new DrawingEvent(System.nanoTime(), event));
+    public void addMotion(DrawingEvent event) {
+        events.add(event);
     }
 
     @Override

@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;

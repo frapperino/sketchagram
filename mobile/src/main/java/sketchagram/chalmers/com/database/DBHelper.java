@@ -40,7 +40,7 @@ public class DBHelper extends SQLiteOpenHelper{
             ContactTable.COLUMN_NAME_CONTACT_EMAIL + TEXT + ") ";
 
     private static final String MESSAGE_TABLE_CREATE = CREATE_TABLE + MessagesTable.TABLE_NAME + " (" +
-            MessagesTable.COLUMN_NAME_CONTENT + BLOB + COMMA +
+            MessagesTable.COLUMN_NAME_CONTENT + TEXT + COMMA +
             MessagesTable.COLUMN_NAME_TIMESTAMP + INTEGER + COMMA +
             MessagesTable.COLUMN_NAME_TYPE + TEXT + COMMA +
             MessagesTable.COLUMN_NAME_SENDER + TEXT + COMMA +
@@ -48,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper{
             PRIMARY_KEY + "( " + MessagesTable.COLUMN_NAME_TIMESTAMP + COMMA + MessagesTable.COLUMN_NAME_SENDER + COMMA + MessagesTable.COLUMN_NAME_RECEIVER + " ) " + COMMA +
             FOREIGN_KEY + "( " + MessagesTable.COLUMN_NAME_SENDER + " ) " + REFERENCES + ContactTable.TABLE_NAME + "( " + ContactTable.COLUMN_NAME_CONTACT_USERNAME + ") " + COMMA +
             FOREIGN_KEY + "( " + MessagesTable.COLUMN_NAME_RECEIVER + " ) " + REFERENCES + ContactTable.TABLE_NAME + "( " + ContactTable.COLUMN_NAME_CONTACT_USERNAME + "))";
+
 
     public DBHelper(Context context)
     {
@@ -65,11 +66,13 @@ public class DBHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         dropTable(db, MessagesTable.TABLE_NAME);
         dropTable(db, ContactTable.TABLE_NAME);
+
         onCreate(db);
     }
     public void onUpgrade(SQLiteDatabase db) {
         dropTable(db, MessagesTable.TABLE_NAME);
         dropTable(db, ContactTable.TABLE_NAME);
+
         onCreate(db);
     }
 
