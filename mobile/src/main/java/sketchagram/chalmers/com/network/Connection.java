@@ -324,11 +324,19 @@ public class Connection implements IConnection{
         List<String> matchingUsers = null;
         try {
             matchingUsers = searchUser(userName);
+            for(String match : matchingUsers){
+                if(match.equals(userName)){
+                    roster.createEntry(userName+DOMAIN, userName, null);
+                    return true;
+                }
+            }
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
         } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotLoggedInException e) {
             e.printStackTrace();
         }
 
