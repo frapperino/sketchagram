@@ -3,8 +3,10 @@ package sketchagram.chalmers.com.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.view.MotionEvent;
 
 import com.google.gson.Gson;
 
@@ -15,6 +17,8 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.database.DataContract.*;
+import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.DrawingEvent;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -29,6 +33,9 @@ public class SketchagramDb {
     private static final String FROM = " FROM ";
     private static final String SELECT_ALL = "SELECT * ";
     private static final String EQUALS = " = ";
+    private static final String AND = " AND ";
+    private static final String QUESTION_MARK = " ? ";
+    private static final String OR = " OR ";
     private SQLiteDatabase db;
     private DBHelper dbh;
 
@@ -37,7 +44,6 @@ public class SketchagramDb {
 
         try {
             db = dbh.getWritableDatabase();
-            update();
         }catch (SQLiteException e){
             System.out.println(e.getMessage());
 
@@ -57,21 +63,17 @@ public class SketchagramDb {
         return true;
     }
 
-    public Integer deleteContact (String userName)
+    public Integer deleteContact (Contact contact)
     {
         return db.delete(ContactTable.TABLE_NAME,
-                ContactTable.COLUMN_NAME_CONTACT_USERNAME + " = " + userName,
-                new String[] { userName });
+                ContactTable.COLUMN_NAME_CONTACT_USERNAME + EQUALS + QUESTION_MARK,
+                new String[] { contact.getUsername() });
     }
 
-    public boolean updateContact (Integer id, String name, String email )
+    public boolean updateContact (Contact contact )
     {
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("email", email);
-        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_USERNAME, id);
-        db.update(ContactTable.TABLE_NAME, contentValues, "id = ? ", new String[] { Integer.toString(id) } );
+        deleteContact(contact);
+        insertContact(contact);
         return true;
     }
 
@@ -109,9 +111,9 @@ public class SketchagramDb {
     public Integer deleteMessage (long timestamp, String sender, String receiver)
     {
         return db.delete(MessagesTable.TABLE_NAME,
-                (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + timestamp + " AND " + MessagesTable.COLUMN_NAME_SENDER + EQUALS + sender + " AND " +
-                MessagesTable.COLUMN_NAME_RECEIVER + EQUALS + receiver),
-                new String[] { sender });
+                (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + QUESTION_MARK + AND + MessagesTable.COLUMN_NAME_SENDER + EQUALS + QUESTION_MARK + AND +
+                MessagesTable.COLUMN_NAME_RECEIVER + EQUALS + QUESTION_MARK),
+                new String[] { String.valueOf(timestamp), sender, receiver });
     }
 
 
@@ -131,35 +133,82 @@ public class SketchagramDb {
         }
         return messages;*/
     }
-    public ArrayList<ClientMessage> getAllMessagesFromAContact(Contact contact) {
+
+    public ArrayList<ClientMessage> getAllMessages() {
         ArrayList<ClientMessage> messages = new ArrayList();
-        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_SENDER
-                + EQUALS + "'" + contact.getUsername() + "'", null );
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME, null);
         res.moveToFirst();
         while(res.isAfterLast() == false){
             String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
             String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
             long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
+            String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
+            String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
             Gson gson = new Gson();
             MessageType typeEnum = MessageType.valueOf(type);
             switch(typeEnum) {
                 case TEXTMESSAGE:
                     String decodedContent = gson.fromJson(content, String.class);
-                    List<User> receiver = new ArrayList<>();
-                    receiver.add(SystemUser.getInstance().getUser());
-                    messages.add(new ClientMessage(timestamp, contact, receiver, decodedContent, typeEnum));
+                    List<ADigitalPerson> receivers = new ArrayList<>();
+                    receivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), receivers, decodedContent, typeEnum));
                     break;
                 case EMOTICON:
                     //TODO: decode here
                     break;
-                case PICTURE:
-                    //TODO: decode here
+                case DRAWING:
+                    Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
+                    List<ADigitalPerson> drawingReceivers = new ArrayList<>();
+                    drawingReceivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), drawingReceivers, decodedDrawing, typeEnum));
                     break;
 
             }
             res.moveToNext();
         }
         return messages;
+    }
+
+    public ArrayList<ClientMessage> getAllMessagesFromAContact(ADigitalPerson contact) {
+        ArrayList<ClientMessage> messages = new ArrayList();
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_SENDER
+                + EQUALS + QUESTION_MARK + OR + MessagesTable.COLUMN_NAME_RECEIVER +
+                EQUALS + QUESTION_MARK, new String[] {contact.getUsername(), contact.getUsername()} );
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+            String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
+            String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
+            long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
+            String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
+            String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
+            Gson gson = new Gson();
+            MessageType typeEnum = MessageType.valueOf(type);
+            switch(typeEnum) {
+                case TEXTMESSAGE:
+                    String decodedContent = gson.fromJson(content, String.class);
+                    List<ADigitalPerson> receivers = new ArrayList<>();
+                    receivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), receivers, decodedContent, typeEnum));
+                    break;
+                case EMOTICON:
+                    //TODO: decode here
+                    break;
+                case DRAWING:
+                    Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
+                    List<ADigitalPerson> drawingReceivers = new ArrayList<>();
+                    drawingReceivers.add(new Contact(receiver, new Profile()));
+                    messages.add(new ClientMessage(timestamp, new Contact(sender, new Profile()), drawingReceivers, decodedDrawing, typeEnum));
+                    break;
+
+            }
+            res.moveToNext();
+        }
+        return messages;
+    }
+
+    private int numberOfRows(String tableName){
+        int numRows = (int) DatabaseUtils.queryNumEntries(db, tableName);
+        return numRows;
     }
 
 }

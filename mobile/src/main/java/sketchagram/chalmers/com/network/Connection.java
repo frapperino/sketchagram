@@ -10,6 +10,7 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
@@ -33,6 +34,7 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.xdata.Form;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,6 +47,7 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
@@ -52,7 +55,7 @@ import sketchagram.chalmers.com.model.SystemUser;
 /**
  * Created by Olliver on 15-02-18.
  */
-public class Connection extends Service implements IConnection{
+public class Connection implements IConnection{
     private ConnectionConfiguration config;
     private XMPPTCPConnection connection;
     private AccountManager manager;
@@ -67,21 +70,6 @@ public class Connection extends Service implements IConnection{
 
     public Connection() {
         super();
-    }
-
-    @Override
-    public void onCreate(){
-        init();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
-        return Service.START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
     }
 
     public void init(){
@@ -105,6 +93,7 @@ public class Connection extends Service implements IConnection{
     private void connect() {
         try {
             if(!connection.isConnected()){
+                SASLAuthentication.supportSASLMechanism("PLAIN", 0);
                 connection.connect();
             }
         } catch (SmackException | IOException | XMPPException e) {
@@ -300,17 +289,24 @@ public class Connection extends Service implements IConnection{
 
     public void sendMessage(ClientMessage clientMessage) {
         org.jivesoftware.smack.packet.Message message = new org.jivesoftware.smack.packet.Message();
+        NetworkMessage networkMessage = null;
+        Gson gson = new Gson();
         switch (clientMessage.getType()){
             case TEXTMESSAGE:
-                NetworkMessage<String> networkMessage = new NetworkMessage<>();
-                networkMessage.convertToNetworkMessage(clientMessage);
-                message.setLanguage(clientMessage.getType().toString());
-                Gson gson = new Gson();
-                String object = gson.toJson(networkMessage);
-                message.setBody(object);
-                sendMessageToContacts(networkMessage, message);
-
+                networkMessage = new NetworkMessage<String>();
+                break;
+            case DRAWING:
+                networkMessage= new NetworkMessage<Drawing>();
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
+        networkMessage.convertToNetworkMessage(clientMessage);
+        message.setLanguage(clientMessage.getType().toString());
+        String object = gson.toJson(networkMessage);
+        message.setBody(object);
+        sendMessageToContacts(networkMessage, message);
+
 
     }
 
@@ -328,11 +324,19 @@ public class Connection extends Service implements IConnection{
         List<String> matchingUsers = null;
         try {
             matchingUsers = searchUser(userName);
+            for(String match : matchingUsers){
+                if(match.equals(userName)){
+                    roster.createEntry(userName+DOMAIN, userName, null);
+                    return true;
+                }
+            }
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
         } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotLoggedInException e) {
             e.printStackTrace();
         }
 
@@ -420,8 +424,14 @@ public class Connection extends Service implements IConnection{
             case TEXTMESSAGE:
                 NetworkMessage<String> networkMessage = gson.fromJson(body, NetworkMessage.class);
                 clientMessage = networkMessage.convertFromNetworkMessage(messageType);
-                System.out.println(clientMessage.getContent());
-                return clientMessage;
+                break;
+            case DRAWING:
+                Type classType = new TypeToken<NetworkMessage<Drawing>>(){}.getType();
+                NetworkMessage<Drawing> drawingNetworkMessage = gson.fromJson(body, classType);
+                clientMessage = drawingNetworkMessage.convertFromNetworkMessage(messageType);
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
         return clientMessage;
     }

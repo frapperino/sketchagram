@@ -8,6 +8,7 @@ import java.util.Set;
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
 
@@ -77,8 +78,10 @@ public class NetworkMessage<T> {
 
         switch (type){
             case TEXTMESSAGE:
-                ClientMessage<String> clientMessage = new ClientMessage<String>(getTimestamp(), sender, personReceivers, (String)getContent(), MessageType.TEXTMESSAGE);
-                return clientMessage;
+                return new ClientMessage<String>(getTimestamp(), sender, personReceivers, (String)getContent(), MessageType.TEXTMESSAGE);
+            case DRAWING:
+                return new ClientMessage<Drawing>(getTimestamp(),sender, personReceivers, (Drawing)getContent(), MessageType.DRAWING);
+
 
         }
         return null;

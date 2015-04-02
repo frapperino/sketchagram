@@ -30,7 +30,6 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String REFERENCES = "REFERENCES ";
     private static final String TEXT = " TEXT ";
     private static final String INTEGER = " INTEGER ";
-    private static final String AUTO_INCREMENT = "AUTO_INCREMENT ";
     private static final String DATABASE_NAME ="Sketchagram.db";
 
     private static final String  CONTACT_TABLE_CREATE = CREATE_TABLE + ContactTable.TABLE_NAME +" (" +
@@ -48,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper{
             FOREIGN_KEY + "( " + MessagesTable.COLUMN_NAME_SENDER + " ) " + REFERENCES + ContactTable.TABLE_NAME + "( " + ContactTable.COLUMN_NAME_CONTACT_USERNAME + ") " + COMMA +
             FOREIGN_KEY + "( " + MessagesTable.COLUMN_NAME_RECEIVER + " ) " + REFERENCES + ContactTable.TABLE_NAME + "( " + ContactTable.COLUMN_NAME_CONTACT_USERNAME + "))";
 
+
     public DBHelper(Context context)
     {
         super(context, DATABASE_NAME, null, 1);
@@ -64,28 +64,18 @@ public class DBHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         dropTable(db, MessagesTable.TABLE_NAME);
         dropTable(db, ContactTable.TABLE_NAME);
+
         onCreate(db);
     }
     public void onUpgrade(SQLiteDatabase db) {
         dropTable(db, MessagesTable.TABLE_NAME);
         dropTable(db, ContactTable.TABLE_NAME);
+
         onCreate(db);
     }
 
     public void dropTable (SQLiteDatabase db, String tbn){
         db.execSQL("DROP TABLE IF EXISTS " + tbn);
-    }
-
-
-    public Cursor getData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts where id="+id+"", null );
-        return res;
-    }
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, ContactTable.TABLE_NAME);
-        return numRows;
     }
 
 }

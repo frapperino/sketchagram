@@ -39,11 +39,10 @@ public class SystemUser {
 
     public boolean login(String userName, String password) {
         if(this.connection.login(userName,password)){
-            setUser(new User(userName, new Profile()));
             for ( Contact user : connection.getContacts()){
                 boolean exists = false;
                 for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
-                    if(contact.getUsername().equals(user)){
+                    if(contact.getUsername().equals(user.getUsername())){
                         exists = true;
                         break;
                     }
@@ -52,6 +51,7 @@ public class SystemUser {
                     MyApplication.getInstance().getDatabase().insertContact(user);
                 }
             }
+            setUser(new User(userName, new Profile()));
 
             return true;
         }

@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -93,7 +95,6 @@ public class User extends ADigitalPerson  {
      * @param clientMessage The message to be sent contains receivers
      */
     public void sendMessage(ClientMessage clientMessage){
-        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
         boolean exist = false;
         Conversation conversation = null;
         conversation = conversationExists(clientMessage.getReceivers());
@@ -146,8 +147,8 @@ public class User extends ADigitalPerson  {
      * @return
      */
     private Conversation conversationExists(List<ADigitalPerson> receivers){
-        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
-        for(Conversation c : conversationList){
+        List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
+        for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {
                 for(ADigitalPerson receiver : receivers){
