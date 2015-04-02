@@ -53,7 +53,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_stub);
+        setContentView(R.layout.activity_listview_stub);
 
         dataMap = new DataMap();
         contactSync = new ContactSync();

@@ -49,7 +49,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_stub);
+        setContentView(R.layout.activity_listview_stub);
 
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
