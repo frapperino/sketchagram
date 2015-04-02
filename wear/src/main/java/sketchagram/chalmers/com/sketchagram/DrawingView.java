@@ -40,8 +40,6 @@ public class DrawingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
-    private Drawing finDraw;
-
     private boolean drawingFinished;
 
     //Tracking last time a drawing action was made.
@@ -49,7 +47,6 @@ public class DrawingView extends View {
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        finDraw = new Drawing();
         drawingFinished = false;
         setupDrawing();
     }
@@ -114,7 +111,7 @@ public class DrawingView extends View {
         helper.startMeasuring();
         helper.setAccessed();
         DrawingEvent drawingEvent = null;
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) findViewById(R.id.drawing).getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -142,9 +139,15 @@ public class DrawingView extends View {
      * @param event
      */
     public boolean handleMotionEvent(DrawingEvent event) {
+        WindowManager wm = (WindowManager) findViewById(R.id.drawing).getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
         //Retrieve the X and Y positions of the user touch:
-        float touchX = event.getX();
-        float touchY = event.getY();
+        float percentX = event.getX();
+        float percentY = event.getY();
+        float touchX = size.x*percentX;
+        float touchY = size.y*percentY;
 
         //The MotionEvent parameter to the onTouchEvent method will
         // let us respond to particular touch events.
@@ -194,7 +197,6 @@ public class DrawingView extends View {
         //http://java.dzone.com/articles/how-schedule-task-run-interval
         CountdownTask task = new CountdownTask(drawing);
         task.execute();
-        finDraw = drawing;
         drawingFinished = true;
         //TODO: Animations that make the drawing seem alive.
     }
@@ -242,10 +244,6 @@ public class DrawingView extends View {
             }
             return null;
         }
-    }
-
-    public Drawing getFinDraw() {
-        return finDraw;
     }
 
     public boolean isDrawingFinished() {
