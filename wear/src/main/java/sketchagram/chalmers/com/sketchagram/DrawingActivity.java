@@ -43,6 +43,7 @@ public class DrawingActivity extends Activity implements Observer,
 
     private DataMap dataMap;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +107,9 @@ public class DrawingActivity extends Activity implements Observer,
     public void update(Observable observable, Object data) {
         drawView.startNew();
         drawView.displayDrawing(helper.getDrawing());
+        if(drawView.isDrawingFinished()) {
+            messagePhone("drawing", drawView.getFinDraw().putToDataMap(dataMap).toByteArray());
+        }
     }
 
 

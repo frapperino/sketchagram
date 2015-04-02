@@ -360,6 +360,8 @@ public class MainActivity extends ActionBarActivity
         } else if(messageEvent.getPath().contains("username")) {
             dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
             sendToWatch("username", dataMap.toByteArray());
+        } else if(messageEvent.getPath().contains("drawing")) {
+
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }

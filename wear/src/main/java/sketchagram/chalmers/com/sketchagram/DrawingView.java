@@ -37,11 +37,17 @@ public class DrawingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
+    private Drawing finDraw;
+
+    private boolean drawingFinished;
+
     //Tracking last time a drawing action was made.
     DrawingHelper helper;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        finDraw = new Drawing();
+        drawingFinished = false;
         setupDrawing();
     }
 
@@ -167,6 +173,8 @@ public class DrawingView extends View {
         //http://java.dzone.com/articles/how-schedule-task-run-interval
         CountdownTask task = new CountdownTask(drawing);
         task.execute();
+        finDraw = drawing;
+        drawingFinished = true;
         //TODO: Animations that make the drawing seem alive.
     }
 
@@ -213,5 +221,13 @@ public class DrawingView extends View {
             }
             return null;
         }
+    }
+
+    public Drawing getFinDraw() {
+        return finDraw;
+    }
+
+    public boolean isDrawingFinished() {
+        return drawingFinished;
     }
 }
