@@ -1,8 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,16 +8,14 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.wearable.view.WearableListView;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -29,29 +25,36 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MainActivity extends Activity implements
-        View.OnClickListener,
+
+public class DrawingActivity extends Activity implements Observer,
         MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks, WearableListView.ClickListener {
+        GoogleApiClient.ConnectionCallbacks  {
 
 
-    private TextView mTextView;
+    private DrawingView drawView;
+
+
     private GoogleApiClient mGoogleApiClient;
-    private final String TAG = "SKETCHAGRAM";
-    public View btn;
-    private Node peerNode;
-    public static final String KEY_REPLY = "reply";
-    private static final int SAMPLE_NOTIFICATION_ID = 0;
+    private DrawingHelper helper;
+
     private DataMap dataMap;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_drawing);
 
-        btn = findViewById(R.id.messageButton);
+        //Get view that is displayed in the Activity on which we can call
+        //the methods in the DrawingView class.
+        drawView = (DrawingView) findViewById(R.id.drawing);
+        helper = new DrawingHelper();
+        drawView.setHelper(helper);
+        helper.addObserver(this);
+
 
 
         //  Is needed for communication between the wearable and the device.
@@ -60,109 +63,55 @@ public class MainActivity extends Activity implements
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(ConnectionResult result) {
-                        Log.d(TAG, "onConnectionFailed: " + result);
+                        Log.d("WATCH", "onConnectionFailed: " + result);
                     }
                 })
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
 
-        dataMap = new DataMap();
 
-        messagePhone("username", null);
+        dataMap = new DataMap();
 
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+    }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_drawing, menu);
+        return true;
     }
 
     @Override
-    public void onClick(WearableListView.ViewHolder viewHolder) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    }
-
-    @Override
-    public void onTopEmptyRegionClick() {
-
-    }
-
-
-    public class MessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //What to do if a message is received
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        Log.v(TAG, "connected to Google Play Services on Wear!");
-        Wearable.MessageApi.addListener(mGoogleApiClient, this).setResultCallback(resultCallback);
-    }
-
-
-    /**
-     * Not needed, but here to show capabilities. This callback occurs after the MessageApi
-     * listener is added to the Google API Client.
-     */
-    private ResultCallback<Status> resultCallback =  new ResultCallback<Status>() {
-        @Override
-        public void onResult(Status status) {
-            Log.v(TAG, "Status: " + status.getStatus().isSuccess());
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    return null;
-                }
-            }.execute();
+    public void update(Observable observable, Object data) {
+        drawView.startNew();
+        drawView.displayDrawing(helper.getDrawing());
+        if(drawView.isDrawingFinished()) {
+            DrawingHolder.getInstance().resetDrawing();
+            DrawingHolder.getInstance().setDrawing(helper.getDrawing());
+            Intent intent = new Intent(this, ContactListActivity.class);
+            startActivity(intent);
         }
-    };
-
-    public void sendDrawing(View view) {
-        Log.e("WATCH", "Trying to send a message");
-        Intent intent = new Intent(this, DrawingActivity.class);
-        startActivity(intent);
-    }
-
-    public void sendMessage(View view) {
-        Log.e("WATCH", "Trying to send a message");
-        Intent intent = new Intent(this, ContactListActivity.class);
-        startActivity(intent);
-    }
-
-    public void showConversations(View view) {
-        Log.e("WATCH", "Showing conversations");
-        Intent intent = new Intent(this, ConversationListActivity.class);
-        startActivity(intent);
-    }
-
-    /** Post a new or updated notification using the selected notification options. */
-    private void updateNotification(int presetIndex) {
-        NotificationPreset preset = NotificationPresets.PRESETS[presetIndex];
-        Notification notif = preset.buildNotification(this);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .notify(SAMPLE_NOTIFICATION_ID, notif);
-        finish();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        dataMap = DataMap.fromByteArray(messageEvent.getData());
-        Log.e("WATCH","username = " + dataMap.getString("username"));
-        getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        Log.e("WATCH", "trying to send a message");
     }
 
 
@@ -191,7 +140,7 @@ public class MainActivity extends Activity implements
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
-                            message,
+                            message.toString(),
                             byteMap
                     );
 
@@ -218,5 +167,30 @@ public class MainActivity extends Activity implements
         return nodes;
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        if(messageEvent.getPath().contains("sendTo")) {
+            Intent intent = new Intent(this, ContactListActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
+    public class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //What to do if a message is received
+        }
+    }
 
 }
