@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -17,9 +18,11 @@ public class Drawing {
     List<DrawingEvent> events;
     List<Float> xs = new ArrayList<>();
     List<Float> ys = new ArrayList<>();
+    int eventCount;
 
     public Drawing() {
         events = new LinkedList<>();
+        eventCount = events.size();
     }
 
     public Drawing(DataMap data) {
@@ -46,7 +49,10 @@ public class Drawing {
      * @param event
      */
     public void addMotion(MotionEvent event) {
+        
         events.add(new DrawingEvent(System.nanoTime(), event));
+        eventCount = events.size();
+        Log.e("events", "events: " + eventCount + "  xs: " + xs.size());
     }
 
     public DataMap putToDataMap(DataMap data) {
