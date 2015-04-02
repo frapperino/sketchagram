@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -108,7 +107,10 @@ public class DrawingActivity extends Activity implements Observer,
         drawView.startNew();
         drawView.displayDrawing(helper.getDrawing());
         if(drawView.isDrawingFinished()) {
-            messagePhone("drawing", drawView.getFinDraw().putToDataMap(dataMap).toByteArray());
+            DrawingHolder.getInstance().resetDrawing();
+            DrawingHolder.getInstance().setDrawing(helper.getDrawing());
+            Intent intent = new Intent(this, ContactListActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -177,7 +179,10 @@ public class DrawingActivity extends Activity implements Observer,
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-
+        if(messageEvent.getPath().contains("sendTo")) {
+            Intent intent = new Intent(this, ContactListActivity.class);
+            startActivity(intent);
+        }
     }
 
 

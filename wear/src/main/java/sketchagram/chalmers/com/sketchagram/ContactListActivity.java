@@ -37,16 +37,17 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvancedListActivity extends Activity implements WearableListView.ClickListener,
+public class ContactListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
 
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
-    private ArrayList<String> receivers;
     private DataMap dataMap;
-    private ContactSync contactSync;
+    private ContactSync contacts;
+    private ContactSync receivers;
+
     private ArrayList<String> choices;
 
     @Override
@@ -56,7 +57,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         setContentView(R.layout.activity_listview_stub);
 
         dataMap = new DataMap();
-        contactSync = new ContactSync();
+        contacts = new ContactSync();
         choices = new ArrayList<>();
 
 
@@ -65,7 +66,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                receivers = new ArrayList<>();
+                receivers = new ContactSync();
                 messagePhone("contacts", null);
                 loadAdapter();
 
@@ -92,11 +93,15 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
 
+    /**
+     * Loads the adapter which holds all the items in the list, call this method if
+     * the adapter should be updated.
+     */
     private void loadAdapter(){
-        choices = contactSync.getContactChoices();
+        choices = contacts.getContactChoices();
         mAdapter = new MyListAdapter(this, choices);
         mListView.setAdapter(mAdapter);
-        mListView.setClickListener(AdvancedListActivity.this);
+        mListView.setClickListener(ContactListActivity.this);
     }
 
 
@@ -142,6 +147,10 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     }
 
+    /**
+     * Gets the nodes to which the wear device is connected to.
+     * @return
+     */
     private List<Node> getNodes() {
         List<Node> nodes = new ArrayList<Node>();
         NodeApi.GetConnectedNodesResult rawNodes =
@@ -153,26 +162,35 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     }
 
 
+    /**
+     * When the device has been touched it calls this method.
+     * Depending on what has been selected this does different things.
+     * When the send alternative has been selected then everything is saved
+     * into a DataMap which is then sent to the phone in bytes.
+     * If a name has been clicked, then the name will be added to receivers.
+     * @param viewHolder
+     */
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == choices.size()-2){
-            dataMap.putStringArrayList("RECEIVERS", receivers);
-            messagePhone("messageTo", dataMap.toByteArray());
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else if (viewHolder.getPosition() == choices.size()-1) {
-            messagePhone("massmessageTo", dataMap.toByteArray());
+        if(viewHolder.getPosition() == choices.size()-1){
+            receivers.putToDataMap(dataMap);
+            Drawing drawing = DrawingHolder.getInstance().getDrawing();
+            if(drawing != null) {
+                drawing.putToDataMap(dataMap);
+                messagePhone("drawing", dataMap.toByteArray());
+            } else {
+                messagePhone("messageTo", dataMap.toByteArray());
+            }
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
-            receivers.add(choices.get(viewHolder.getPosition()));
+            receivers.addContact(choices.get(viewHolder.getPosition()));
         }
         Log.e("contacts", viewHolder.getPosition() + " : " + choices.size());
     }
 
     @Override
     public void onTopEmptyRegionClick() {
-        Toast.makeText(this, "You tapped Top empty area", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -204,10 +222,17 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     }
 
+    /**
+     * Messages from the phone are received here.
+     * The phone is called earlier to send contacts to the
+     * wear-device, when the phone has sent back all the
+     * contacts then the adapter has to be notified and reloaded.
+     * @param messageEvent
+     */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         dataMap = DataMap.fromByteArray(messageEvent.getData());
-        contactSync = new ContactSync(dataMap);
+        contacts = new ContactSync(dataMap);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -228,7 +253,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         }
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            return new WearableListView.ViewHolder(new MyItemView(AdvancedListActivity.this));
+            return new WearableListView.ViewHolder(new MyItemView(ContactListActivity.this));
         }
 
         @Override
@@ -238,7 +263,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i >= items.size()-2) {
+            if(i >= items.size()-1) {
                 txt.setBackgroundColor(Color.GREEN);
                 txt.setTextColor(Color.BLACK);
             }

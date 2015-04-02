@@ -344,7 +344,7 @@ public class MainActivity extends ActionBarActivity
         if(messageEvent.getPath().contains("contacts")) {
             ContactsSync cs = new ContactsSync(SystemUser.getInstance().getUser().getContactList());
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
-        } else if(messageEvent.getPath().contains("massmessageTo")) {
+        } else if(messageEvent.getPath().contains("messageTo")) {
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
             for(Contact c : cs.getContacts()) {
                 List<ADigitalPerson> ls = new ArrayList<>();
@@ -361,7 +361,11 @@ public class MainActivity extends ActionBarActivity
             dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
             sendToWatch("username", dataMap.toByteArray());
         } else if(messageEvent.getPath().contains("drawing")) {
-
+            Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
+            ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
+            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
+                    cs.getContacts(), drawing, MessageType.DRAWING);
+            SystemUser.getInstance().getUser().sendMessage(cm);
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }

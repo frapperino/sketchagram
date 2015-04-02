@@ -16,70 +16,64 @@ import java.util.List;
  */
 public class Drawing {
     List<DrawingEvent> events;
-    List<Float> xs = new ArrayList<>();
-    List<Float> ys = new ArrayList<>();
-    int eventCount;
 
     public Drawing() {
         events = new LinkedList<>();
-        eventCount = events.size();
     }
 
     public Drawing(DataMap data) {
 
+        events = new LinkedList<>();
+
         float[] yf = data.getFloatArray("y-coordinates");
-        for(float f : yf) {
-            ys.add(f);
-        }
-
         float[] xf = data.getFloatArray("x-coordinates");
-        for(float f : xf) {
-            xs.add(f);
+        long[] times = data.getLongArray("drawing-times");
+        List<String> actions = data.getStringArrayList("actions");
+
+        int i = 0;
+        for(float f : yf) {
+            events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions.get(i))));
         }
-
-
 
     }
     public List<DrawingEvent> getMotions() {
         return events;
     }
 
+
     /**
      * Adds a DrawingEvent to the queue by converting the MotionEvent.
      * @param event
      */
-    public void addMotion(MotionEvent event) {
-        
-        events.add(new DrawingEvent(System.nanoTime(), event));
-        eventCount = events.size();
-        Log.e("events", "events: " + eventCount + "  xs: " + xs.size());
+    public void addMotion(DrawingEvent event) {
+        events.add(event);
     }
 
+
     public DataMap putToDataMap(DataMap data) {
-        data.remove("DRAWING");
-        for(DrawingEvent de : events) {
-            xs.add(de.getMotionEvent().getRawX());
-            ys.add(de.getMotionEvent().getRawY());
-        }
-        Log.e("Coords", xs.toString());
-        Log.e("Coords", ys.toString());
+        data.remove("y-coordinates");
+        data.remove("x-coordinates");
+        data.remove("drawing-times");
+        data.remove("actions");
 
-        float[] xf = new float[xs.size()];
+        long[] times = new long[events.size()];
+        float[] xf = new float[events.size()];
+        float[] yf = new float[events.size()];
+        String[] actions = new String[events.size()];
+
         int i = 0;
-        for(float f : xs) {
-            xf[i] = f;
-            i++;
-        }
-
-        float[] yf = new float[ys.size()];
-        i = 0;
-        for(float f : ys) {
-            yf[i] = f;
+        for(DrawingEvent de : events) {
+            xf[i] = de.getX();
+            yf[i] = de.getY();
+            times[i] = de.getTime();
+            actions[i] = de.getAction().toString();
             i++;
         }
 
         data.putFloatArray("x-coordinates", xf);
         data.putFloatArray("y-coordinates", yf);
+        data.putLongArray("drawing-times", times);
+        data.putStringArray("actions", actions);
         return data;
     }
 }

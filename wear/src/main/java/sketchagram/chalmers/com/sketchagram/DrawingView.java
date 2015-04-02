@@ -5,12 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.List;
 
@@ -110,17 +113,35 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         helper.startMeasuring();
         helper.setAccessed();
+        DrawingEvent drawingEvent = null;
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_DOWN);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_MOVE);
+                break;
+            case MotionEvent.ACTION_UP:
+                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_UP);
+                break;
+        }
+        if(drawingEvent != null) {
+            helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
 
-        helper.addMotion(MotionEvent.obtain(event));    //Must use a copy since android recycles.
-
-        return handleMotionEvent(event);
+            return handleMotionEvent(drawingEvent);
+        }
+        return false;
     }
 
     /**
      * Takes care of drawing.
      * @param event
      */
-    public boolean handleMotionEvent(MotionEvent event) {
+    public boolean handleMotionEvent(DrawingEvent event) {
         //Retrieve the X and Y positions of the user touch:
         float touchX = event.getX();
         float touchY = event.getY();
@@ -129,13 +150,13 @@ public class DrawingView extends View {
         // let us respond to particular touch events.
         // The actions we are interested in to implement drawing are down, move and up.
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
+            case ACTION_DOWN:
                 drawPath.moveTo(touchX, touchY);
                 break;
-            case MotionEvent.ACTION_MOVE:
+            case ACTION_MOVE:
                 drawPath.lineTo(touchX, touchY);
                 break;
-            case MotionEvent.ACTION_UP:
+            case ACTION_UP:
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
                 break;
@@ -189,7 +210,7 @@ public class DrawingView extends View {
 
         @Override
         public void run() {
-            handleMotionEvent(event.getMotionEvent());
+            handleMotionEvent(event);
         }
     }
 

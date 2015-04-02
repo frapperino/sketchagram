@@ -128,7 +128,7 @@ public class MainActivity extends Activity implements
 
     public void sendMessage(View view) {
         Log.e("WATCH", "Trying to send a message");
-        Intent intent = new Intent(this, AdvancedListActivity.class);
+        Intent intent = new Intent(this, ContactListActivity.class);
         startActivity(intent);
     }
 

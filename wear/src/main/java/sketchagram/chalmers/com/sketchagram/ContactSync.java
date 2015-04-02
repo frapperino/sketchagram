@@ -16,6 +16,10 @@ public class ContactSync {
         contacts = new ArrayList<>();
     }
 
+    /**
+     * Decode contacts from the phone.
+     * @param data
+     */
     public ContactSync(DataMap data) {
         contacts = new ArrayList<>();
         try {
@@ -25,13 +29,25 @@ public class ContactSync {
         }
     }
 
+    /**
+     *
+     * @return the contacts plus a "send" alternative.
+     */
     public ArrayList<String> getContactChoices() {
         ArrayList<String> choices = contacts;
         choices.add("  Send  ");
-        choices.add("Send one to all");
         return choices;
     }
 
+    public void addContact(String name) {
+        contacts.add(name);
+    }
+
+    /**
+     * Puts all the contacts into the following datamap.
+     * @param data
+     * @return
+     */
     public DataMap putToDataMap(DataMap data) {
         data.remove("RECEIVERS");
         data.putStringArrayList("RECEIVERS", contacts);

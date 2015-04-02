@@ -58,7 +58,7 @@ public class DrawingHelper extends Observable{
         lastActionTime = System.nanoTime();
     }
 
-    public void addMotion(MotionEvent event) {
+    public void addMotion(DrawingEvent event) {
         drawing.addMotion(event);
     }
 
