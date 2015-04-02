@@ -24,9 +24,16 @@ public class User extends ADigitalPerson  {
 
     public User(String username, Profile profile) {
         super(username, profile);
-        conversationList = new ArrayList<Conversation>();
-        //TODO: get contacts from database instead of server
-        contactList = SystemUser.getInstance().getConnection().getContacts();
+        conversationList = new ArrayList<>();
+        for(Contact contact : getContactList()) {
+            List<ClientMessage> messageList = MyApplication.getInstance().getDatabase().getAllMessagesFromAContact(contact);
+            if(!messageList.isEmpty()) {
+                List<ADigitalPerson> participants = new ArrayList<>();
+                participants.add(contact);
+                conversationList.add(new Conversation(participants, messageList));
+            }
+        }
+        contactList = MyApplication.getInstance().getDatabase().getAllContacts();
     }
 
     /**
@@ -51,6 +58,8 @@ public class User extends ADigitalPerson  {
      * @return the contactlist
      */
     public List<Contact> getContactList() {
+
+        contactList = MyApplication.getInstance().getDatabase().getAllContacts();
         return contactList;
     }
 
@@ -70,23 +79,11 @@ public class User extends ADigitalPerson  {
      */
     public boolean addContact(String userName){
         boolean success = false;
-        try {
-            success = SystemUser.getInstance().getConnection().addContact(userName);
-            if(success) {
-                contactList.add(new Contact(userName, new Profile()));
-            }
-        } catch (SmackException.NotLoggedInException e) {
-            e.printStackTrace();
-            return false;
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-            return false;
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-            return false;
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-            return false;
+        success = SystemUser.getInstance().getConnection().addContact(userName);
+        if(success) {
+            Contact newContact = new Contact(userName, new Profile());
+            MyApplication.getInstance().getDatabase().insertContact(newContact);
+            contactList.add(newContact);
         }
         return success;
     }
@@ -111,7 +108,9 @@ public class User extends ADigitalPerson  {
         }
 
         SystemUser.getInstance().getConnection().sendMessage(clientMessage);
+        MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         conversation.addMessage(clientMessage);
+        updateObservers(clientMessage);
 
 
     }
@@ -122,10 +121,10 @@ public class User extends ADigitalPerson  {
      * @param clientMessage The message received.
      */
     public void addMessage(ClientMessage clientMessage){
-        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
-        boolean exist = false;
         Conversation conversation = null;
-        conversation = conversationExists(clientMessage.getReceivers());
+        List<ADigitalPerson> sender = new ArrayList<>();
+        sender.add(clientMessage.getSender());
+        conversation = conversationExists(sender);
         if(conversation == null) {
             List<ADigitalPerson> otherParticipants = new ArrayList<>();
             otherParticipants.addAll(clientMessage.getReceivers());
@@ -135,6 +134,7 @@ public class User extends ADigitalPerson  {
             conversation = new Conversation(otherParticipants);
             this.addConversation(conversation);
         }
+        MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         conversation.addMessage(clientMessage);
         updateObservers(clientMessage);
 

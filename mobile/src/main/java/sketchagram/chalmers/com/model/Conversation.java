@@ -15,6 +15,10 @@ public class Conversation {
         history = new ArrayList<ClientMessage>();
         this.otherParticipants = participants;
     }
+    public Conversation(List<ADigitalPerson> participants, List<ClientMessage> oldMessages){
+        history = oldMessages;
+        this.otherParticipants = participants;
+    }
 
     public List<ClientMessage> getHistory() {
         return history;

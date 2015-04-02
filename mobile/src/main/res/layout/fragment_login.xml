@@ -80,6 +80,13 @@
                     android:textStyle="bold"
                     android:onClick="attemptLogin" />
 
+                <TextView
+                    android:layout_width="76dp"
+                    android:layout_height="62dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Test"
+                    android:id="@+id/textView2" />
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

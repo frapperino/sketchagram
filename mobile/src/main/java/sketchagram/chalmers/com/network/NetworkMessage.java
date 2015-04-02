@@ -58,6 +58,9 @@ public class NetworkMessage<T> {
                 if(user.equals(contact.getUsername())){
                     personReceivers.add(contact);
                     break;
+                } else if (user.equals(SystemUser.getInstance().getUser().getUsername())){
+                    personReceivers.add(SystemUser.getInstance().getUser());
+                    break;
                 }
             }
 

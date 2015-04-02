@@ -323,15 +323,19 @@ public class Connection extends Service implements IConnection{
      * @throws SmackException.NotConnectedException
      * @throws SmackException.NoResponseException
      */
-    public boolean addContact(String userName) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
+    public boolean addContact(String userName) {
         Roster roster = connection.getRoster();
-        List<String> matchingUsers = searchUser(userName);
-        for(String user : matchingUsers) {
-            if(userName.equals(user)) {
-                roster.createEntry(userName + DOMAIN, "Username", null);
-                return true;
-            }
+        List<String> matchingUsers = null;
+        try {
+            matchingUsers = searchUser(userName);
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
         }
+
         return false;
     }
 

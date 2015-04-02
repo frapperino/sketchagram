@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.model;
 import android.net.Network;
 
 import sketchagram.chalmers.com.network.*;
+import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Bosch on 20/02/15.
@@ -39,6 +40,19 @@ public class SystemUser {
     public boolean login(String userName, String password) {
         if(this.connection.login(userName,password)){
             setUser(new User(userName, new Profile()));
+            for ( Contact user : connection.getContacts()){
+                boolean exists = false;
+                for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
+                    if(contact.getUsername().equals(user)){
+                        exists = true;
+                        break;
+                    }
+                }
+                if(!exists) {
+                    MyApplication.getInstance().getDatabase().insertContact(user);
+                }
+            }
+
             return true;
         }
         return false;
