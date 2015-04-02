@@ -26,15 +26,15 @@ public class User extends ADigitalPerson  {
 
     public User(String username, Profile profile) {
         super(username, profile);
-        conversationList = new ArrayList<>();
-        for(Contact contact : getContactList()) {
+        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(this);
+        /*for(Contact contact : getContactList()) {
             List<ClientMessage> messageList = MyApplication.getInstance().getDatabase().getAllMessagesFromAContact(contact);
             if(!messageList.isEmpty()) {
                 List<ADigitalPerson> participants = new ArrayList<>();
                 participants.add(contact);
                 conversationList.add(new Conversation(participants, messageList));
             }
-        }
+        }*/
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
     }
 

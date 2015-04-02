@@ -99,8 +99,24 @@ public class SketchagramDb {
         return contacts;
     }
 
+    private Contact getContact(String userName){
+        Cursor res =  db.rawQuery( SELECT_ALL + FROM + ContactTable.TABLE_NAME +
+                WHERE + ContactTable.COLUMN_NAME_CONTACT_USERNAME + EQUALS + QUESTION_MARK
+                , new String[]{userName} );
+        res.moveToFirst();
+        String name = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_NAME));
+        String email = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_EMAIL));
+        String id = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_USERNAME));
+        Profile profile = new Profile();
+        profile.setNickName(email);
+        profile.setName(name);
+        return new Contact(id, profile);
+
+    }
+
     public boolean insertMessage (ClientMessage message) {
         ContentValues contentValues = new ContentValues();
+        //TODO: add conversation too.
         ADigitalPerson receiver = (ADigitalPerson)message.getReceivers().get(0);
         contentValues.put(MessagesTable.COLUMN_NAME_SENDER, message.getSender().getUsername());
         contentValues.put(MessagesTable.COLUMN_NAME_CONVERSATION_ID, receiver.getUsername());
@@ -158,18 +174,70 @@ public class SketchagramDb {
 
 
     private List<Conversation> getAllConversations(){
-        ArrayList<ClientMessage> conversations = new ArrayList();
+        ArrayList<Conversation> conversations = new ArrayList();
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + ConversationTable.TABLE_NAME, null);
+        int current = -1;
         res.moveToFirst();
+        List<ADigitalPerson> participants = new ArrayList<>();
         while(res.isAfterLast() == false){
-                Conversation conv = new Conversation()
-
+            int temp = res.getInt(res.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_CONVERSATION_ID));
+            if(temp != current) {
+                current = temp;
+                participants.add(getContact(res.getString(res.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_PARTICIPANT))));
 
             }
             res.moveToNext();
+            temp = res.getInt(res.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_CONVERSATION_ID));
+            if(temp > current){
+                Cursor cursor = db.rawQuery(SELECT_ALL + FROM + MessagesTable.TABLE_NAME +
+                                WHERE + MessagesTable.COLUMN_NAME_CONVERSATION_ID + EQUALS + QUESTION_MARK,
+                        new String[]{String.valueOf(current)});
+                cursor.moveToFirst();
+                List<ClientMessage> messages = new ArrayList<>();
+                while (!cursor.isAfterLast()) {
+                    String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
+                    String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
+                    long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
+                    String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
+                    Gson gson = new Gson();
+                    MessageType typeEnum = MessageType.valueOf(type);
+                    ADigitalPerson contactSender = getContact(sender);
+                    participants.remove(contactSender);
+                    switch(typeEnum) {
+                        case TEXTMESSAGE:
+                            String decodedContent = gson.fromJson(content, String.class);
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum));
+                            break;
+                        case EMOTICON:
+                            //TODO: decode here
+                            break;
+                        case DRAWING:
+                            Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedDrawing, typeEnum));
+                            break;
+
+                    }
+                    cursor.moveToNext();
+                }
+                conversations.add(new Conversation(participants, messages));
+                participants = new ArrayList<>();
+            }
+
         }
-        return messages;
+        return conversations;
     }
+
+    public List<Conversation> getAllConversations(ADigitalPerson user) {
+        List<Conversation> userConversations = new ArrayList<>();
+        for(Conversation conversation : getAllConversations()){
+            if(conversation.getParticipants().contains(user)){
+                userConversations.add(conversation);
+            }
+        }
+        return userConversations;
+    }
+
+
 
     private int maxValue(String table, String column) {
         Cursor cur = db.rawQuery("SELECT MAX(" + column + ") " + FROM + table, null);
@@ -195,7 +263,7 @@ public class SketchagramDb {
         }
         return messages;*/
     }
-
+/*
     public ArrayList<ClientMessage> getAllMessages() {
         ArrayList<ClientMessage> messages = new ArrayList();
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME, null);
@@ -205,7 +273,6 @@ public class SketchagramDb {
             String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
             long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
             String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
-            String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
             Gson gson = new Gson();
             MessageType typeEnum = MessageType.valueOf(type);
             switch(typeEnum) {
@@ -234,15 +301,13 @@ public class SketchagramDb {
     public ArrayList<ClientMessage> getAllMessagesFromAContact(ADigitalPerson contact) {
         ArrayList<ClientMessage> messages = new ArrayList();
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + MessagesTable.TABLE_NAME + WHERE + MessagesTable.COLUMN_NAME_SENDER
-                + EQUALS + QUESTION_MARK + OR + MessagesTable.COLUMN_NAME_RECEIVER +
-                EQUALS + QUESTION_MARK, new String[] {contact.getUsername(), contact.getUsername()} );
+                + EQUALS + QUESTION_MARK, new String[] {contact.getUsername(), contact.getUsername()} );
         res.moveToFirst();
         while(res.isAfterLast() == false){
             String content = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
             String type = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
             long timestamp = res.getLong(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
             String sender = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
-            String receiver = res.getString(res.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_RECEIVER));
             Gson gson = new Gson();
             MessageType typeEnum = MessageType.valueOf(type);
             switch(typeEnum) {
@@ -267,7 +332,7 @@ public class SketchagramDb {
         }
         return messages;
     }
-
+*/
     private int numberOfRows(String tableName){
         int numRows = (int) DatabaseUtils.queryNumEntries(db, tableName);
         return numRows;

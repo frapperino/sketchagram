@@ -66,7 +66,7 @@ public class Connection implements IConnection{
     private final String GROUP = "Friends";
 
 
-    private final IBinder binder = new Binder();
+    //private final IBinder binder = new Binder();
 
     public Connection() {
         super();
