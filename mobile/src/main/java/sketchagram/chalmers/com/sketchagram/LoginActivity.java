@@ -9,10 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -64,16 +66,15 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         loginFragment = new LoginFragment();
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.fragment_frame, new LoginFragment()).commit();
+        fragmentManager.beginTransaction().add(R.id.fragment_frame, loginFragment).commit();
     }
-
-
 
     /**
      * Attempts to create a new account using the server.
      * @param view
      */
     public void createAccount(View view) {
+        loginFragment.showProgressBar();
         String mUserName = ((EditText) findViewById(R.id.enter_username_id)).getText().toString();
         String mPassword = ((EditText) findViewById(R.id.choose_password_id)).getText().toString();
         String mReEnterPassword = ((EditText) findViewById(R.id.re_enter_password_id)).getText().toString();
@@ -104,6 +105,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         ((EditText) findViewById(R.id.username_id)).setText("");
         ((EditText) findViewById(R.id.choose_password_id)).setText("");
         ((EditText) findViewById(R.id.re_enter_password_id)).setText("");
+        loginFragment.hideProgressBar();
     }
 
     /**
@@ -112,6 +114,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin(View view) {
+        loginFragment.showProgressBar();
         // Set up the login form.
         AutoCompleteTextView mEmailView = (AutoCompleteTextView) findViewById(R.id.username_id);
 
@@ -139,6 +142,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
             Toast toast = Toast.makeText(getApplicationContext(), "Failed to login.", Toast.LENGTH_SHORT);
             toast.show();
         }
+        loginFragment.hideProgressBar();
     }
 
     @Override

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.SignInButton;
@@ -43,6 +44,8 @@ public class LoginFragment extends Fragment {
 
     private View view;
 
+    private ProgressBar spinner;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -57,6 +60,10 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_login_new, container, false);
+
+        //Get reference to progress bar and set it hidden.
+        spinner = (ProgressBar)view.findViewById(R.id.progressBar1);
+        hideProgressBar();
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) view.findViewById(R.id.email);
@@ -110,4 +117,10 @@ public class LoginFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    public void showProgressBar() {
+         spinner.setVisibility(View.VISIBLE);
+    }
+    public void hideProgressBar() {
+        spinner.setVisibility(View.GONE);
+    }
 }
