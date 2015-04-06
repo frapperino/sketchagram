@@ -79,7 +79,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         //Frappe
         gridView = (GridView) view.findViewById(R.id.gridView);
-        gridView.setAdapter(new MyAdapter(getActivity()));
+        gridView.setAdapter(new MyAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList()));
 
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -169,7 +169,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         private List<Item> items = new ArrayList<Item>();
         private LayoutInflater inflater;
 
-        public MyAdapter(Context context)
+        public MyAdapter(Context context, List<Conversation> conversations)
         {
             inflater = LayoutInflater.from(context);
 
