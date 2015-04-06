@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -12,11 +13,14 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -41,7 +45,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      * The fragment's ListView/GridView.
      */
     private AbsListView mListView;
-
+    private GridView gridView;
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
@@ -73,11 +77,19 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         mListView = (AbsListView) view.findViewById(R.id.conversation_list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
+        //Frappe
+        gridView = (GridView) view.findViewById(R.id.gridView);
+        gridView.setAdapter(new MyAdapter(getActivity()));
+
+
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        //gridView.setOnItemClickListener(this);
 
         return view;
     }
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -148,6 +160,90 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+
+    //Frappe
+    private class MyAdapter extends BaseAdapter
+    {
+        private List<Item> items = new ArrayList<Item>();
+        private LayoutInflater inflater;
+
+        public MyAdapter(Context context)
+        {
+            inflater = LayoutInflater.from(context);
+
+            //TODO: hur få getName, getDrawing + timestamp från servern?
+            items.add(new Item("Danny","12:54", R.drawable.danny));
+            items.add(new Item("Alex","14:22", R.drawable.alex));
+            items.add(new Item("Frappe","29 Mar, 2015", R.drawable.frappe));
+            items.add(new Item("Jabbe","1 Feb, 2015", R.drawable.jabbe));
+            items.add(new Item("Olliver","3 Jan, 2015", R.drawable.olliver));
+            items.add(new Item("Huttu", "2014",R.drawable.huttu));
+            items.add(new Item("Fring", "2014",R.drawable.gustavo_fring));
+            items.add(new Item("Glader", "2014",R.drawable.happyface));
+            items.add(new Item("Arger?", "2013",R.drawable.madface));
+        }
+
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        @Override
+        public Object getItem(int i)
+        {
+            return items.get(i);
+        }
+
+        @Override
+        public long getItemId(int i)
+        {
+            return items.get(i).drawableId;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup)
+        {
+            View v = view;
+            ImageView picture;
+            TextView name;
+            TextView time;
+
+            if(v == null)
+            {
+                v = inflater.inflate(R.layout.fragment_conversation_item, viewGroup, false);
+                v.setTag(R.id.text2, v.findViewById(R.id.text2));
+                v.setTag(R.id.picture, v.findViewById(R.id.picture));
+                v.setTag(R.id.text, v.findViewById(R.id.text));
+            }
+
+            picture = (ImageView)v.getTag(R.id.picture);
+            name = (TextView)v.getTag(R.id.text);
+            time = (TextView)v.getTag(R.id.text2);
+
+            Item item = (Item)getItem(i);
+
+            picture.setImageResource(item.drawableId);
+            name.setText(item.name);
+            time.setText(item.time);
+
+            return v;
+        }
+
+        private class Item
+        {
+            final String time;
+            final String name;
+            final int drawableId;
+
+            Item(String name, String time, int drawableId)
+            {
+                this.time = time;
+                this.name = name;
+                this.drawableId = drawableId;
+            }
+        }
     }
 
 }
