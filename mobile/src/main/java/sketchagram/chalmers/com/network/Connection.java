@@ -192,8 +192,13 @@ public class Connection implements IConnection{
                             @Override
                             public void chatCreated(Chat chat, boolean b) {
                                 if(!b){
-                                    chatList.add(chat);
-                                    chat.addMessageListener(messageListener);
+                                    if(!chatList.contains(chat)) {
+                                        chatList.add(chat);
+                                    }
+                                    Chat c = chatList.get(chatList.indexOf(chat));
+                                    c.addMessageListener(messageListener);
+
+
                                 }
                             }
                         });
@@ -263,7 +268,7 @@ public class Connection implements IConnection{
 
     @Override
     public void createGroupConversation(List<ADigitalPerson> recipients, String name) {
-        MultiUserChat muc = null;
+        /*MultiUserChat muc = null;
         if(name.isEmpty()){
             String newName = SystemUser.getInstance().getUser().getUsername() + ", ";
             for(ADigitalPerson recipient: recipients){
@@ -283,7 +288,7 @@ public class Connection implements IConnection{
             }
         }
         Conversation c = new Conversation(recipients);
-        SystemUser.getInstance().getUser().addConversation(c);
+        SystemUser.getInstance().getUser().addConversation(c);*/
 
     }
 
