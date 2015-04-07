@@ -182,6 +182,7 @@ public class MainActivity extends ActionBarActivity
             prefs.clear();
             prefs.apply();
             SystemUser.getInstance().logout();
+            MyApplication.getInstance().getDatabase().update();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
