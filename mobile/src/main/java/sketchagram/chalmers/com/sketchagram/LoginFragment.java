@@ -32,16 +32,6 @@ import sketchagram.chalmers.com.model.SystemUser;
 public class LoginFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
-    // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mEmailLoginFormView;
-    private SignInButton mPlusSignInButton;
-    private View mSignOutButtons;
-    private View mLoginFormView;
-    private final String FILENAME = "user";
-
     private View view;
 
     private ProgressBar spinner;
@@ -64,17 +54,6 @@ public class LoginFragment extends Fragment {
         //Get reference to progress bar and set it hidden.
         spinner = (ProgressBar)view.findViewById(R.id.progressBar1);
         hideProgressBar();
-
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) view.findViewById(R.id.email);
-
-        mPasswordView = (EditText) view.findViewById(R.id.password);
-
-        mLoginFormView = view.findViewById(R.id.login_form);
-        mProgressView = view.findViewById(R.id.login_progress);
-        mEmailLoginFormView = view.findViewById(R.id.email_login_form);
-        mSignOutButtons = view.findViewById(R.id.plus_sign_out_buttons);
-
         return view;
     }
 
