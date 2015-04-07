@@ -45,7 +45,7 @@ public class DrawingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
-    private boolean isTouchable;
+    private boolean isTouchable = true;
 
     //Tracking last time a drawing action was made.
     DrawingHelper helper;
@@ -53,6 +53,10 @@ public class DrawingView extends View {
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
+    }
+
+    public void setTouchable(boolean isTouchable) {
+        this.isTouchable = isTouchable;
     }
 
     /**
@@ -199,10 +203,6 @@ public class DrawingView extends View {
      * @param drawing
      */
     public void displayDrawing(Drawing drawing) {
-        //TODO: Draw at certain time intervals
-        //http://stackoverflow.com/questions/4544197/how-do-i-schedule-a-task-to-run-at-periodic-intervals
-        //Create new thread which sleeps if necessary and sends calls to main GUI thread.
-        //http://java.dzone.com/articles/how-schedule-task-run-interval
         CountdownTask task = new CountdownTask(drawing);
         task.execute();
         //TODO: Animations that make the drawing seem alive.
@@ -244,6 +244,7 @@ public class DrawingView extends View {
             List<DrawingEvent> events = drawing.getMotions();
             DrawingEvent first = events.get(0);
             String s = "S";
+
             handler.post(new EventRunnable(first));
             for (int i = 1; i < events.size(); i++) {
                 curr = events.get(i);

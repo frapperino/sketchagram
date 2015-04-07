@@ -72,6 +72,7 @@ public class DrawingFragment extends Fragment implements Observer {
         helper.addObserver(this);
         if(drawing != null){
             drawView.displayDrawing(drawing);
+            drawView.setTouchable(false);
         }
         return view;
     }
