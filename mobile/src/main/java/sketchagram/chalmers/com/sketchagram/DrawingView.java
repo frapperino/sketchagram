@@ -45,6 +45,8 @@ public class DrawingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
+    private boolean isTouchable;
+
     //Tracking last time a drawing action was made.
     DrawingHelper helper;
 
@@ -110,30 +112,34 @@ public class DrawingView extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        helper.startMeasuring();
-        helper.setAccessed();
-        DrawingEvent drawingEvent = null;
-        WindowManager wm = (WindowManager) MyApplication.getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_DOWN);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_MOVE);
-                break;
-            case MotionEvent.ACTION_UP:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_UP);
-                break;
-        }
-        if(drawingEvent != null) {
-            helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
+        if(isTouchable) {
+            helper.startMeasuring();
+            helper.setAccessed();
+            DrawingEvent drawingEvent = null;
+            WindowManager wm = (WindowManager) MyApplication.getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_DOWN);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_MOVE);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_UP);
+                    break;
+            }
+            if(drawingEvent != null) {
+                helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
 
-            return handleMotionEvent(drawingEvent);
+                return handleMotionEvent(drawingEvent);
+            }
+            return false;
+        } else {
+            return super.onTouchEvent(event);   //does nothing.
         }
-        return false;
     }
 
     /**

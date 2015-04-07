@@ -47,6 +47,7 @@ public class DrawingFragment extends Fragment implements Observer {
         fragment.receivers = receivers;
         return fragment;
     }
+
     public static DrawingFragment newInstance(Drawing drawing){
         DrawingFragment fragment = new DrawingFragment();
         fragment.drawing = drawing;
