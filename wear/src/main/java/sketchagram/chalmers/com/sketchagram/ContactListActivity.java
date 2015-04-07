@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -36,22 +37,28 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvancedListActivity extends Activity implements WearableListView.ClickListener,
+public class ContactListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
 
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
-    private List<String> contactChoices;
-    private List<String> receivers;
-    private final List<String> MSGTAG = new ArrayList<>();
+    private DataMap dataMap;
+    private ContactSync contacts;
+    private ContactSync receivers;
+
+    private ArrayList<String> choices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_stub);
+        setContentView(R.layout.activity_listview_stub);
+
+        dataMap = new DataMap();
+        contacts = new ContactSync();
+        choices = new ArrayList<>();
 
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -59,10 +66,8 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                contactChoices = new ArrayList<>();
-                receivers = new ArrayList<>();
-                MSGTAG.add("contacts");
-                messagePhone(MSGTAG);
+                receivers = new ContactSync();
+                messagePhone("contacts", null);
                 loadAdapter();
 
             }
@@ -88,11 +93,15 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
 
+    /**
+     * Loads the adapter which holds all the items in the list, call this method if
+     * the adapter should be updated.
+     */
     private void loadAdapter(){
-        Log.e("ADAPTER", contactChoices.toString());
-        mAdapter = new MyListAdapter(this, contactChoices);
+        choices = contacts.getContactChoices();
+        mAdapter = new MyListAdapter(this, choices);
         mListView.setAdapter(mAdapter);
-        mListView.setClickListener(AdvancedListActivity.this);
+        mListView.setClickListener(ContactListActivity.this);
     }
 
 
@@ -104,7 +113,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void messagePhone(final List<String> message){
+    private void messagePhone(final String message, final byte[] byteMap){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -122,7 +131,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
                             mGoogleApiClient,
                             node.getId(),
                             message.toString(),
-                            null
+                            byteMap
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
@@ -138,6 +147,10 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     }
 
+    /**
+     * Gets the nodes to which the wear device is connected to.
+     * @return
+     */
     private List<Node> getNodes() {
         List<Node> nodes = new ArrayList<Node>();
         NodeApi.GetConnectedNodesResult rawNodes =
@@ -149,25 +162,35 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
     }
 
 
+    /**
+     * When the device has been touched it calls this method.
+     * Depending on what has been selected this does different things.
+     * When the send alternative has been selected then everything is saved
+     * into a DataMap which is then sent to the phone in bytes.
+     * If a name has been clicked, then the name will be added to receivers.
+     * @param viewHolder
+     */
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == contactChoices.size()-2){
-            messagePhone(receivers);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else if (viewHolder.getPosition() == contactChoices.size()-1) {
-            receivers.add("massmessage");
-            messagePhone(receivers);
+        if(viewHolder.getPosition() == choices.size()-1){
+            receivers.putToDataMap(dataMap);
+            Drawing drawing = DrawingHolder.getInstance().getDrawing();
+            if(drawing != null) {
+                drawing.putToDataMap(dataMap);
+                messagePhone("drawing", dataMap.toByteArray());
+            } else {
+                messagePhone("messageTo", dataMap.toByteArray());
+            }
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
-            receivers.add(contactChoices.get(viewHolder.getPosition()));
+            receivers.addContact(choices.get(viewHolder.getPosition()));
         }
+        Log.e("contacts", viewHolder.getPosition() + " : " + choices.size());
     }
 
     @Override
     public void onTopEmptyRegionClick() {
-        Toast.makeText(this, "You tapped Top empty area", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -199,30 +222,24 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
     }
 
+    /**
+     * Messages from the phone are received here.
+     * The phone is called earlier to send contacts to the
+     * wear-device, when the phone has sent back all the
+     * contacts then the adapter has to be notified and reloaded.
+     * @param messageEvent
+     */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        String s = messageEvent.getPath();
-        contactChoices.clear();
-        for(String contact : s.split(" ")) {
-            if(contact.contains("[") ){
-                contact = contact.substring(1,contact.length()-1);
-            } else if(contact.contains("]")){
-                contact = contact.substring(0,contact.length()-1);
-            } else {
-                contact = contact.substring(0,contact.length()-1);
-            }
-            contactChoices.add(contact);
-
-        }
-        contactChoices.add("  Send  ");
-        contactChoices.add("  Send MassMSG  ");
+        dataMap = DataMap.fromByteArray(messageEvent.getData());
+        contacts = new ContactSync(dataMap);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mAdapter.notifyDataSetChanged();
+                loadAdapter();
             }
         });
-        Log.e("WATCH", contactChoices.toString());
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
@@ -236,7 +253,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
         }
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            return new WearableListView.ViewHolder(new MyItemView(AdvancedListActivity.this));
+            return new WearableListView.ViewHolder(new MyItemView(ContactListActivity.this));
         }
 
         @Override
@@ -246,7 +263,7 @@ public class AdvancedListActivity extends Activity implements WearableListView.C
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i == items.size()-1) {
+            if(i >= items.size()-1) {
                 txt.setBackgroundColor(Color.GREEN);
                 txt.setTextColor(Color.BLACK);
             }
