@@ -11,7 +11,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
             android:layout_height="match_parent"
             android:id="@+id/scrollView"
             android:layout_gravity="center_vertical"
-            android:background="#80000000"
+            android:background="#59000000"
             android:focusable="false"
             android:nestedScrollingEnabled="false">
 
