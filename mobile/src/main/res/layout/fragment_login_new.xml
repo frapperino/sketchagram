@@ -243,8 +243,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                         </LinearLayout>
                     </LinearLayout>
                 </ScrollView>
-                //ska in i scroll viewn ovanför, får nullpointer i editorn, dock funkar appen
-
+                <!-- ska in i scroll viewn ovanför, får nullpointer i editorn, dock funkar appen -->
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
