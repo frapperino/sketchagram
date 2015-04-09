@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="sketchagram.chalmers.com.sketchagram">
+    package="sketchagram.chalmers.com.sketchagram"
+    process = "sketchagram.chalmers.com.sketchagramprocess">
+
 
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -41,6 +43,9 @@
             android:noHistory="false"
             android:screenOrientation="portrait">
         </activity>
+        <service android:name="sketchagram.chalmers.com.network.NetworkService"
+            android:enabled="true"
+            android:process = "sketchagram.chalmers.com.sketchagramprocess"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
@@ -81,7 +82,7 @@ public class User extends ADigitalPerson  {
      */
     public boolean addContact(String userName){
         boolean success = false;
-        success = SystemUser.getInstance().getConnection().addContact(userName);
+        success = Connection.getInstance().addContact(userName);
         if(success) {
             Contact newContact = new Contact(userName, new Profile());
             MyApplication.getInstance().getDatabase().insertContact(newContact);
@@ -97,18 +98,19 @@ public class User extends ADigitalPerson  {
     public void sendMessage(ClientMessage clientMessage){
         boolean exist = true;
         Conversation conversation = null;
-        conversation = conversationExists(clientMessage.getReceivers());
         List<ADigitalPerson> participants = new ArrayList<>();
+        participants.addAll(clientMessage.getReceivers());
+        participants.add(clientMessage.getSender());
+
+        conversation = conversationExists(participants);
         if(conversation == null){
             exist = false;
-            participants.addAll(clientMessage.getReceivers());
-            participants.add(clientMessage.getSender());
         }
 
 
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
-            SystemUser.getInstance().getConnection().sendMessage(clientMessage);
+            Connection.getInstance().sendMessage(clientMessage);
             if(!exist) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
@@ -151,16 +153,16 @@ public class User extends ADigitalPerson  {
 
     /**
      * Checks if the receiver list matches the specified conversation
-     * @param receivers
+     * @param participants
      * @return
      */
-    private Conversation conversationExists(List<ADigitalPerson> receivers){
+    private Conversation conversationExists(List<ADigitalPerson> participants){
         List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
         for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {
                 boolean participantexists = false;
-                for(ADigitalPerson receiver : receivers){
+                for(ADigitalPerson receiver : participants){
                     if(participant.equals(receiver)){
                         participantexists = true;
                         break;

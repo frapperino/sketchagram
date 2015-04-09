@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.network;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Network;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -51,6 +52,7 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Olliver on 15-02-18.
@@ -64,17 +66,29 @@ public class Connection implements IConnection{
     private final String HOST = "129.16.23.202";
     private final String DOMAIN = "@sketchagram";
     private final String GROUP = "Friends";
+    private static Connection myInstance;
+    private static boolean loggedIn;
 
 
     //private final IBinder binder = new Binder();
 
-    public Connection() {
+    private Connection() {
         super();
+        init();
     }
 
-    public void init(){
+    public static Connection getInstance(){
+        if(myInstance == null){
+            myInstance = new Connection();
+        }
+
+        return myInstance;
+
+    }
+    private void init(){
         //SmackAndroid.init()
         config = new ConnectionConfiguration(HOST, 5222);
+        config.setReconnectionAllowed(true);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         chatList = new ArrayList<>();
@@ -88,6 +102,7 @@ public class Connection implements IConnection{
         connect();
         Roster roster = connection.getRoster();
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
+
     }
 
     private void connect() {
@@ -138,7 +153,7 @@ public class Connection implements IConnection{
         presence.setMode(Presence.Mode.away);
         if(connection.isConnected()){
             disconnect(presence);
-            init();
+            loggedIn = false;
         }
 
     }
@@ -182,6 +197,7 @@ public class Connection implements IConnection{
     }
 
     public boolean login(final String userName, final String password){
+        if(loggedIn){return true;}
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params){
@@ -263,7 +279,14 @@ public class Connection implements IConnection{
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        if(success){
+            loggedIn = true;
+        }
         return success;
+    }
+
+    public static boolean isLoggedIn(){
+        return loggedIn;
     }
 
     @Override
