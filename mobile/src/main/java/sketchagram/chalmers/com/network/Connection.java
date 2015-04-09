@@ -63,7 +63,7 @@ public class Connection implements IConnection{
     private AccountManager manager;
     private List<Chat> chatList;
     private List<MultiUserChat> groupChatList;
-    private final String HOST = "129.16.23.202";
+    private final String HOST = "sketchagram.ollivermattsson.se";
     private final String DOMAIN = "@sketchagram";
     private final String GROUP = "Friends";
     private static Connection myInstance;

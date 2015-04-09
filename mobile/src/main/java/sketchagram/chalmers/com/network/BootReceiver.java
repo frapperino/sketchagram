@@ -14,6 +14,8 @@ public class BootReceiver extends BroadcastReceiver{
         if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
             context.startService(new Intent(context, NetworkService.class));
             Log.d("RECEIVER", "SERVICE STARTED");
+        }else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)){
+            context.stopService(new Intent(context, NetworkService.class));
         }
     }
 }
