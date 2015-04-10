@@ -117,7 +117,6 @@ public class MainActivity extends ActionBarActivity
         mHandler = new Handler(this);
 
         fragmentManager = getFragmentManager();
-        displayFragment(conversationFragment);
 
         /*
          * Navigation drawer
@@ -139,8 +138,11 @@ public class MainActivity extends ActionBarActivity
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        if(bundle != null) {
+        if(bundle != null) {    //Notification passed a conversationId.
             inConversationFragment = InConversationFragment.newInstance(bundle.getInt("ConversationId"));
+            displayFragment(inConversationFragment);
+        } else {    //Normal startup
+            displayFragment(conversationFragment);
         }
      }
 
@@ -210,7 +212,8 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onFragmentInteraction(int conversationId) {
-        displayFragment(InConversationFragment.newInstance(conversationId));
+        inConversationFragment = InConversationFragment.newInstance(conversationId);
+        displayFragment(inConversationFragment);
     }
 
     /**

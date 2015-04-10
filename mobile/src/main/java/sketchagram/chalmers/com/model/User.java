@@ -132,13 +132,10 @@ public class User extends ADigitalPerson  {
             conversation.addMessage(clientMessage);
             updateObservers(clientMessage);
         }
-
-
     }
 
     /**
      * Adds a message that was received from the server to the proper conversation.
-     *
      * @param clientMessage The message received.
      * @return The conversation which the message was appended to.
      */
