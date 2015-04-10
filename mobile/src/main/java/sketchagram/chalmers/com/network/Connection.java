@@ -191,8 +191,8 @@ public class Connection implements IConnection{
                         getChatManager().addChatListener(new ChatManagerListener() {
                             @Override
                             public void chatCreated(Chat chat, boolean b) {
-                                if(!b){
-                                    if(!chatList.contains(chat)) {
+                                if (!b) {
+                                    if (!chatList.contains(chat)) {
                                         chatList.add(chat);
                                     }
                                     Chat c = chatList.get(chatList.indexOf(chat));
@@ -372,6 +372,24 @@ public class Connection implements IConnection{
 
     public boolean isConnected(){
         return connection.isConnected();
+    }
+
+    @Override
+    public boolean changePassword(String password) {
+        manager = AccountManager.getInstance(connection);
+        try {
+            manager.changePassword(password);
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     /**
