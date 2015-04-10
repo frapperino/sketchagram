@@ -37,6 +37,8 @@ public class NotificationHandler {
                         .setContentTitle(message.getSender().getUsername())
                         .setContentText(message.getContent().toString());  //TODO: Display message content.
 
+        mBuilder.setAutoCancel(true);
+
         mBuilder.setLights(Color.MAGENTA, 500, 500);
 
         // Creates an explicit intent for an Activity in your app
