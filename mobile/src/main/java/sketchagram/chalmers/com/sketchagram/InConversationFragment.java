@@ -2,14 +2,8 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +11,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
-import android.widget.TextView;
-
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
@@ -42,7 +30,8 @@ import sketchagram.chalmers.com.model.SystemUser;
  */
 public class InConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
     private OnFragmentInteractionListener mListener;
-    private Conversation conversation;
+
+    private static final String PARAM1 = "conversation ID";
 
     /**
      * The fragment's ListView/GridView.
@@ -55,6 +44,9 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
      */
     private ListAdapter mAdapter;
 
+    private int conversationId;
+    private Conversation conversation;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -62,19 +54,23 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
     public InConversationFragment() {
     }
 
+    public static InConversationFragment newInstance(int param1) {
+        InConversationFragment fragment = new InConversationFragment();
+        Bundle args = new Bundle();
+        args.putInt(PARAM1, param1);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        String participants = getActivity().getSharedPreferences("Participants", 0).getString("Participants", "");
-        conversation = null;
-        for(Conversation c : SystemUser.getInstance().getUser().getConversationList()){
-            if(c.getParticipants().toString().equals(participants))
-                conversation = c;
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            conversationId = bundle.getInt(PARAM1);
+            conversation = SystemUser.getInstance().getUser().getConversation(conversationId);
+            mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
         }
-        if(conversation == null)
-            conversation = SystemUser.getInstance().getUser().getConversationList().get(0);
-        mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
     }
 
     @Override
@@ -145,7 +141,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(int conversationId);
     }
 
 }

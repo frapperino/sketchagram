@@ -107,7 +107,6 @@ public class User extends ADigitalPerson  {
             exist = false;
         }
 
-
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
             Connection.getInstance().sendMessage(clientMessage);
@@ -126,9 +125,10 @@ public class User extends ADigitalPerson  {
      * Adds a message that was received from the server to the proper conversation.
      *
      * @param clientMessage The message received.
+     * @return The conversation which the message was appended to.
      */
-    public void addMessage(ClientMessage clientMessage){
-        Conversation conversation = null;
+    public Conversation addMessage(ClientMessage clientMessage){
+        Conversation conversation;
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
@@ -148,7 +148,7 @@ public class User extends ADigitalPerson  {
             conversation.addMessage(clientMessage);
             updateObservers(clientMessage);
         }
-
+        return conversation;
     }
 
     /**
@@ -192,4 +192,17 @@ public class User extends ADigitalPerson  {
         handler.post(runnable);
     }
 
+    /**
+     * Retrieve a conversation with a requested id.
+     * @param conversationId Id of the conversation.
+     * @return The conversation with the corresponding id. Otherwise null.
+     */
+    public Conversation getConversation(int conversationId) {
+        for(Conversation c: conversationList) {
+            if(c.getConversationId() == conversationId) {
+                return c;
+            }
+        }
+        return null;
+    }
 }

@@ -334,8 +334,6 @@ public class Connection implements IConnection{
         String object = gson.toJson(networkMessage);
         message.setBody(object);
         sendMessageToContacts(networkMessage, message);
-
-
     }
 
     /**
@@ -441,9 +439,9 @@ public class Connection implements IConnection{
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
             ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
-            SystemUser.getInstance().getUser().addMessage(clientMessage);
+            Conversation conversation = SystemUser.getInstance().getUser().addMessage(clientMessage);
             NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
-            notificationHandler.pushNewMessageNotification(clientMessage);
+            notificationHandler.pushNewMessageNotification(conversation, clientMessage);
         }
     };
 

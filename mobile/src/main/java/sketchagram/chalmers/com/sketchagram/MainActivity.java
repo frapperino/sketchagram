@@ -85,7 +85,6 @@ public class MainActivity extends ActionBarActivity
         sendFragment = new SendFragment();
         contactSendFragment = new ContactSendFragment();
         conversationFragment = new ConversationFragment();
-        inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         drawingFragment = new DrawingFragment();
 
@@ -138,6 +137,37 @@ public class MainActivity extends ActionBarActivity
 
         //Set observer
         SystemUser.getInstance().getUser().addObserver(this);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(bundle != null) {
+            inConversationFragment = InConversationFragment.newInstance(bundle.getInt("ConversationId"));
+        }
+        /*try{
+            String action = intent.getAction().toUpperCase();
+
+            if(action != null){
+                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_friend))){
+                    goFrag(getResources().getInteger(R.integer.FRAG_A_INT));
+                }
+                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_article))){
+                    goFrag(getResources().getInteger(R.integer.FRAG_B_INT));
+                }
+                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_points))){
+                    goFrag(getResources().getInteger(R.integer.FRAG_C_INT));
+                }
+                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_redeemable))){
+                    goFrag(getResources().getInteger(R.integer.FRAG_D_INT));
+                }
+                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_dance))){
+                    goFrag(getResources().getInteger(R.integer.FRAG_E_INT));
+                }
+            }else{
+                Log.d(TAG, "Intent was null");
+            }
+        }catch(Exception e){
+            Log.e(TAG, "Problem consuming action from intent", e);
+        }*/
     }
 
     public void startDrawingFragment(View v) {
@@ -206,13 +236,8 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onFragmentInteraction(String id) {
-        if (id.contains("conversation")) {
-            //Create a new fragment and replace the old fragment in layout.
-            displayFragment(inConversationFragment);
-        } else {
-            displayFragment(conversationFragment);
-        }
+    public void onFragmentInteraction(int conversationId) {
+        displayFragment(InConversationFragment.newInstance(conversationId));
     }
 
     /**
@@ -371,17 +396,17 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        //Must be implemented?
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        //Must be implemented?
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        //Must be implemented?
     }
 
     @Override
@@ -444,4 +469,9 @@ public class MainActivity extends ActionBarActivity
                 inConversationFragment.updateList();
             }
         }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+        //Currently not in use but has to be implemented, as defined by a fragment.
+    }
 }

@@ -1,14 +1,18 @@
 package sketchagram.chalmers.com.network;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MainActivity;
 import sketchagram.chalmers.com.sketchagram.R;
 
@@ -30,7 +34,7 @@ public class NotificationHandler {
     /**
      * Creates a notification displaying that a new message has been received.
      */
-    public void pushNewMessageNotification(ClientMessage message) {
+    public void pushNewMessageNotification(Conversation conversation, ClientMessage message) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.sketchagram_logo)  //TODO: Provide photo of sender.
@@ -38,11 +42,12 @@ public class NotificationHandler {
                         .setContentText(message.getContent().toString());  //TODO: Display message content.
 
         mBuilder.setAutoCancel(true);
-
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE);
         mBuilder.setLights(Color.MAGENTA, 500, 500);
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MainActivity.class);
+        resultIntent.putExtra("ConversationId", conversation.getConversationId());
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
