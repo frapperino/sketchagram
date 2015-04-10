@@ -319,10 +319,6 @@ public class Connection implements IConnection{
      * Adds the specified user if it exists
      * @param userName the user to be added
      * @return true if user exists false otherwise
-     * @throws SmackException.NotLoggedInException
-     * @throws XMPPException.XMPPErrorException
-     * @throws SmackException.NotConnectedException
-     * @throws SmackException.NoResponseException
      */
     public boolean addContact(String userName) {
         Roster roster = connection.getRoster();
@@ -346,6 +342,36 @@ public class Connection implements IConnection{
         }
 
         return false;
+    }
+
+    public boolean removeContact(String userName){
+        Roster roster = connection.getRoster();
+
+        try {
+            RosterEntry entry = roster.getEntry(userName+DOMAIN);
+            if(entry != null){
+                roster.removeEntry(entry);
+            } else {
+                return false;
+            }
+        } catch (SmackException.NotLoggedInException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isConnected(){
+        return connection.isConnected();
     }
 
     /**

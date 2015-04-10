@@ -60,8 +60,6 @@ public class User extends ADigitalPerson  {
      * @return the contactlist
      */
     public List<Contact> getContactList() {
-
-        contactList = MyApplication.getInstance().getDatabase().getAllContacts();
         return contactList;
     }
 
@@ -80,13 +78,30 @@ public class User extends ADigitalPerson  {
      * @param userName contact to be added.
      */
     public boolean addContact(String userName){
-        boolean success = false;
-        success = SystemUser.getInstance().getConnection().addContact(userName);
+        boolean success = SystemUser.getInstance().getConnection().addContact(userName);
         if(success) {
             Contact newContact = new Contact(userName, new Profile());
             MyApplication.getInstance().getDatabase().insertContact(newContact);
             contactList.add(newContact);
         }
+        return success;
+    }
+
+    public boolean removeContact(Contact contact){
+        boolean success = SystemUser.getInstance().getConnection().removeContact(contact.getUsername());
+        if(success){
+            List<ADigitalPerson> participants = new ArrayList<>();
+            participants.add(contact);
+            participants.add(SystemUser.getInstance().getUser());
+            Conversation conversation = conversationExists(participants);
+            if(conversation != null) {
+                MyApplication.getInstance().getDatabase().removeConversation(conversation);
+                conversationList.remove(conversation);
+            }
+            MyApplication.getInstance().getDatabase().deleteContact(contact);
+            contactList.remove(contact);
+        }
+        updateObservers(null);
         return success;
     }
 

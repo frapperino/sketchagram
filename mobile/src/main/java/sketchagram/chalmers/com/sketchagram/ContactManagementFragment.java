@@ -128,9 +128,16 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         Contact removedContact = contactList.get(info.position);
         String contactName = removedContact.getUsername();
-        //TODO: Remove contact from ContactList at server and in model as well as update gui.
-        Toast.makeText(MyApplication.getContext(), contactName + " was removed from contacts.", Toast.LENGTH_SHORT).show();
-        return true;
+        boolean success = SystemUser.getInstance().getUser().removeContact(removedContact);
+        if(success) {
+            Toast.makeText(MyApplication.getContext(), contactName + " was removed from contacts.", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(MyApplication.getContext(), contactName + " couldn't be removed.", Toast.LENGTH_SHORT).show();
+        }
+        BaseAdapter adapter = (BaseAdapter)mAdapter;
+        adapter.notifyDataSetChanged();
+        return success;
     }
 
     @Override
