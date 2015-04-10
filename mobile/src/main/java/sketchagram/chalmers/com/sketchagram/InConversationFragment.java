@@ -125,22 +125,9 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
     }
 
     /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
-    }
-
-    /**
      * Update list graphically when model has changed.
      */
-    public void updateList(ClientMessage message, MainActivity mainActivity) {
+    public void updateList() {
         if(mAdapter != null) {
             ((BaseAdapter)mAdapter).notifyDataSetChanged();
         }

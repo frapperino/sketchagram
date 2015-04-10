@@ -3,17 +3,14 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
 import android.support.v4.widget.DrawerLayout;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -444,7 +441,7 @@ public class MainActivity extends ActionBarActivity
             conversationFragment.updateList();
             if (data != null) {
                 //Update relevant ListAdapters.
-                inConversationFragment.updateList((ClientMessage) data, this);
+                inConversationFragment.updateList();
             }
         }
 }
