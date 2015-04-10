@@ -79,8 +79,7 @@ public class User extends ADigitalPerson  {
      * @param userName contact to be added.
      */
     public boolean addContact(String userName){
-        boolean success = false;
-        success = Connection.getInstance().addContact(userName);
+        boolean success = Connection.getInstance().addContact(userName);
         if(success) {
             Contact newContact = new Contact(userName, new Profile());
             MyApplication.getInstance().getDatabase().insertContact(newContact);
@@ -90,7 +89,7 @@ public class User extends ADigitalPerson  {
     }
 
     public boolean removeContact(Contact contact){
-        boolean success = SystemUser.getInstance().getConnection().removeContact(contact.getUsername());
+        boolean success = Connection.getInstance().removeContact(contact.getUsername());
         if(success){
             List<ADigitalPerson> participants = new ArrayList<>();
             participants.add(contact);

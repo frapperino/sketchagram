@@ -81,7 +81,6 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         // Check if logged in, else start LoginActivity
-
         sendFragment = new SendFragment();
         contactSendFragment = new ContactSendFragment();
         conversationFragment = new ConversationFragment();
@@ -143,32 +142,7 @@ public class MainActivity extends ActionBarActivity
         if(bundle != null) {
             inConversationFragment = InConversationFragment.newInstance(bundle.getInt("ConversationId"));
         }
-        /*try{
-            String action = intent.getAction().toUpperCase();
-
-            if(action != null){
-                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_friend))){
-                    goFrag(getResources().getInteger(R.integer.FRAG_A_INT));
-                }
-                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_article))){
-                    goFrag(getResources().getInteger(R.integer.FRAG_B_INT));
-                }
-                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_points))){
-                    goFrag(getResources().getInteger(R.integer.FRAG_C_INT));
-                }
-                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_redeemable))){
-                    goFrag(getResources().getInteger(R.integer.FRAG_D_INT));
-                }
-                if(action.equalsIgnoreCase(getResources().getString(R.string.notification_action_dance))){
-                    goFrag(getResources().getInteger(R.integer.FRAG_E_INT));
-                }
-            }else{
-                Log.d(TAG, "Intent was null");
-            }
-        }catch(Exception e){
-            Log.e(TAG, "Problem consuming action from intent", e);
-        }*/
-    }
+     }
 
     public void startDrawingFragment(View v) {
         displayFragment(drawingFragment);
@@ -219,9 +193,8 @@ public class MainActivity extends ActionBarActivity
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
         } else {
-            throw new IllegalStateException("Forbidden item selected in menu!");
+            throw new UnsupportedOperationException("Menu item selected not supported!");
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -332,7 +305,6 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-
     private List<Node> getNodes() {
         List<Node> nodes = new ArrayList<Node>();
         NodeApi.GetConnectedNodesResult rawNodes =
@@ -360,7 +332,6 @@ public class MainActivity extends ActionBarActivity
             }.execute();
         }
     };
-
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
@@ -414,8 +385,6 @@ public class MainActivity extends ActionBarActivity
         return false;
     }
 
-
-
     /**
      * This method will generate all the nodes that are attached to a Google Api Client.
      * There should only be one node however, which should be the watch.
@@ -461,14 +430,14 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-        @Override
-        public void update (Observable observable, Object data){
-            conversationFragment.updateList();
-            if (data != null) {
-                //Update relevant ListAdapters.
-                inConversationFragment.updateList();
-            }
+    @Override
+    public void update (Observable observable, Object data){
+        conversationFragment.updateList();
+        if (data != null && inConversationFragment != null) {
+            //Update relevant ListAdapters.
+            inConversationFragment.updateList();
         }
+    }
 
     @Override
     public void onFragmentInteraction(String id) {
