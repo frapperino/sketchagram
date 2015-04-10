@@ -17,6 +17,7 @@ import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
@@ -24,6 +25,8 @@ import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
@@ -51,6 +54,7 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.User;
 
 /**
  * Created by Olliver on 15-02-18.
@@ -85,6 +89,24 @@ public class Connection implements IConnection{
             StrictMode.setThreadPolicy(policy);
         }
         SASLAuthentication.supportSASLMechanism("PLAIN", 0);
+        connection.addPacketListener(requestListener, new PacketFilter() {
+            @Override
+            public boolean accept(Packet packet) {
+                if (packet instanceof Presence) {
+                    Presence presence = (Presence) packet;
+                    if (presence.getType().equals(Presence.Type.subscribed)
+                            || presence.getType().equals(
+                            Presence.Type.subscribe)
+                            || presence.getType().equals(
+                            Presence.Type.unsubscribed)
+                            || presence.getType().equals(
+                            Presence.Type.unsubscribe)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
         connect();
         Roster roster = connection.getRoster();
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
@@ -191,8 +213,8 @@ public class Connection implements IConnection{
                         getChatManager().addChatListener(new ChatManagerListener() {
                             @Override
                             public void chatCreated(Chat chat, boolean b) {
-                                if(!b){
-                                    if(!chatList.contains(chat)) {
+                                if (!b) {
+                                    if (!chatList.contains(chat)) {
                                         chatList.add(chat);
                                     }
                                     Chat c = chatList.get(chatList.indexOf(chat));
@@ -223,7 +245,7 @@ public class Connection implements IConnection{
                         getRoster().addRosterListener(new RosterListener() {
                                @Override
                                public void entriesAdded(Collection<String> strings) {
-
+                                    Log.d("REQUEST", "ENTRIES ADDED REQUEST");
                                }
 
                                @Override
@@ -466,5 +488,29 @@ public class Connection implements IConnection{
         }
         return clientMessage;
     }
+
+    private PacketListener requestListener = new PacketListener() {
+        @Override
+        public void processPacket(Packet packet) throws SmackException.NotConnectedException {
+            if(packet instanceof Presence){
+                Presence presence = (Presence)packet;
+                if(presence.getType().equals(Presence.Type.subscribe)){
+                    String userName = packet.getFrom().split("@")[0];
+                    User user = SystemUser.getInstance().getUser();
+                    boolean exists = false;
+                    for(Contact contact : user.getContactList()){
+                        if(contact.getUsername().equals(userName)){
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(!exists) {
+                        user.addContact(packet.getFrom().split("@")[0]);
+                    }
+                }
+            }
+        }
+    };
 }
 
