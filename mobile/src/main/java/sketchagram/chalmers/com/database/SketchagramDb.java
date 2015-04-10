@@ -283,7 +283,7 @@ public class SketchagramDb {
     private int maxValue(String table, String column) {
         Cursor cur = db.rawQuery("SELECT MAX(" + column + ") AS " + column + FROM + table, null);
         cur.moveToFirst();
-        int max = cur.getInt(cur.getColumnIndexOrThrow(column));
+        int max = cur.getInt(cur.getColumnIndexOrThrow(column)) + 1;
         return max;
     }
 
