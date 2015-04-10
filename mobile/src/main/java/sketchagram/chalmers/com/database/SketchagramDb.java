@@ -159,6 +159,16 @@ public class SketchagramDb {
 
 
     }
+
+    public void removeConversation(Conversation conversation){
+        db.delete(MessagesTable.TABLE_NAME,
+                (MessagesTable.COLUMN_NAME_CONVERSATION_ID + EQUALS + QUESTION_MARK),
+                new String[] { String.valueOf(conversation.getConversationId())});
+        db.delete(ConversationTable.TABLE_NAME,
+                (ConversationTable.COLUMN_NAME_CONVERSATION_ID + EQUALS + QUESTION_MARK),
+                new String[] { String.valueOf(conversation.getConversationId())});
+    }
+
     private int conversationExists(int i, List<ADigitalPerson> participants){
         List<Conversation> convList = getAllConversations();
         for(Conversation c : convList){

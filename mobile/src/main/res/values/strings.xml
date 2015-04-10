@@ -195,6 +195,11 @@
         <item >Contacts</item>
     </string-array>
 
+    <!--  Menu Items -->
+    <string-array name="contact_menu_items">
+        <item >Delete</item>
+    </string-array>
+
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">

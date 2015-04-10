@@ -21,6 +21,8 @@ public interface IConnection {
     public void createGroupConversation(List<ADigitalPerson> recipients, String name);
     public void sendMessage(ClientMessage clientMessage);
     public boolean addContact(String userName);
+    public boolean removeContact(String userName);
     public List<Contact> getContacts();
+    public boolean isConnected();
 
 }
