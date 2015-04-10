@@ -144,43 +144,6 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         if(mAdapter != null) {
             ((BaseAdapter)mAdapter).notifyDataSetChanged();
         }
-        pushNewMessageNotification(message, mainActivity);
-    }
-
-    /**
-     * Creates a notification displaying that a new message has been received.
-     */
-    int mId = 0;
-    private void pushNewMessageNotification(ClientMessage message, MainActivity mainActivity) {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mainActivity)
-                        .setSmallIcon(R.drawable.sketchagram_logo)  //TODO: Provide photo of sender.
-                        .setContentTitle(message.getSender().getUsername())
-                        .setContentText(message.getContent().toString());  //TODO: Display message content.
-
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(mainActivity, MainActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mainActivity);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) MyApplication.getContext()
-                        .getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(mId, mBuilder.build());
     }
 
     /**

@@ -440,7 +440,10 @@ public class Connection implements IConnection{
     private MessageListener messageListener = new MessageListener() {
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
-            SystemUser.getInstance().getUser().addMessage(getMessage(message.getBody(), message.getLanguage()));
+            ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
+            SystemUser.getInstance().getUser().addMessage(clientMessage);
+            NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
+            notificationHandler.pushNewMessageNotification(clientMessage);
         }
     };
 
