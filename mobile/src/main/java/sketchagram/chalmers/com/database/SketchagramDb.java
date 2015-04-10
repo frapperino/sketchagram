@@ -144,7 +144,7 @@ public class SketchagramDb {
     }
 
     private int insertConversation(List<ADigitalPerson> participants){
-        int i = maxValue(ConversationTable.TABLE_NAME, ConversationTable.COLUMN_NAME_PARTICIPANT);
+        int i = maxValue(ConversationTable.TABLE_NAME, ConversationTable.COLUMN_NAME_CONVERSATION_ID);
         int exists = conversationExists(i, participants);
         if( exists < 0 ) {
             for (ADigitalPerson person : participants) {
@@ -281,9 +281,9 @@ public class SketchagramDb {
 
 
     private int maxValue(String table, String column) {
-        Cursor cur = db.rawQuery("SELECT MAX(" + column + ") AS " + column + FROM + table, null);
+        Cursor cur = db.rawQuery("SELECT MAX(" + column + ") AS "+ column + FROM + table, null);
         cur.moveToFirst();
-        int max = cur.getInt(cur.getColumnIndexOrThrow(column));
+        int max = cur.getInt(cur.getColumnIndexOrThrow(column)) + 1;
         return max;
     }
 
