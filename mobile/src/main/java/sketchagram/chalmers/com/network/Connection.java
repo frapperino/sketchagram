@@ -159,8 +159,11 @@ public class Connection implements IConnection{
     }
 
     private ChatManager getChatManager(){
-        ChatManager chatManager = null;
+        ChatManager chatManager;
         if(connection.isConnected()) {
+            chatManager = ChatManager.getInstanceFor(connection);
+        }else {
+            connect();
             chatManager = ChatManager.getInstanceFor(connection);
         }
         return chatManager;
