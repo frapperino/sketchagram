@@ -508,6 +508,20 @@ public class Connection implements IConnection{
                     if(!exists) {
                         user.addContact(packet.getFrom().split("@")[0]);
                     }
+                } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
+                    String userName = packet.getFrom().split("@")[0];
+                    User user = SystemUser.getInstance().getUser();
+                    boolean exists = false;
+                    for(Contact contact : user.getContactList()){
+                        if(contact.getUsername().equals(userName)){
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(exists) {
+                        user.removeContact(new Contact(packet.getFrom().split("@")[0], new Profile()));
+                    }
                 }
             }
         }
