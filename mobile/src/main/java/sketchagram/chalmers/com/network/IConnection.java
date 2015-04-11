@@ -15,7 +15,6 @@ import sketchagram.chalmers.com.model.MessageType;
  * Created by Olliver on 2015-03-11.
  */
 public interface IConnection {
-    public void init();
     public boolean login(String userName, String password);
     public void logout();
     public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException;

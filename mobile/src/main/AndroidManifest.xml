@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="sketchagram.chalmers.com.sketchagram">
+    package="sketchagram.chalmers.com.sketchagram"
+    process = "sketchagram.chalmers.com.sketchagramprocess">
+
 
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,6 +14,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.receive_boot_completed"/>
 
     <application
         android:name=".MyApplication"
@@ -41,6 +44,12 @@
             android:noHistory="false"
             android:screenOrientation="portrait">
         </activity>
+        <service android:name="sketchagram.chalmers.com.network.NetworkService"
+            android:enabled="true"
+            android:process = "sketchagram.chalmers.com.sketchagramprocess"/>
+
+        <receiver android:name="sketchagram.chalmers.com.network.BootReceiver"
+            android:enabled="true"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
