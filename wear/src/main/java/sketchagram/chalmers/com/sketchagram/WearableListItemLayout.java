@@ -52,8 +52,8 @@ public class WearableListItemLayout extends LinearLayout
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mCircle = (ImageView) findViewById(R.id.circle);
-        mName = (TextView) findViewById(R.id.name);
+        mCircle = (ImageView) findViewById(R.id.image);
+        mName = (TextView) findViewById(R.id.text);
     }
 
     @Override

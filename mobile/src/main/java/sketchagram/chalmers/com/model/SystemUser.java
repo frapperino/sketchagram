@@ -1,5 +1,8 @@
 package sketchagram.chalmers.com.model;
+import android.net.Network;
+
 import sketchagram.chalmers.com.network.*;
+import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Bosch on 20/02/15.
@@ -7,14 +10,13 @@ import sketchagram.chalmers.com.network.*;
 public class SystemUser {
     private static SystemUser ourInstance;
     private User user;
-    private IConnection connection = new Connection();
 
     public static SystemUser getInstance() {
         return ourInstance;
     }
 
     private SystemUser() {
-        this.connection.init();
+
     }
 
     public static void initInstance(){
@@ -28,25 +30,33 @@ public class SystemUser {
     public void setUser(User user) {
         this.user = user;
     }
-    public IConnection getConnection() {return connection;}
-    public void newConnection() {
-        this.connection = new Connection();
-        this.connection.init();
-    }
 
     public boolean login(String userName, String password) {
-        if(this.connection.login(userName,password)){
+        if(Connection.getInstance().login(userName,password)){
+            for ( Contact user : Connection.getInstance().getContacts()){
+                boolean exists = false;
+                for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
+                    if(contact.getUsername().equals(user.getUsername())){
+                        exists = true;
+                        break;
+                    }
+                }
+                if(!exists) {
+                    MyApplication.getInstance().getDatabase().insertContact(user);
+                }
+            }
             setUser(new User(userName, new Profile()));
+
             return true;
         }
         return false;
     }
 
-    public Exception createAccount(String userName, String password) {
-        return this.connection.createAccount(userName, password);
+    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException {
+        Connection.getInstance().createAccount(userName, password);
     }
 
     public void logout(){
-        this.connection.logout();
+        Connection.getInstance().logout();
     }
 }

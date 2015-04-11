@@ -33,5 +33,9 @@
     <string name="reply_was">Reply was: </string>
     <string name="third_page">Third page</string>
     <string name="choice_1">Choice #1</string>
+    <string name="title_activity_drawing">DrawingActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

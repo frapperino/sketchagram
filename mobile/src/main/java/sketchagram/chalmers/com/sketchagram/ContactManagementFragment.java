@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -15,7 +19,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -55,6 +61,8 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
      */
     private ListAdapter mAdapter;
 
+    private List<Contact> contactList;
+
     // TODO: Rename and change types of parameters
     public static ContactManagementFragment newInstance(String param1, String param2) {
         ContactManagementFragment fragment = new ContactManagementFragment();
@@ -80,9 +88,9 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+        contactList = SystemUser.getInstance().getUser().getContactList();
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getContactList());
+        mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
         SystemUser.getInstance().getUser().addObserver(this);
     }
 
@@ -94,11 +102,42 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         // Set the adapter
         mListView = (AbsListView) view.findViewById(R.id.contact_management_list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        registerForContextMenu(mListView);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId()==R.id.contact_management_list) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle(contactList.get(info.position).getUsername());
+            String[] menuItems = getResources().getStringArray(R.array.contact_menu_items);
+            for (int i = 0; i<menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        Contact removedContact = contactList.get(info.position);
+        String contactName = removedContact.getUsername();
+        boolean success = SystemUser.getInstance().getUser().removeContact(removedContact);
+        if(success) {
+            Toast.makeText(MyApplication.getContext(), contactName + " was removed from contacts.", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(MyApplication.getContext(), contactName + " couldn't be removed.", Toast.LENGTH_SHORT).show();
+        }
+        BaseAdapter adapter = (BaseAdapter)mAdapter;
+        adapter.notifyDataSetChanged();
+        return success;
     }
 
     @Override
@@ -161,5 +200,4 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
-
 }

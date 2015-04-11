@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -43,13 +44,12 @@ public class ConversationListActivity extends Activity implements WearableListVi
     private MyListAdapter mAdapter;
     private GoogleApiClient mGoogleApiClient;
     private List<String> conversations;
-    private final List<String> CONVTAG = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_stub);
+        setContentView(R.layout.activity_listview_stub);
 
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -58,8 +58,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
                 conversations = new ArrayList<>();
-                CONVTAG.add("clockversations");
-                messagePhone(CONVTAG);
+                messagePhone("conversations", null);
                 loadAdapter();
 
             }
@@ -93,6 +92,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
     }
 
 
+
     /**
      * This method will generate all the nodes that are attached to a Google Api Client.
      * Now, theoretically, only one should be: the phone. However, they return us more
@@ -101,7 +101,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
      * a message. After getting the list of nodes, it sends a message to each of them telling
      * it to start. One the last successful node, it saves it as our one peerNode.
      */
-    private void messagePhone(final List<String> message){
+    private void messagePhone(final String message, final byte[] byteMap){
 
         new AsyncTask<Void, Void, List<Node>>(){
 
@@ -114,11 +114,12 @@ public class ConversationListActivity extends Activity implements WearableListVi
             protected void onPostExecute(List<Node> nodeList) {
                 for(Node node : nodeList) {
                     Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
+                    Log.e("WATCH", "Sending to: " + message.toString());
                     PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
                             mGoogleApiClient,
                             node.getId(),
                             message.toString(),
-                            null
+                            byteMap
                     );
 
                     result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
@@ -187,23 +188,20 @@ public class ConversationListActivity extends Activity implements WearableListVi
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.e("WATCH", "Conversation here");
-        String s = messageEvent.getPath();
         conversations.clear();
+
+        ConversationSync conversationSync = new ConversationSync(DataMap.fromByteArray(messageEvent.getData()));
+
+        conversations = conversationSync.getConversations();
+
         String username = getSharedPreferences("user",0).getString("username", null);
         Log.e("WATCH", "username=" + username);
-        for(String conversation : s.split("]")) {
-            conversation = conversation.substring(2,conversation.length());
-            if(conversation.contains("["))
-                conversation = conversation.substring(1,conversation.length());
-            if(username != null)
-                conversation = conversation.replace(username, "Me");
-            conversations.add(conversation);
 
-        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mAdapter.notifyDataSetChanged();
+                loadAdapter();
             }
         });
         Log.e("WATCH", conversations.toString());

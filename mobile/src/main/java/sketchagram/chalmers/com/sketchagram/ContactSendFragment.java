@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -33,16 +34,6 @@ import sketchagram.chalmers.com.model.SystemUser;
  * interface.
  */
 public class ContactSendFragment extends Fragment implements AbsListView.OnItemClickListener {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -56,16 +47,6 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
      */
     private ListAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
-    public static ContactSendFragment newInstance(String param1, String param2) {
-        ContactSendFragment fragment = new ContactSendFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -76,11 +57,6 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         // Sets the adapter to customized one which enables our layout of items.
         mAdapter = new ContactSendListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
@@ -118,31 +94,17 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         mListener = null;
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
             List<ADigitalPerson> receiverList = new ArrayList<>();
             receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
-            ClientMessage<String> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receiverList, ":D", MessageType.TEXTMESSAGE);
-            SystemUser.getInstance().getUser().sendMessage(message, MessageType.TEXTMESSAGE);
-            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
-        }
-    }
-
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
+                    .addToBackStack(null).commit();
+            // Notify the active callbacks interface (the activity, if the
+            // fragment is attached to one) that an item has been selected.
         }
     }
 

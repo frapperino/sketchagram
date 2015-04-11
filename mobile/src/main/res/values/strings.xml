@@ -195,6 +195,11 @@
         <item >Contacts</item>
     </string-array>
 
+    <!--  Menu Items -->
+    <string-array name="contact_menu_items">
+        <item >Delete</item>
+    </string-array>
+
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
@@ -205,6 +210,7 @@
     <!-- Content Description -->
     <string name="navigation_drawer_open">Navigation opened!</string>
     <string name="navigation_drawer_close">Navigation closed!</string>
+    <string name="paint">Paint</string>
     <string name="choose_username">Choose a username</string>
     <string name="choose_password">Choose a password</string>
     <string name="reenter_password">Re-enter password</string>
@@ -213,5 +219,4 @@
     <string name="cancel_add_contact">Cancel</string>
     <string name="add_contact">Add contact</string>
     <string name="enter_username">Username</string>
-
 </resources>

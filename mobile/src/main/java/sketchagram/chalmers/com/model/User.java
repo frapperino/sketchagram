@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -10,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
@@ -24,31 +27,33 @@ public class User extends ADigitalPerson  {
 
     public User(String username, Profile profile) {
         super(username, profile);
-        conversationList = new ArrayList<Conversation>();
-        //TODO: get contacts from database instead of server
-        contactList = SystemUser.getInstance().getConnection().getContacts();
+        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username);
+        /*for(Contact contact : getContactList()) {
+            List<ClientMessage> messageList = MyApplication.getInstance().getDatabase().getAllMessagesFromAContact(contact);
+            if(!messageList.isEmpty()) {
+                List<ADigitalPerson> participants = new ArrayList<>();
+                participants.add(contact);
+                conversationList.add(new Conversation(participants, messageList));
+            }
+        }*/
+        contactList = MyApplication.getInstance().getDatabase().getAllContacts();
     }
 
-    public void addContact(Contact contact){
-        if(contact == null) {
-            throw new IllegalArgumentException("contact is invalid!");
-        }
-        contactList.add(contact);
-    }
-
+    /**
+     * Adds a new conversation.
+     *
+     * @param conversation the conversation to be added.
+     */
     public void addConversation(Conversation conversation){
         boolean exist = false;
         for(Conversation c : conversationList){
             if(c.getParticipants().equals(conversation.getParticipants())) {
-                for (ClientMessage msg : conversation.getHistory())
-                    c.addMessage(msg);
                 exist = true;
             }
-
         }
         if(!exist)
             conversationList.add(conversation);
-        updateObservers();
+        updateObservers(null);
     }
 
     /**
@@ -68,88 +73,116 @@ public class User extends ADigitalPerson  {
         return getUsername();
     }
 
+    /**
+     * Adds a contacts.
+     *
+     * @param userName contact to be added.
+     */
     public boolean addContact(String userName){
-        boolean success = false;
-        try {
-            success = SystemUser.getInstance().getConnection().addContact(userName);
-            if(success) {
-                contactList.add(new Contact(userName, new Profile()));
-            }
-        } catch (SmackException.NotLoggedInException e) {
-            e.printStackTrace();
-            return false;
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-            return false;
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-            return false;
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-            return false;
+        boolean success = Connection.getInstance().addContact(userName);
+        if(success) {
+            Contact newContact = new Contact(userName, new Profile());
+            MyApplication.getInstance().getDatabase().insertContact(newContact);
+            contactList.add(newContact);
         }
-        updateObservers();
+        return success;
+    }
+
+    public boolean removeContact(Contact contact){
+        boolean success = Connection.getInstance().removeContact(contact.getUsername());
+        if(success){
+            List<ADigitalPerson> participants = new ArrayList<>();
+            participants.add(contact);
+            participants.add(SystemUser.getInstance().getUser());
+            Conversation conversation = conversationExists(participants);
+            if(conversation != null) {
+                MyApplication.getInstance().getDatabase().removeConversation(conversation);
+                conversationList.remove(conversation);
+            }
+            MyApplication.getInstance().getDatabase().deleteContact(contact);
+            contactList.remove(contact);
+        }
+        updateObservers(null);
         return success;
     }
 
     /**
      * Sends the specified message
      * @param clientMessage The message to be sent contains receivers
-     * @param type The type of the message
      */
-    public void sendMessage(ClientMessage clientMessage, MessageType type){
-        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
-        boolean exist = false;
+    public void sendMessage(ClientMessage clientMessage){
+        boolean exist = true;
         Conversation conversation = null;
-        conversation = conversationExists(clientMessage.getReceivers());
+        List<ADigitalPerson> participants = new ArrayList<>();
+        participants.addAll(clientMessage.getReceivers());
+        participants.add(clientMessage.getSender());
+
+        conversation = conversationExists(participants);
         if(conversation == null){
-            List<ADigitalPerson> otherParticipants = new ArrayList<>();
-            otherParticipants.addAll(clientMessage.getReceivers());
-            otherParticipants.add(clientMessage.getSender());
-            //Remove yourself from participants
-            otherParticipants.remove(this);
-            conversation = new Conversation(otherParticipants);
-            this.addConversation(conversation);
+            exist = false;
         }
 
-        SystemUser.getInstance().getConnection().sendMessage(clientMessage);
-        conversation.addMessage(clientMessage);
-
+        int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
+        if(conversationId >= 0) {
+            Connection.getInstance().sendMessage(clientMessage);
+            if(!exist) {
+                conversation = new Conversation(participants, conversationId);
+                this.addConversation(conversation);
+            }
+            conversation.addMessage(clientMessage);
+            updateObservers(clientMessage);
+        }
     }
 
-    public void addMessage(ClientMessage clientMessage){
-        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
-        boolean exist = false;
-        Conversation conversation = null;
-        conversation = conversationExists(clientMessage.getReceivers());
-        if(conversation == null) {
-            List<ADigitalPerson> otherParticipants = new ArrayList<>();
-            otherParticipants.addAll(clientMessage.getReceivers());
-            otherParticipants.add(clientMessage.getSender());
-            //Remove yourself from participants
-            otherParticipants.remove(this);
-            conversation = new Conversation(otherParticipants);
-            this.addConversation(conversation);
-        }
-        conversation.addMessage(clientMessage);
-        updateObservers();
+    /**
+     * Adds a message that was received from the server to the proper conversation.
+     * @param clientMessage The message received.
+     * @return The conversation which the message was appended to.
+     */
+    public Conversation addMessage(ClientMessage clientMessage){
+        Conversation conversation;
+        List<ADigitalPerson> participants = new ArrayList<>();
+        participants.addAll(clientMessage.getReceivers());
+        participants.add(clientMessage.getSender());
 
+        conversation = conversationExists(participants);
+        boolean exist = true;
+
+        if(conversation == null) {
+            exist = false;
+        }
+        int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
+        if(conversationId >= 0) {
+            if(!exist) {
+                conversation = new Conversation(participants, conversationId);
+                this.addConversation(conversation);
+            }
+            conversation.addMessage(clientMessage);
+            updateObservers(clientMessage);
+        }
+        return conversation;
     }
 
     /**
      * Checks if the receiver list matches the specified conversation
-     * @param receivers
+     * @param participants
      * @return
      */
-    private Conversation conversationExists(List<ADigitalPerson> receivers){
-        List<Conversation> conversationList = SystemUser.getInstance().getUser().getConversationList();
-        for(Conversation c : conversationList){
+    private Conversation conversationExists(List<ADigitalPerson> participants){
+        List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
+        for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {
-                for(ADigitalPerson receiver : receivers){
-                    if(!participant.equals(receiver)){
-                        same = false;
+                boolean participantexists = false;
+                for(ADigitalPerson receiver : participants){
+                    if(participant.equals(receiver)){
+                        participantexists = true;
+                        break;
                     }
+                }
+                if(!participantexists){
+                    same = false;
+                    break;
                 }
             }
             if(same){
@@ -159,16 +192,29 @@ public class User extends ADigitalPerson  {
         return null;
     }
 
-    private void updateObservers(){
+    private void updateObservers(final ClientMessage message){
         setChanged();
         Handler handler = new Handler(MyApplication.getContext().getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                notifyObservers();
+                notifyObservers(message);
             }
         };
         handler.post(runnable);
     }
 
+    /**
+     * Retrieve a conversation with a requested id.
+     * @param conversationId Id of the conversation.
+     * @return The conversation with the corresponding id. Otherwise null.
+     */
+    public Conversation getConversation(int conversationId) {
+        for(Conversation c: conversationList) {
+            if(c.getConversationId() == conversationId) {
+                return c;
+            }
+        }
+        return null;
+    }
 }

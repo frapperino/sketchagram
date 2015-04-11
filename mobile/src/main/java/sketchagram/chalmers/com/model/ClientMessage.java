@@ -35,5 +35,10 @@ public class ClientMessage<T> {
         return sender;
     }
     public List<ADigitalPerson> getReceivers(){return receivers;}
+    public long getTimestamp(){return timestamp;}
+    @Override
+    public String toString(){
+        return sender.getUsername() + ": " + content.toString();
+    }
 
 }
