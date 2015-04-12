@@ -197,8 +197,6 @@ public class Connection implements IConnection{
                 } catch (SmackException.NoResponseException e) {
                     e.printStackTrace();
                     return new NetworkException.ServerNotRespondingException(e.getMessage());
-                } catch (SmackException e) {
-                    e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
                     return e;
                 }

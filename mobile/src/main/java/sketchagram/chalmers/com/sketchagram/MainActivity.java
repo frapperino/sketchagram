@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -229,7 +230,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", "" + position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch (position) {
@@ -255,14 +255,12 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Toast toast;
                 String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
                 if (SystemUser.getInstance().getUser().addContact(user)) {
-                    toast = Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
-                    toast = Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
                 }
-                toast.show();
             }
         });
         ((Button) dialog.findViewById(R.id.cancel_dialog_button)).setOnClickListener(new View.OnClickListener() {

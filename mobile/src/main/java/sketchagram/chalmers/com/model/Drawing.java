@@ -1,5 +1,8 @@
 package sketchagram.chalmers.com.model;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.android.gms.wearable.DataMap;
@@ -14,6 +17,8 @@ import java.util.List;
  */
 public class Drawing {
     List<DrawingEvent> events = new LinkedList<>();
+    //Color used in the drawing. TODO: Change from static to dynamic.
+    private final int COLOR = Color.MAGENTA;
     public Drawing() {
         events = new LinkedList<>();
     }
@@ -33,6 +38,10 @@ public class Drawing {
 
     }
 
+    public int getCOLOR() {
+        return COLOR;
+    }
+
     public List<DrawingEvent> getMotions() {
         return events;
     }
@@ -48,5 +57,28 @@ public class Drawing {
     @Override
     public String toString(){
         return "Drawing";
+    }
+
+    /**
+     * Get the Drawing represented as an image.
+     * @return the drawing in form of a Bitmap
+     * @deprecated
+     */
+    public Bitmap getDrawing() {
+        int height = 0;
+        int width = 0;
+        /*for(DrawingEvent e:events) {
+            if(e.getX()>height) {
+                height = e.getX();
+            }
+        }
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+        Bitmap bitmap = Bitmap.createBitmap(HEIGHT, WIDTH, conf); // this creates a MUTABLE bitmap
+        for(DrawingEvent e:events) {
+            bitmap.setPixel((int)(HEIGHT * e.getX()), (int)(WIDTH * e.getY()), COLOR);
+        }
+        //TODO: Remove all white pixels outside the painting in order to enhance picture.
+        return bitmap;*/
+        return null;
     }
 }
