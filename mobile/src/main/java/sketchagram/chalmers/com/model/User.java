@@ -37,6 +37,7 @@ public class User extends ADigitalPerson  {
             }
         }*/
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
+        setStatuses();
     }
 
     /**
@@ -54,6 +55,13 @@ public class User extends ADigitalPerson  {
         if(!exist)
             conversationList.add(conversation);
         updateObservers(null);
+    }
+
+    private void setStatuses(){
+        for(Contact contact : Connection.getInstance().getContacts()){
+            Contact con = contactList.get(contactList.indexOf(contact));
+            con.setStatus(contact.getStatus());
+        }
     }
 
     /**
