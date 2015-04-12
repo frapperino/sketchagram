@@ -193,7 +193,7 @@ public class User extends ADigitalPerson  {
     }
 
     public boolean changePassword(String password) {
-        return SystemUser.getInstance().getConnection().changePassword(password);
+        return Connection.getInstance().changePassword(password);
     }
 
     private void updateObservers(final ClientMessage message){
