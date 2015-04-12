@@ -38,7 +38,7 @@ public class ClientMessage<T> {
     public long getTimestamp(){return timestamp;}
     @Override
     public String toString(){
-        return sender.getUsername() + ": " + content.toString();
+        return "[" + timestamp + "] " + sender.getUsername() + ": " + content.toString();
     }
 
 }
