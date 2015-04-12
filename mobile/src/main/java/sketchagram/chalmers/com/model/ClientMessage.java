@@ -14,6 +14,7 @@ public class ClientMessage<T> {
     private final List<ADigitalPerson> receivers = new ArrayList<>();
     private final T content;
     private final MessageType type;
+    private boolean read;
 
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
         this.timestamp = timestamp;
@@ -21,6 +22,7 @@ public class ClientMessage<T> {
         this.receivers.addAll(receiver);
         this.content = content;
         this.type = type;
+        this.read = false;
     }
 
     public T getContent(){
@@ -40,5 +42,11 @@ public class ClientMessage<T> {
     public String toString(){
         return sender.getUsername() + ": " + content.toString();
     }
+    public boolean isRead() {
+        return read;
+    }
 
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 }

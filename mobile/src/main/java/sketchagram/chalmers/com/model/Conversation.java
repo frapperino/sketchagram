@@ -36,6 +36,19 @@ public class Conversation {
         history.add(clientMessage);
     }
 
+    /**
+     * Determines whether or not this conversation has unread messages.
+     * @return true if there exists unread messages. false otherwise.
+     */
+    public boolean hasUnreadMessages() {
+        for(ClientMessage c: history) {
+            if(!c.isRead()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString(){
         getParticipants().remove(SystemUser.getInstance().getUser());// to not display user
