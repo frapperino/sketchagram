@@ -420,6 +420,24 @@ public class Connection implements IConnection{
         return connection.isConnected();
     }
 
+    @Override
+    public boolean changePassword(String password) {
+        manager = AccountManager.getInstance(connection);
+        try {
+            manager.changePassword(password);
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Gets the matching users from the server.
      * @return matching users

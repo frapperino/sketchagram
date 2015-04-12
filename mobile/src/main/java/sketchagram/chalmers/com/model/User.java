@@ -192,6 +192,10 @@ public class User extends ADigitalPerson  {
         return null;
     }
 
+    public boolean changePassword(String password) {
+        return SystemUser.getInstance().getConnection().changePassword(password);
+    }
+
     private void updateObservers(final ClientMessage message){
         setChanged();
         Handler handler = new Handler(MyApplication.getContext().getMainLooper());

@@ -24,5 +24,6 @@ public interface IConnection {
     public boolean removeContact(String userName);
     public List<Contact> getContacts();
     public boolean isConnected();
+    public boolean changePassword(String password);
 
 }
