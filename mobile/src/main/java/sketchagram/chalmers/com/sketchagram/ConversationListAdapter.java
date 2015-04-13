@@ -77,8 +77,8 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
     }
 
     private Bitmap getBitmap(Drawing drawing, ImageView imageView) {
-        int HEIGHT = 400;
-        int WIDTH = 400;
+        int HEIGHT = 40;
+        int WIDTH = 40;
         float minX = Float.MAX_VALUE;
         float maxX = 0;
         float minY = Float.MAX_VALUE;
@@ -104,10 +104,10 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
             bitmap.setPixel((int)(HEIGHT * e.getX()), (int)(WIDTH * e.getY()), drawing.getCOLOR());
         }
         int startX = (minX == 0) ? 0 : (int)(minX*WIDTH);
-        int endX = (maxX > WIDTH) ? WIDTH : (int)(maxX*WIDTH);
+        int endX = (maxX > 1) ? WIDTH : (int)(maxX*WIDTH);
         int startY = (minY == 0) ? 0 : (int)(minY*HEIGHT);
-        int endY = (maxY > HEIGHT) ? HEIGHT : (int)(maxY*HEIGHT);
-        Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, startX, startY, endX, endY);
-        return croppedBitmap;
+        int endY = (maxY > 1) ? HEIGHT : (int)(maxY*HEIGHT);
+        //Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, startX, startY, endX, endY);
+        return Bitmap.createScaledBitmap(bitmap, 400, 400, true);
     }
 }
