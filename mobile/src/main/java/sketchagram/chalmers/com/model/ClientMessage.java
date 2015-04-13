@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +40,9 @@ public class ClientMessage<T> {
     public long getTimestamp(){return timestamp;}
     @Override
     public String toString(){
-        return "[" + timestamp + "] " + sender.getUsername() + ": " + content.toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date resultDate = new Date(timestamp);
+        return "[" + sdf.format(resultDate) + "] " + sender.getUsername() + ": " + content.toString();
     }
 
 }
