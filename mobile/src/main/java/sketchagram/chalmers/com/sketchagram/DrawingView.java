@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Observer;
 
 import sketchagram.chalmers.com.model.DrawMotionEvents;
 import sketchagram.chalmers.com.model.Drawing;
@@ -42,6 +43,7 @@ public class DrawingView extends View {
     private static int BRUSH_COLOR = 0xff00304e;    //http://colrd.com/color/
     //canvas
     private Canvas drawCanvas;
+
     //canvas bitmap
     private Bitmap canvasBitmap;
 
@@ -53,6 +55,7 @@ public class DrawingView extends View {
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
+        helper = new DrawingHelper();
     }
 
     public void setTouchable(boolean isTouchable) {
@@ -185,27 +188,31 @@ public class DrawingView extends View {
     /**
      * Start a new drawing.
      */
-    public void startNew(){
+    public void clearCanvas(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
         //TODO: Animations that will make graphics fade.
     }
 
     /**
-     * Set the Drawing helper in the fragment that uses the view.
-     */
-    public void setHelper(DrawingHelper helper) {
-        this.helper = helper;
-    }
-
-    /**
-     * Displays the provided drawing.
+     * Displays the provided drawing
+     * drawn with the original time-delay between strokes.
      * @param drawing
      */
     public void displayDrawing(Drawing drawing) {
         CountdownTask task = new CountdownTask(drawing);
         task.execute();
-        //TODO: Animations that make the drawing seem alive.
+    }
+
+    /**
+     * Instantly displays the drawing on canvas.
+     * @param drawing
+     */
+    public void displayStaticDrawing(Drawing drawing) {
+        List<DrawingEvent> motions = drawing.getMotions();
+        for(DrawingEvent e: motions) {
+            handleMotionEvent(e);
+        }
     }
 
     /**
@@ -243,7 +250,6 @@ public class DrawingView extends View {
             long timeDeltaInMilli;
             List<DrawingEvent> events = drawing.getMotions();
             DrawingEvent first = events.get(0);
-            String s = "S";
 
             handler.post(new EventRunnable(first));
             for (int i = 1; i < events.size(); i++) {
@@ -253,5 +259,17 @@ public class DrawingView extends View {
             }
             return null;
         }
+    }
+
+    /**
+     * Return a copy of the image in form a bitmap.
+     * @return the bitmap in question.
+     */
+    public Bitmap getCanvasBitmap() {
+        return canvasBitmap.copy(Bitmap.Config.RGB_565, false);
+    }
+
+    public void addHelperObserver(Observer observer) {
+        helper.addObserver(observer);
     }
 }

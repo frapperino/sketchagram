@@ -55,8 +55,7 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
 
         if (convertView == null) {
             viewToUse = mInflater.inflate(R.layout.conversation_list_item, null);
-            ImageView imageView = (ImageView) viewToUse.findViewById(R.id.imageHolder);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            ImageView imageView = (ImageView) viewToUse.findViewById(R.id.drawing_holder);
             TextView senderView = (TextView) viewToUse.findViewById(R.id.sender);
             holder = new ViewHolder();
             holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
@@ -65,7 +64,9 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
                 ClientMessage clientMessage = messages.get(messages.size() - 1);
                 if (clientMessage.getType() == MessageType.DRAWING) {
                     Drawing drawing = ((Drawing)clientMessage.getContent());
-                    imageView.setImageBitmap(getBitmap(drawing, imageView));
+                    if(drawing != null){
+                        imageView.setImageBitmap(drawing.getStaticDrawing());
+                    }
                 }
             }
             senderView.setText(item.toString());
@@ -74,40 +75,5 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
             holder = (ViewHolder) viewToUse.getTag();
         }
         return viewToUse;
-    }
-
-    private Bitmap getBitmap(Drawing drawing, ImageView imageView) {
-        int HEIGHT = 40;
-        int WIDTH = 40;
-        float minX = Float.MAX_VALUE;
-        float maxX = 0;
-        float minY = Float.MAX_VALUE;
-        float maxY = 0;
-        List<DrawingEvent> events = drawing.getMotions();
-        for(DrawingEvent event: events) {
-            if(event.getX() < minX) {
-                minX = event.getX();
-            }
-            if(event.getX() > maxX) {
-                maxX = event.getX();
-            }
-            if(event.getY() < minY) {
-                minY = event.getY();
-            }
-            if(event.getY() > maxY) {
-                maxY = event.getY();
-            }
-        }
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-        Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, conf); // this creates a MUTABLE bitmap
-        for(DrawingEvent e:events) {
-            bitmap.setPixel((int)(HEIGHT * e.getX()), (int)(WIDTH * e.getY()), drawing.getCOLOR());
-        }
-        int startX = (minX == 0) ? 0 : (int)(minX*WIDTH);
-        int endX = (maxX > 1) ? WIDTH : (int)(maxX*WIDTH);
-        int startY = (minY == 0) ? 0 : (int)(minY*HEIGHT);
-        int endY = (maxY > 1) ? HEIGHT : (int)(maxY*HEIGHT);
-        //Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, startX, startY, endX, endY);
-        return Bitmap.createScaledBitmap(bitmap, 400, 400, true);
     }
 }

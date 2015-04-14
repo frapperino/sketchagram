@@ -19,6 +19,9 @@ public class Drawing {
     List<DrawingEvent> events = new LinkedList<>();
     //Color used in the drawing. TODO: Change from static to dynamic.
     private final int COLOR = Color.MAGENTA;
+
+    private Bitmap staticDrawing;
+
     public Drawing() {
         events = new LinkedList<>();
     }
@@ -59,26 +62,11 @@ public class Drawing {
         return "Drawing";
     }
 
-    /**
-     * Get the Drawing represented as an image.
-     * @return the drawing in form of a Bitmap
-     * @deprecated
-     */
-    public Bitmap getDrawing() {
-        int height = 0;
-        int width = 0;
-        /*for(DrawingEvent e:events) {
-            if(e.getX()>height) {
-                height = e.getX();
-            }
-        }
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-        Bitmap bitmap = Bitmap.createBitmap(HEIGHT, WIDTH, conf); // this creates a MUTABLE bitmap
-        for(DrawingEvent e:events) {
-            bitmap.setPixel((int)(HEIGHT * e.getX()), (int)(WIDTH * e.getY()), COLOR);
-        }
-        //TODO: Remove all white pixels outside the painting in order to enhance picture.
-        return bitmap;*/
-        return null;
+    public void setStaticDrawing(Bitmap staticDrawing) {
+        this.staticDrawing = staticDrawing;
+    }
+
+    public Bitmap getStaticDrawing() {
+        return staticDrawing;
     }
 }
