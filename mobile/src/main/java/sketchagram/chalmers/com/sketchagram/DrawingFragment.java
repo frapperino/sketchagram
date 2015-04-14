@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import java.util.List;
 import java.util.Observable;
@@ -32,8 +35,6 @@ public class DrawingFragment extends Fragment implements Observer {
     private OnFragmentInteractionListener mListener;
 
     private DrawingView drawView;
-
-    private DrawingHelper helper;
 
     private List<ADigitalPerson> receivers;
     private Drawing drawing = null;
@@ -67,9 +68,7 @@ public class DrawingFragment extends Fragment implements Observer {
         //Get view that is displayed in the Activity on which we can call
         //the methods in the DrawingView class.
         drawView = (DrawingView) view.findViewById(R.id.drawing);
-        helper = new DrawingHelper();
-        drawView.setHelper(helper);
-        helper.addObserver(this);
+        drawView.addHelperObserver(this);
         if(drawing != null){
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
@@ -96,7 +95,9 @@ public class DrawingFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers, (Drawing)data, MessageType.DRAWING);
+        Drawing mDrawing = (Drawing)data;
+        mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
+        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers, mDrawing, MessageType.DRAWING);
         SystemUser.getInstance().getUser().sendMessage(message);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())

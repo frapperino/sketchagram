@@ -6,6 +6,7 @@ import sketchagram.chalmers.com.database.SketchagramDb;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.google.android.gms.internal.ge;
 
@@ -19,14 +20,14 @@ public class MyApplication extends Application {
     private static MyApplication ourInstance;
     private static SketchagramDb db = null;
     private static Context context;
+    private static String FIRST_STARTUP = "FIRST_STARTUP";
 
     public static MyApplication getInstance(){
         return ourInstance;
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate(){
         super.onCreate();
         context = getApplicationContext();
         ourInstance = this;

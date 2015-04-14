@@ -1,5 +1,9 @@
 package sketchagram.chalmers.com.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.android.gms.wearable.DataMap;
@@ -14,6 +18,11 @@ import java.util.List;
  */
 public class Drawing {
     List<DrawingEvent> events = new LinkedList<>();
+    //Color used in the drawing. TODO: Change from static to dynamic.
+    private final int COLOR = Color.MAGENTA;
+
+    private byte[] staticDrawing;
+
     public Drawing() {
         events = new LinkedList<>();
     }
@@ -33,6 +42,10 @@ public class Drawing {
 
     }
 
+    public int getCOLOR() {
+        return COLOR;
+    }
+
     public List<DrawingEvent> getMotions() {
         return events;
     }
@@ -48,5 +61,13 @@ public class Drawing {
     @Override
     public String toString(){
         return "Drawing";
+    }
+
+    public void setStaticDrawing(byte[] staticDrawing) {
+        this.staticDrawing = staticDrawing;
+    }
+
+    public Bitmap getStaticDrawing() {
+        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
     }
 }
