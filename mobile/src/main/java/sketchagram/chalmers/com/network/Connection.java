@@ -47,6 +47,7 @@ import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.Status;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 import sketchagram.chalmers.com.model.User;
@@ -270,6 +271,7 @@ public class Connection implements IConnection{
 
                                @Override
                                public void presenceChanged(Presence presence) {
+                                   Presence prec = presence;
                                    Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
                                }
                        });
@@ -469,7 +471,16 @@ public class Connection implements IConnection{
         List<Contact> list = new ArrayList<>();
         Collection<RosterEntry> entries = getRoster().getEntries();
         for(RosterEntry entry : entries){
-            list.add(new Contact(entry.getUser().split("@")[0], new Profile()));
+            Contact contact = new Contact(entry.getUser().split("@")[0], new Profile());
+            Presence presence = getRoster().getPresence(entry.getUser());
+            if(presence.isAvailable()){
+                contact.setStatus(Status.ONLINE);
+            } else if (presence.isAway()) {
+                contact.setStatus(Status.AWAY);
+            } else {
+                contact.setStatus(Status.OFFLINE);
+            }
+            list.add(contact);
         }
         return list;
     }

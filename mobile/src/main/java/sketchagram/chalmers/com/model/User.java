@@ -56,6 +56,13 @@ public class User extends ADigitalPerson  {
         updateObservers(null);
     }
 
+    private void setStatuses(){
+        for(Contact contact : Connection.getInstance().getContacts()){
+            Contact con = contactList.get(contactList.indexOf(contact));
+            con.setStatus(contact.getStatus());
+        }
+    }
+
     /**
      * Gets contacts from database which is synced with server.
      * @return the contactlist
