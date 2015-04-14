@@ -53,6 +53,7 @@ public class DBHelper extends SQLiteOpenHelper{
             MessagesTable.COLUMN_NAME_TYPE + TEXT + COMMA +
             MessagesTable.COLUMN_NAME_SENDER + TEXT + COMMA +
             MessagesTable.COLUMN_NAME_CONVERSATION_ID + INTEGER + COMMA +
+            MessagesTable.COLUMN_NAME_READ + INTEGER + COMMA +
             PRIMARY_KEY + "( " + MessagesTable.COLUMN_NAME_TIMESTAMP + COMMA +
             MessagesTable.COLUMN_NAME_SENDER + COMMA + MessagesTable.COLUMN_NAME_CONVERSATION_ID + " ) " + COMMA +
             FOREIGN_KEY + "( " + MessagesTable.COLUMN_NAME_SENDER + " ) " +

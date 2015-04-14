@@ -16,6 +16,7 @@ public class ClientMessage<T> {
     private final List<ADigitalPerson> receivers = new ArrayList<>();
     private final T content;
     private final MessageType type;
+    public boolean read;
 
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
         this.timestamp = timestamp;
@@ -23,6 +24,12 @@ public class ClientMessage<T> {
         this.receivers.addAll(receiver);
         this.content = content;
         this.type = type;
+        this.read = false;
+    }
+
+    public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
+        this(timestamp,sender,receiver,content,type);
+        this.read = read;
     }
 
     public T getContent(){
@@ -38,6 +45,15 @@ public class ClientMessage<T> {
     }
     public List<ADigitalPerson> getReceivers(){return receivers;}
     public long getTimestamp(){return timestamp;}
+
+    public boolean isRead(){
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
     @Override
     public String toString(){
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
