@@ -221,4 +221,8 @@ public class User extends ADigitalPerson  {
         }
         return null;
     }
+
+    public List<String> search(String userName){
+        return Connection.getInstance().searchUsers(userName);
+    }
 }
