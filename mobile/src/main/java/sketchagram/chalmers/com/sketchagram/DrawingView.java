@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Observer;
 
@@ -140,7 +142,6 @@ public class DrawingView extends View {
             }
             if(drawingEvent != null) {
                 helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
-
                 return handleMotionEvent(drawingEvent);
             }
             return false;
@@ -265,8 +266,11 @@ public class DrawingView extends View {
      * Return a copy of the image in form a bitmap.
      * @return the bitmap in question.
      */
-    public Bitmap getCanvasBitmap() {
-        return canvasBitmap.copy(Bitmap.Config.RGB_565, false);
+    public byte[] getCanvasBitmapAsByte() {
+        Bitmap bmp = canvasBitmap;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
     }
 
     public void addHelperObserver(Observer observer) {

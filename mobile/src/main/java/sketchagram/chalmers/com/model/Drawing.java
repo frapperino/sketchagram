@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,7 +21,7 @@ public class Drawing {
     //Color used in the drawing. TODO: Change from static to dynamic.
     private final int COLOR = Color.MAGENTA;
 
-    private Bitmap staticDrawing;
+    private byte[] staticDrawing;
 
     public Drawing() {
         events = new LinkedList<>();
@@ -62,11 +63,11 @@ public class Drawing {
         return "Drawing";
     }
 
-    public void setStaticDrawing(Bitmap staticDrawing) {
+    public void setStaticDrawing(byte[] staticDrawing) {
         this.staticDrawing = staticDrawing;
     }
 
     public Bitmap getStaticDrawing() {
-        return staticDrawing;
+        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
     }
 }
