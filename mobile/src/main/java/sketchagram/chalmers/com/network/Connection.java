@@ -280,6 +280,7 @@ public class Connection implements IConnection{
 
                                @Override
                                public void presenceChanged(Presence presence) {
+                                   Presence prec = presence;
                                    Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
                                }
                        });

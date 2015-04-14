@@ -37,7 +37,6 @@ public class User extends ADigitalPerson  {
             }
         }*/
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
-        setStatuses();
     }
 
     /**
