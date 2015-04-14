@@ -1,12 +1,6 @@
 package sketchagram.chalmers.com.network;
 
-import android.app.Service;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Network;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -44,7 +38,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
@@ -370,7 +363,7 @@ public class Connection implements IConnection{
         Roster roster = connection.getRoster();
         List<String> matchingUsers = null;
         try {
-            matchingUsers = searchUser(userName);
+            matchingUsers = searchUsers(userName);
             for(String match : matchingUsers){
                 if(match.equals(userName)){
                     roster.createEntry(userName+DOMAIN, userName, null);
@@ -442,25 +435,35 @@ public class Connection implements IConnection{
      * Gets the matching users from the server.
      * @return matching users
      */
-    private List<String> searchUser(String userName) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public List<String> searchUsers(String userName) {
         UserSearchManager search = new UserSearchManager(connection);
 
-        Form searchForm = search.getSearchForm("search." + connection.getServiceName());
+        Form searchForm = null;
+        try {
+            searchForm = search.getSearchForm("search." + connection.getServiceName());
+            Form answerForm = searchForm.createAnswerForm();
+            answerForm.setAnswer("Username", true);
 
-        Form answerForm = searchForm.createAnswerForm();
-        answerForm.setAnswer("Username", true);
+            answerForm.setAnswer("search", userName);
 
-        answerForm.setAnswer("search", userName);
+            ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
 
-        ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
-
-        if (data.getRows() != null) {
-            Iterator<ReportedData.Row> it = data.getRows().iterator();
-            while (it.hasNext()) {
-                ReportedData.Row row = it.next();
-                return row.getValues("Username");
+            if (data.getRows() != null) {
+                Iterator<ReportedData.Row> it = data.getRows().iterator();
+                while (it.hasNext()) {
+                    ReportedData.Row row = it.next();
+                    return row.getValues("Username");
+                }
             }
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
         }
+
+
         return new LinkedList<>();
     }
 
