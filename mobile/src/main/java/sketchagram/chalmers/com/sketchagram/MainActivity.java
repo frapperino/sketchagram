@@ -45,6 +45,7 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.network.Connection;
 
 
 public class MainActivity extends ActionBarActivity
@@ -178,6 +179,8 @@ public class MainActivity extends ActionBarActivity
                 }
             });
             dialog.show();
+        }else if (id == R.id.action_change_password) {
+            changePassword();
         } else if (id == R.id.action_logout) {
             //Delete saved user
             SharedPreferences pref = getSharedPreferences(FILENAME, 0);
@@ -245,6 +248,33 @@ public class MainActivity extends ActionBarActivity
         if (fragment != null) {
             displayFragment(fragment);
         }
+    }
+
+    public void changePassword() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.change_password_dialog);
+        dialog.setTitle("Change password");
+        ((Button) dialog.findViewById(R.id.change_password_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Toast toast;
+                String password = ((EditText) dialog.findViewById(R.id.change_password_dialog)).getText().toString();
+                if (Connection.getInstance().changePassword(password)) {
+                    toast = Toast.makeText(getApplicationContext(),"Password changed.", Toast.LENGTH_LONG);
+                } else {
+                    toast = Toast.makeText(getApplicationContext(), "Password couldn't be changed.", Toast.LENGTH_LONG);
+                }
+                toast.show();
+            }
+        });
+        ((Button) dialog.findViewById(R.id.cancel_change_password_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     public void addContact(View view) {
