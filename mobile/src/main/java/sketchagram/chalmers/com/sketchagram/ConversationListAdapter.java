@@ -65,6 +65,7 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
                 if (clientMessage.getType() == MessageType.DRAWING) {
                     Drawing drawing = ((Drawing)clientMessage.getContent());
                     if(drawing != null){
+                        //TODO: make it fit into imageview.
                         imageView.setImageBitmap(drawing.getStaticDrawing());
                     }
                 }
