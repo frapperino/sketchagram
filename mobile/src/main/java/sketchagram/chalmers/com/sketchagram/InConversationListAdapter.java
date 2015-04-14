@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
@@ -58,8 +60,11 @@ public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
         holder.titleText.setText(item.toString());
-        if (item.getSender().getUsername().equals(SystemUser.getInstance().getUser().getUsername()))
-            holder.titleText.setText("Me: " + item.getContent().toString());
+        if (item.getSender().getUsername().equals(SystemUser.getInstance().getUser().getUsername())) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            Date resultDate = new Date(item.getTimestamp());
+            holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());
+        }
 
         return viewToUse;
     }
