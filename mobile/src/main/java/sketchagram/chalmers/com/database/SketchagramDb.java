@@ -11,7 +11,9 @@ import android.view.MotionEvent;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
@@ -119,9 +121,17 @@ public class SketchagramDb {
 
     public int insertMessage (ClientMessage message) {
         ContentValues contentValues = new ContentValues();
-        List<ADigitalPerson> participants = new ArrayList<>();
+        Set<ADigitalPerson> participants = new HashSet<>();
         participants.addAll(message.getReceivers());
-        participants.add(message.getSender());
+        boolean exists = false;
+        for(ADigitalPerson participant : participants){
+            if(participant.getUsername().equals(message.getSender().getUsername())){
+                exists = true;
+            }
+        }
+        if(!exists) {
+            participants.add(message.getSender());
+        }
         int i = insertConversation(participants);
         if(i < 0){
             return i;
@@ -143,9 +153,9 @@ public class SketchagramDb {
                 new String[] { String.valueOf(message.getTimestamp()), message.getSender().getUsername() });
     }
 
-    private int insertConversation(List<ADigitalPerson> participants){
+    private int insertConversation(Set<ADigitalPerson> participants){
         int i = maxValue(ConversationTable.TABLE_NAME, ConversationTable.COLUMN_NAME_CONVERSATION_ID);
-        int exists = conversationExists(i, participants);
+        int exists = conversationExists(participants);
         if( exists < 0 ) {
             for (ADigitalPerson person : participants) {
                 ContentValues contentValues = new ContentValues();
@@ -169,7 +179,7 @@ public class SketchagramDb {
                 new String[] { String.valueOf(conversation.getConversationId())});
     }
 
-    private int conversationExists(int i, List<ADigitalPerson> participants){
+    private int conversationExists(Set<ADigitalPerson> participants){
         List<Conversation> convList = getAllConversations();
         for(Conversation c : convList){
             boolean same = true;
@@ -224,7 +234,7 @@ public class SketchagramDb {
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + ConversationTable.TABLE_NAME, null);
         int current = -1;
         res.moveToFirst();
-        List<ADigitalPerson> participants = new ArrayList<>();
+        Set<ADigitalPerson> participants = new HashSet<>();
         while(res.isAfterLast() == false){
             int temp = res.getInt(res.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_CONVERSATION_ID));
             if(temp != current) {
@@ -251,26 +261,26 @@ public class SketchagramDb {
                     Gson gson = new Gson();
                     MessageType typeEnum = MessageType.valueOf(type);
                     ADigitalPerson contactSender = new Contact(sender, new Profile());
-                    participants.remove(contactSender);
+                    List<ADigitalPerson> listParticipants = new ArrayList<>(participants);
+
                     switch(typeEnum) {
                         case TEXTMESSAGE:
                             String decodedContent = gson.fromJson(content, String.class);
-                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum, read));
+                            messages.add(new ClientMessage(timestamp, contactSender, listParticipants, decodedContent, typeEnum, read));
                             break;
                         case EMOTICON:
                             //TODO: decode here
                             break;
                         case DRAWING:
                             Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
-                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedDrawing, typeEnum, read));
+                            messages.add(new ClientMessage(timestamp, contactSender, listParticipants, decodedDrawing, typeEnum, read));
                             break;
 
                     }
-                    participants.add(contactSender);
                     cursor.moveToNext();
                 }
                 conversations.add(new Conversation(participants, messages, current));
-                participants = new ArrayList<>();
+                participants = new HashSet<>();
             }
 
         }

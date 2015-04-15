@@ -2,21 +2,22 @@ package sketchagram.chalmers.com.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Bosch on 10/02/15.
  */
 public class Conversation {
     private List<ClientMessage> history;
-    private List<ADigitalPerson> participants;
+    private Set<ADigitalPerson> participants;
     private int conversationId;
 
-    public Conversation(List<ADigitalPerson> participants, int conversationId){
+    public Conversation(Set<ADigitalPerson> participants, int conversationId){
         history = new ArrayList<ClientMessage>();
         this.participants = participants;
         this.conversationId = conversationId;
     }
-    public Conversation(List<ADigitalPerson> participants, List<ClientMessage> oldMessages, int conversationId){
+    public Conversation(Set<ADigitalPerson> participants, List<ClientMessage> oldMessages, int conversationId){
         history = oldMessages;
         this.participants = participants;
         this.conversationId = conversationId;
@@ -28,7 +29,7 @@ public class Conversation {
 
     public int getConversationId(){ return  conversationId; }
 
-    public List<ADigitalPerson> getParticipants() {
+    public Set<ADigitalPerson> getParticipants() {
         return participants;
     }
 

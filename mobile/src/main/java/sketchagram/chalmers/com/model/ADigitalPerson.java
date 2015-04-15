@@ -35,4 +35,5 @@ public abstract class ADigitalPerson extends Observable{
     public int hashCode(){
         return (int) username.hashCode() * profile.hashCode() * 17;
     }
+
 }
