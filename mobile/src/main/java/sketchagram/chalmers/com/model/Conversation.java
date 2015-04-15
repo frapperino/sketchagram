@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Bosch on 10/02/15.

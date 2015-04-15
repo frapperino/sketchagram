@@ -11,7 +11,9 @@ import android.view.MotionEvent;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
@@ -121,7 +123,15 @@ public class SketchagramDb {
         ContentValues contentValues = new ContentValues();
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(message.getReceivers());
-        participants.add(message.getSender());
+        boolean exists = false;
+        for(ADigitalPerson participant : participants){
+            if(participant.getUsername().equals(message.getSender().getUsername())){
+                exists = true;
+            }
+        }
+        if(!exists) {
+            participants.add(message.getSender());
+        }
         int i = insertConversation(participants);
         if(i < 0){
             return i;
@@ -145,7 +155,7 @@ public class SketchagramDb {
 
     private int insertConversation(List<ADigitalPerson> participants){
         int i = maxValue(ConversationTable.TABLE_NAME, ConversationTable.COLUMN_NAME_CONVERSATION_ID);
-        int exists = conversationExists(i, participants);
+        int exists = conversationExists(participants);
         if( exists < 0 ) {
             for (ADigitalPerson person : participants) {
                 ContentValues contentValues = new ContentValues();
@@ -169,7 +179,7 @@ public class SketchagramDb {
                 new String[] { String.valueOf(conversation.getConversationId())});
     }
 
-    private int conversationExists(int i, List<ADigitalPerson> participants){
+    private int conversationExists(List<ADigitalPerson> participants){
         List<Conversation> convList = getAllConversations();
         for(Conversation c : convList){
             boolean same = true;
@@ -252,6 +262,7 @@ public class SketchagramDb {
                     MessageType typeEnum = MessageType.valueOf(type);
                     ADigitalPerson contactSender = new Contact(sender, new Profile());
                     participants.remove(contactSender);
+
                     switch(typeEnum) {
                         case TEXTMESSAGE:
                             String decodedContent = gson.fromJson(content, String.class);
