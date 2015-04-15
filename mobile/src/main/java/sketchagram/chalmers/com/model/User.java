@@ -131,7 +131,9 @@ public class User extends ADigitalPerson  {
 
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
-            Connection.getInstance().sendMessage(clientMessage);
+            if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername())){
+                Connection.getInstance().sendMessage(clientMessage);
+            }
             if(!exist) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
