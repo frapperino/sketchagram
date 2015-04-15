@@ -13,7 +13,7 @@ import java.util.Set;
 public class ClientMessage<T> {
     private final long timestamp;
     private final ADigitalPerson sender;
-    private final List<ADigitalPerson> receivers = new ArrayList<>();
+    private final List<ADigitalPerson> receivers = new ArrayList();
     private final T content;
     private final MessageType type;
     private boolean read;
@@ -24,7 +24,7 @@ public class ClientMessage<T> {
         this.receivers.addAll(receiver);
         this.content = content;
         this.type = type;
-        this.read = false;
+        this.read = sender.equals(SystemUser.getInstance().getUser());
     }
 
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
@@ -45,14 +45,6 @@ public class ClientMessage<T> {
     }
     public List<ADigitalPerson> getReceivers(){return receivers;}
     public long getTimestamp(){return timestamp;}
-
-    public boolean isRead(){
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
-    }
 
     @Override
     public String toString(){

@@ -3,6 +3,7 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -71,6 +72,11 @@ public class ConversationListAdapter extends ArrayAdapter<Conversation> {
                 }
             }
             senderView.setText(item.toString());
+            if(item.hasUnreadMessages()) {  //Highlight unread conversations.
+                senderView.setTypeface(null, Typeface.BOLD);
+            } else {
+                senderView.setTypeface(null, Typeface.NORMAL);
+            }
         } else {
             viewToUse = convertView;
             holder = (ViewHolder) viewToUse.getTag();

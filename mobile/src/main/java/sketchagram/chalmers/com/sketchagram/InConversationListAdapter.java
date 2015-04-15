@@ -65,7 +65,7 @@ public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
             Date resultDate = new Date(item.getTimestamp());
             holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());
         }
-
+        item.setRead(true); //Mark message as read.
         return viewToUse;
     }
 }
