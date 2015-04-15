@@ -5,7 +5,6 @@ package sketchagram.chalmers.com.model;
  */
 public class Contact extends ADigitalPerson {
     private boolean favorite;
-    private Status status;
 
     public Contact(String username, Profile profile) {
         super(username, profile);
@@ -18,13 +17,14 @@ public class Contact extends ADigitalPerson {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
-
-    public void setStatus(Status status){ this.status = status;}
-    public Status getStatus(){return status;}
-
     @Override
     public String toString(){
-        return super.getUsername();
+        Status status = super.getStatus();
+        if(status == null) {
+            return super.getUsername();
+        } else {
+            return super.getUsername() + "  " + status.toString(); 
+        }
     }
 
 }

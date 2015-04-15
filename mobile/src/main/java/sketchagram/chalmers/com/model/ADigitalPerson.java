@@ -7,6 +7,7 @@ import java.util.Observable;
  */
 public abstract class ADigitalPerson extends Observable{
     private final String username;
+    private Status status;
     private final Profile profile;
 
     public ADigitalPerson(){
@@ -26,6 +27,9 @@ public abstract class ADigitalPerson extends Observable{
     public Profile getProfile() {
         return profile;
     }
+
+    public void setStatus(Status status){ this.status = status;}
+    public Status getStatus(){return status;}
 
     @Override
     public boolean equals(Object obj){
