@@ -23,7 +23,7 @@ public class Contact extends ADigitalPerson {
         if(status == null) {
             return super.getUsername();
         } else {
-            return super.getUsername() + "  " + status.toString();
+            return super.getUsername() + "  " + status.toString(); 
         }
     }
 
