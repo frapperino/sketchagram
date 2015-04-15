@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +27,11 @@ public class ClientMessage<T> {
         this.read = false;
     }
 
+    public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
+        this(timestamp,sender,receiver,content,type);
+        this.read = read;
+    }
+
     public T getContent(){
         return content;
     }
@@ -38,9 +45,20 @@ public class ClientMessage<T> {
     }
     public List<ADigitalPerson> getReceivers(){return receivers;}
     public long getTimestamp(){return timestamp;}
+
+    public boolean isRead(){
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
     @Override
     public String toString(){
-        return sender.getUsername() + ": " + content.toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date resultDate = new Date(timestamp);
+        return "[" + sdf.format(resultDate) + "] " + sender.getUsername() + ": " + content.toString();
     }
     public boolean isRead() {
         return read;

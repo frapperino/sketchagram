@@ -126,12 +126,12 @@ public class SketchagramDb {
         if(i < 0){
             return i;
         }
-        ADigitalPerson receiver = (ADigitalPerson)message.getReceivers().get(0);
         contentValues.put(MessagesTable.COLUMN_NAME_SENDER, message.getSender().getUsername());
         contentValues.put(MessagesTable.COLUMN_NAME_CONVERSATION_ID, i);
         contentValues.put(MessagesTable.COLUMN_NAME_TIMESTAMP, message.getTimestamp());
         contentValues.put(MessagesTable.COLUMN_NAME_TYPE, message.getType().toString());
         contentValues.put(MessagesTable.COLUMN_NAME_CONTENT, new Gson().toJson(message.getContent()));
+        contentValues.put(MessagesTable.COLUMN_NAME_READ, message.isRead() ? 1:0);
         db.insert(MessagesTable.TABLE_NAME, null, contentValues);
         return i;
     }
@@ -243,10 +243,11 @@ public class SketchagramDb {
                 cursor.moveToFirst();
                 List<ClientMessage> messages = new ArrayList<>();
                 while (!cursor.isAfterLast()) {
-                    String content = cursor.getString(cursor.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
                     String type = cursor.getString(cursor.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TYPE));
+                    String content = cursor.getString(cursor.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_CONTENT));
                     long timestamp = cursor.getLong(cursor.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_TIMESTAMP));
                     String sender = cursor.getString(cursor.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_SENDER));
+                    boolean read = cursor.getInt(cursor.getColumnIndexOrThrow(MessagesTable.COLUMN_NAME_READ)) == 0 ? false : true;
                     Gson gson = new Gson();
                     MessageType typeEnum = MessageType.valueOf(type);
                     ADigitalPerson contactSender = new Contact(sender, new Profile());
@@ -254,14 +255,14 @@ public class SketchagramDb {
                     switch(typeEnum) {
                         case TEXTMESSAGE:
                             String decodedContent = gson.fromJson(content, String.class);
-                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum));
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum, read));
                             break;
                         case EMOTICON:
                             //TODO: decode here
                             break;
                         case DRAWING:
                             Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
-                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedDrawing, typeEnum));
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedDrawing, typeEnum, read));
                             break;
 
                     }

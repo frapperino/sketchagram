@@ -35,12 +35,11 @@ public class NotificationHandler {
      * Creates a notification displaying that a new message has been received.
      */
     public void pushNewMessageNotification(Conversation conversation, ClientMessage message) {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.sketchagram_logo)  //TODO: Provide photo of sender.
-                        .setContentTitle(message.getSender().getUsername())
-                        .setContentText(message.getContent().toString());  //TODO: Display message content.
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
 
+        mBuilder.setSmallIcon(R.drawable.sketchagram_logo);  //TODO: Provide photo of sender.
+        mBuilder.setContentTitle(message.getSender().getUsername());
+        mBuilder.setContentText(message.getContent().toString());  //TODO: Display message content.
         mBuilder.setAutoCancel(true);
         mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE);
         mBuilder.setLights(Color.MAGENTA, 500, 500);

@@ -1,8 +1,11 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.List;
@@ -48,9 +51,7 @@ public class DrawingHelper extends Observable{
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast toast;
-                                    toast = Toast.makeText(MyApplication.getContext(), "RESETTING DRAWING!", Toast.LENGTH_SHORT);
-                                    toast.show();
+                                    Toast.makeText(MyApplication.getContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
                                     setChanged();
                                     notifyObservers(drawing);
                                 }

@@ -37,7 +37,6 @@ import sketchagram.chalmers.com.model.SystemUser;
  * interface.
  */
 public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
-
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -63,11 +62,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: Change Adapter to display your content
         conversationList = SystemUser.getInstance().getUser().getConversationList();
-        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
-                android.R.layout.simple_list_item_1, conversationList);
+        mAdapter = new ConversationListAdapter(getActivity(), conversationList);
     }
 
     @Override

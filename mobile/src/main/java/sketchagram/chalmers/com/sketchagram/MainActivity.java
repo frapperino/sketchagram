@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -45,6 +46,7 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.network.Connection;
 
 
 public class MainActivity extends ActionBarActivity
@@ -178,6 +180,8 @@ public class MainActivity extends ActionBarActivity
                 }
             });
             dialog.show();
+        }else if (id == R.id.action_change_password) {
+            changePassword();
         } else if (id == R.id.action_logout) {
             //Delete saved user
             SharedPreferences pref = getSharedPreferences(FILENAME, 0);
@@ -229,7 +233,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", "" + position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch (position) {
@@ -247,6 +250,33 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    public void changePassword() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.change_password_dialog);
+        dialog.setTitle("Change password");
+        ((Button) dialog.findViewById(R.id.change_password_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Toast toast;
+                String password = ((EditText) dialog.findViewById(R.id.change_password_dialog)).getText().toString();
+                if (Connection.getInstance().changePassword(password)) {
+                    toast = Toast.makeText(getApplicationContext(),"Password changed.", Toast.LENGTH_LONG);
+                } else {
+                    toast = Toast.makeText(getApplicationContext(), "Password couldn't be changed.", Toast.LENGTH_LONG);
+                }
+                toast.show();
+            }
+        });
+        ((Button) dialog.findViewById(R.id.cancel_change_password_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     public void addContact(View view) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_contact_dialog);
@@ -255,14 +285,12 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Toast toast;
                 String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
                 if (SystemUser.getInstance().getUser().addContact(user)) {
-                    toast = Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
-                    toast = Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
                 }
-                toast.show();
             }
         });
         ((Button) dialog.findViewById(R.id.cancel_dialog_button)).setOnClickListener(new View.OnClickListener() {

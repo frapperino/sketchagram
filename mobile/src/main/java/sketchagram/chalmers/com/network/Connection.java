@@ -1,12 +1,6 @@
 package sketchagram.chalmers.com.network;
 
-import android.app.Service;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Network;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -44,7 +38,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
@@ -54,6 +47,7 @@ import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.Status;
 import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 import sketchagram.chalmers.com.model.User;
@@ -197,8 +191,6 @@ public class Connection implements IConnection{
                 } catch (SmackException.NoResponseException e) {
                     e.printStackTrace();
                     return new NetworkException.ServerNotRespondingException(e.getMessage());
-                } catch (SmackException e) {
-                    e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
                     return e;
                 }
@@ -279,6 +271,7 @@ public class Connection implements IConnection{
 
                                @Override
                                public void presenceChanged(Presence presence) {
+                                   Presence prec = presence;
                                    Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
                                }
                        });
@@ -370,7 +363,7 @@ public class Connection implements IConnection{
         Roster roster = connection.getRoster();
         List<String> matchingUsers = null;
         try {
-            matchingUsers = searchUser(userName);
+            matchingUsers = searchUsers(userName);
             for(String match : matchingUsers){
                 if(match.equals(userName)){
                     roster.createEntry(userName+DOMAIN, userName, null);
@@ -420,29 +413,57 @@ public class Connection implements IConnection{
         return connection.isConnected();
     }
 
+    @Override
+    public boolean changePassword(String password) {
+        manager = AccountManager.getInstance(connection);
+        try {
+            manager.changePassword(password);
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Gets the matching users from the server.
      * @return matching users
      */
-    private List<String> searchUser(String userName) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public List<String> searchUsers(String userName) {
         UserSearchManager search = new UserSearchManager(connection);
 
-        Form searchForm = search.getSearchForm("search." + connection.getServiceName());
+        Form searchForm = null;
+        try {
+            searchForm = search.getSearchForm("search." + connection.getServiceName());
+            Form answerForm = searchForm.createAnswerForm();
+            answerForm.setAnswer("Username", true);
 
-        Form answerForm = searchForm.createAnswerForm();
-        answerForm.setAnswer("Username", true);
+            answerForm.setAnswer("search", userName);
 
-        answerForm.setAnswer("search", userName);
+            ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
 
-        ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
-
-        if (data.getRows() != null) {
-            Iterator<ReportedData.Row> it = data.getRows().iterator();
-            while (it.hasNext()) {
-                ReportedData.Row row = it.next();
-                return row.getValues("Username");
+            if (data.getRows() != null) {
+                Iterator<ReportedData.Row> it = data.getRows().iterator();
+                while (it.hasNext()) {
+                    ReportedData.Row row = it.next();
+                    return row.getValues("Username");
+                }
             }
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
         }
+
+
         return new LinkedList<>();
     }
 
@@ -450,7 +471,16 @@ public class Connection implements IConnection{
         List<Contact> list = new ArrayList<>();
         Collection<RosterEntry> entries = getRoster().getEntries();
         for(RosterEntry entry : entries){
-            list.add(new Contact(entry.getUser().split("@")[0], new Profile()));
+            Contact contact = new Contact(entry.getUser().split("@")[0], new Profile());
+            Presence presence = getRoster().getPresence(entry.getUser());
+            if(presence.isAvailable()){
+                contact.setStatus(Status.ONLINE);
+            } else if (presence.isAway()) {
+                contact.setStatus(Status.AWAY);
+            } else {
+                contact.setStatus(Status.OFFLINE);
+            }
+            list.add(contact);
         }
         return list;
     }
@@ -534,6 +564,20 @@ public class Connection implements IConnection{
 
                     if(!exists) {
                         user.addContact(packet.getFrom().split("@")[0]);
+                    }
+                } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
+                    String userName = packet.getFrom().split("@")[0];
+                    User user = SystemUser.getInstance().getUser();
+                    boolean exists = false;
+                    for(Contact contact : user.getContactList()){
+                        if(contact.getUsername().equals(userName)){
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(exists) {
+                        user.removeContact(new Contact(packet.getFrom().split("@")[0], new Profile()));
                     }
                 }
             }

@@ -56,6 +56,13 @@ public class User extends ADigitalPerson  {
         updateObservers(null);
     }
 
+    private void setStatuses(){
+        for(Contact contact : Connection.getInstance().getContacts()){
+            Contact con = contactList.get(contactList.indexOf(contact));
+            con.setStatus(contact.getStatus());
+        }
+    }
+
     /**
      * Gets contacts from database which is synced with server.
      * @return the contactlist
@@ -192,6 +199,10 @@ public class User extends ADigitalPerson  {
         return null;
     }
 
+    public boolean changePassword(String password) {
+        return Connection.getInstance().changePassword(password);
+    }
+
     private void updateObservers(final ClientMessage message){
         setChanged();
         Handler handler = new Handler(MyApplication.getContext().getMainLooper());
@@ -216,5 +227,9 @@ public class User extends ADigitalPerson  {
             }
         }
         return null;
+    }
+
+    public List<String> search(String userName){
+        return Connection.getInstance().searchUsers(userName);
     }
 }
