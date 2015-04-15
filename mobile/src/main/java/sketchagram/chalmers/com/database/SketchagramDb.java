@@ -121,7 +121,7 @@ public class SketchagramDb {
 
     public int insertMessage (ClientMessage message) {
         ContentValues contentValues = new ContentValues();
-        Set<ADigitalPerson> participants = new HashSet<>();
+        List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(message.getReceivers());
         boolean exists = false;
         for(ADigitalPerson participant : participants){
@@ -153,7 +153,7 @@ public class SketchagramDb {
                 new String[] { String.valueOf(message.getTimestamp()), message.getSender().getUsername() });
     }
 
-    private int insertConversation(Set<ADigitalPerson> participants){
+    private int insertConversation(List<ADigitalPerson> participants){
         int i = maxValue(ConversationTable.TABLE_NAME, ConversationTable.COLUMN_NAME_CONVERSATION_ID);
         int exists = conversationExists(participants);
         if( exists < 0 ) {
@@ -179,7 +179,7 @@ public class SketchagramDb {
                 new String[] { String.valueOf(conversation.getConversationId())});
     }
 
-    private int conversationExists(Set<ADigitalPerson> participants){
+    private int conversationExists(List<ADigitalPerson> participants){
         List<Conversation> convList = getAllConversations();
         for(Conversation c : convList){
             boolean same = true;
@@ -234,7 +234,7 @@ public class SketchagramDb {
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + ConversationTable.TABLE_NAME, null);
         int current = -1;
         res.moveToFirst();
-        Set<ADigitalPerson> participants = new HashSet<>();
+        List<ADigitalPerson> participants = new ArrayList<>();
         while(res.isAfterLast() == false){
             int temp = res.getInt(res.getColumnIndexOrThrow(ConversationTable.COLUMN_NAME_CONVERSATION_ID));
             if(temp != current) {
@@ -261,26 +261,27 @@ public class SketchagramDb {
                     Gson gson = new Gson();
                     MessageType typeEnum = MessageType.valueOf(type);
                     ADigitalPerson contactSender = new Contact(sender, new Profile());
-                    List<ADigitalPerson> listParticipants = new ArrayList<>(participants);
+                    participants.remove(contactSender);
 
                     switch(typeEnum) {
                         case TEXTMESSAGE:
                             String decodedContent = gson.fromJson(content, String.class);
-                            messages.add(new ClientMessage(timestamp, contactSender, listParticipants, decodedContent, typeEnum, read));
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum, read));
                             break;
                         case EMOTICON:
                             //TODO: decode here
                             break;
                         case DRAWING:
                             Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
-                            messages.add(new ClientMessage(timestamp, contactSender, listParticipants, decodedDrawing, typeEnum, read));
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedDrawing, typeEnum, read));
                             break;
 
                     }
+                    participants.add(contactSender);
                     cursor.moveToNext();
                 }
                 conversations.add(new Conversation(participants, messages, current));
-                participants = new HashSet<>();
+                participants = new ArrayList<>();
             }
 
         }

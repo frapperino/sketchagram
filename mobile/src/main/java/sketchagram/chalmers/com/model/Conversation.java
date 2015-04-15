@@ -9,15 +9,15 @@ import java.util.Set;
  */
 public class Conversation {
     private List<ClientMessage> history;
-    private Set<ADigitalPerson> participants;
+    private List<ADigitalPerson> participants;
     private int conversationId;
 
-    public Conversation(Set<ADigitalPerson> participants, int conversationId){
+    public Conversation(List<ADigitalPerson> participants, int conversationId){
         history = new ArrayList<ClientMessage>();
         this.participants = participants;
         this.conversationId = conversationId;
     }
-    public Conversation(Set<ADigitalPerson> participants, List<ClientMessage> oldMessages, int conversationId){
+    public Conversation(List<ADigitalPerson> participants, List<ClientMessage> oldMessages, int conversationId){
         history = oldMessages;
         this.participants = participants;
         this.conversationId = conversationId;
@@ -29,7 +29,7 @@ public class Conversation {
 
     public int getConversationId(){ return  conversationId; }
 
-    public Set<ADigitalPerson> getParticipants() {
+    public List<ADigitalPerson> getParticipants() {
         return participants;
     }
 

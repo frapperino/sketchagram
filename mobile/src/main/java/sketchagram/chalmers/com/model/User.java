@@ -98,7 +98,7 @@ public class User extends ADigitalPerson  {
     public boolean removeContact(Contact contact){
         boolean success = Connection.getInstance().removeContact(contact.getUsername());
         if(success){
-            Set<ADigitalPerson> participants = new HashSet<>();
+            List<ADigitalPerson> participants = new ArrayList<>();
             participants.add(contact);
             participants.add(SystemUser.getInstance().getUser());
             Conversation conversation = conversationExists(participants);
@@ -120,7 +120,7 @@ public class User extends ADigitalPerson  {
     public void sendMessage(ClientMessage clientMessage){
         boolean exist = true;
         Conversation conversation = null;
-        Set<ADigitalPerson> participants = new HashSet<>();
+        List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
 
@@ -150,7 +150,7 @@ public class User extends ADigitalPerson  {
      */
     public Conversation addMessage(ClientMessage clientMessage){
         Conversation conversation;
-        Set<ADigitalPerson> participants = new HashSet<>();
+        List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
 
@@ -177,7 +177,7 @@ public class User extends ADigitalPerson  {
      * @param participants
      * @return
      */
-    private Conversation conversationExists(Set<ADigitalPerson> participants){
+    private Conversation conversationExists(List<ADigitalPerson> participants){
         List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
         for(Conversation c : convList){
             boolean same = true;
