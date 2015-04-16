@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_floating_material_light"
-    tools:context="sketchagram.chalmers.com.sketchagram.ConversationFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="sketchagram.chalmers.com.sketchagram.ConversationFragment">
 
-    <GridView
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/conversation_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/gridView"
-        android:verticalSpacing="0dp"
-        android:horizontalSpacing="0dp"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"
-        android:numColumns="2"
-        android:smoothScrollbar="false" />
-
-    <ListView android:id="@+id/conversation_list" android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <TextView android:id="@android:id/empty" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:gravity="center" />
-
-
-</LinearLayout>
+        android:gravity="center"/>
+</FrameLayout>

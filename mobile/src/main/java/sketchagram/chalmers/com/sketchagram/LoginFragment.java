@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.SignInButton;
@@ -31,17 +32,9 @@ import sketchagram.chalmers.com.model.SystemUser;
 public class LoginFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
-    // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mEmailLoginFormView;
-    private SignInButton mPlusSignInButton;
-    private View mSignOutButtons;
-    private View mLoginFormView;
-    private final String FILENAME = "user";
-
     private View view;
+
+    private ProgressBar spinner;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -58,16 +51,9 @@ public class LoginFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_login_new, container, false);
 
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) view.findViewById(R.id.email);
-
-        mPasswordView = (EditText) view.findViewById(R.id.password);
-
-        mLoginFormView = view.findViewById(R.id.login_form);
-        mProgressView = view.findViewById(R.id.login_progress);
-        mEmailLoginFormView = view.findViewById(R.id.email_login_form);
-        mSignOutButtons = view.findViewById(R.id.plus_sign_out_buttons);
-
+        //Get reference to progress bar and set it hidden.
+        spinner = (ProgressBar)view.findViewById(R.id.progressBar1);
+        hideProgressBar();
         return view;
     }
 
@@ -110,4 +96,10 @@ public class LoginFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    public void showProgressBar() {
+         spinner.setVisibility(View.VISIBLE);
+    }
+    public void hideProgressBar() {
+        spinner.setVisibility(View.GONE);
+    }
 }

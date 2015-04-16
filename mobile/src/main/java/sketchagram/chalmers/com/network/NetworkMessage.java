@@ -25,7 +25,7 @@ public class NetworkMessage<T> {
 
     }
 
-    public NetworkMessage(long timestamp,String sender, List<String> receivers, T content){
+    public NetworkMessage(long timestamp, String sender, List<String> receivers, T content){
         this.timestamp = timestamp;
         this.sender = sender;
         this.receivers = receivers;

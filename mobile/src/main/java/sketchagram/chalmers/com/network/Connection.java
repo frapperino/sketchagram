@@ -1,11 +1,6 @@
 package sketchagram.chalmers.com.network;
 
-import android.app.Service;
-import android.content.Intent;
-import android.net.Network;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -17,6 +12,7 @@ import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
@@ -24,6 +20,8 @@ import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
@@ -40,7 +38,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
@@ -50,7 +47,10 @@ import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.Status;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.sketchagram.MyApplication;
+import sketchagram.chalmers.com.model.User;
 
 /**
  * Created by Olliver on 15-02-18.
@@ -61,20 +61,32 @@ public class Connection implements IConnection{
     private AccountManager manager;
     private List<Chat> chatList;
     private List<MultiUserChat> groupChatList;
-    private final String HOST = "129.16.23.202";
+    private final String HOST = "sketchagram.ollivermattsson.se";
     private final String DOMAIN = "@sketchagram";
     private final String GROUP = "Friends";
+    private static Connection myInstance;
+    private static boolean loggedIn;
 
 
-    private final IBinder binder = new Binder();
+    //private final IBinder binder = new Binder();
 
-    public Connection() {
+    private Connection() {
         super();
+        init();
     }
 
-    public void init(){
+    public static Connection getInstance(){
+        if(myInstance == null){
+            myInstance = new Connection();
+        }
+
+        return myInstance;
+
+    }
+    private void init(){
         //SmackAndroid.init()
         config = new ConnectionConfiguration(HOST, 5222);
+        config.setReconnectionAllowed(true);
         config.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         connection = new XMPPTCPConnection(config);
         chatList = new ArrayList<>();
@@ -85,9 +97,28 @@ public class Connection implements IConnection{
             StrictMode.setThreadPolicy(policy);
         }
         SASLAuthentication.supportSASLMechanism("PLAIN", 0);
+        connection.addPacketListener(requestListener, new PacketFilter() {
+            @Override
+            public boolean accept(Packet packet) {
+                if (packet instanceof Presence) {
+                    Presence presence = (Presence) packet;
+                    if (presence.getType().equals(Presence.Type.subscribed)
+                            || presence.getType().equals(
+                            Presence.Type.subscribe)
+                            || presence.getType().equals(
+                            Presence.Type.unsubscribed)
+                            || presence.getType().equals(
+                            Presence.Type.unsubscribe)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
         connect();
         Roster roster = connection.getRoster();
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
+
     }
 
     private void connect() {
@@ -122,8 +153,11 @@ public class Connection implements IConnection{
     }
 
     private ChatManager getChatManager(){
-        ChatManager chatManager = null;
+        ChatManager chatManager;
         if(connection.isConnected()) {
+            chatManager = ChatManager.getInstanceFor(connection);
+        }else {
+            connect();
             chatManager = ChatManager.getInstanceFor(connection);
         }
         return chatManager;
@@ -138,7 +172,7 @@ public class Connection implements IConnection{
         presence.setMode(Presence.Mode.away);
         if(connection.isConnected()){
             disconnect(presence);
-            init();
+            loggedIn = false;
         }
 
     }
@@ -157,8 +191,6 @@ public class Connection implements IConnection{
                 } catch (SmackException.NoResponseException e) {
                     e.printStackTrace();
                     return new NetworkException.ServerNotRespondingException(e.getMessage());
-                } catch (SmackException e) {
-                    e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
                     return e;
                 }
@@ -182,6 +214,7 @@ public class Connection implements IConnection{
     }
 
     public boolean login(final String userName, final String password){
+        if(loggedIn){return true;}
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params){
@@ -191,9 +224,14 @@ public class Connection implements IConnection{
                         getChatManager().addChatListener(new ChatManagerListener() {
                             @Override
                             public void chatCreated(Chat chat, boolean b) {
-                                if(!b){
-                                    chatList.add(chat);
-                                    chat.addMessageListener(messageListener);
+                                if (!b) {
+                                    if (!chatList.contains(chat)) {
+                                        chatList.add(chat);
+                                    }
+                                    Chat c = chatList.get(chatList.indexOf(chat));
+                                    c.addMessageListener(messageListener);
+
+
                                 }
                             }
                         });
@@ -218,7 +256,7 @@ public class Connection implements IConnection{
                         getRoster().addRosterListener(new RosterListener() {
                                @Override
                                public void entriesAdded(Collection<String> strings) {
-
+                                    Log.d("REQUEST", "ENTRIES ADDED REQUEST");
                                }
 
                                @Override
@@ -233,6 +271,7 @@ public class Connection implements IConnection{
 
                                @Override
                                public void presenceChanged(Presence presence) {
+                                   Presence prec = presence;
                                    Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
                                }
                        });
@@ -258,12 +297,19 @@ public class Connection implements IConnection{
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        if(success){
+            loggedIn = true;
+        }
         return success;
+    }
+
+    public static boolean isLoggedIn(){
+        return loggedIn;
     }
 
     @Override
     public void createGroupConversation(List<ADigitalPerson> recipients, String name) {
-        MultiUserChat muc = null;
+        /*MultiUserChat muc = null;
         if(name.isEmpty()){
             String newName = SystemUser.getInstance().getUser().getUsername() + ", ";
             for(ADigitalPerson recipient: recipients){
@@ -283,7 +329,7 @@ public class Connection implements IConnection{
             }
         }
         Conversation c = new Conversation(recipients);
-        SystemUser.getInstance().getUser().addConversation(c);
+        SystemUser.getInstance().getUser().addConversation(c);*/
 
     }
 
@@ -306,24 +352,18 @@ public class Connection implements IConnection{
         String object = gson.toJson(networkMessage);
         message.setBody(object);
         sendMessageToContacts(networkMessage, message);
-
-
     }
 
     /**
      * Adds the specified user if it exists
      * @param userName the user to be added
      * @return true if user exists false otherwise
-     * @throws SmackException.NotLoggedInException
-     * @throws XMPPException.XMPPErrorException
-     * @throws SmackException.NotConnectedException
-     * @throws SmackException.NoResponseException
      */
     public boolean addContact(String userName) {
         Roster roster = connection.getRoster();
         List<String> matchingUsers = null;
         try {
-            matchingUsers = searchUser(userName);
+            matchingUsers = searchUsers(userName);
             for(String match : matchingUsers){
                 if(match.equals(userName)){
                     roster.createEntry(userName+DOMAIN, userName, null);
@@ -343,29 +383,87 @@ public class Connection implements IConnection{
         return false;
     }
 
+    public boolean removeContact(String userName){
+        Roster roster = connection.getRoster();
+
+        try {
+            RosterEntry entry = roster.getEntry(userName+DOMAIN);
+            if(entry != null){
+                roster.removeEntry(entry);
+            } else {
+                return false;
+            }
+        } catch (SmackException.NotLoggedInException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isConnected(){
+        return connection.isConnected();
+    }
+
+    @Override
+    public boolean changePassword(String password) {
+        manager = AccountManager.getInstance(connection);
+        try {
+            manager.changePassword(password);
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+            return false;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Gets the matching users from the server.
      * @return matching users
      */
-    private List<String> searchUser(String userName) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public List<String> searchUsers(String userName) {
         UserSearchManager search = new UserSearchManager(connection);
 
-        Form searchForm = search.getSearchForm("search." + connection.getServiceName());
+        Form searchForm = null;
+        try {
+            searchForm = search.getSearchForm("search." + connection.getServiceName());
+            Form answerForm = searchForm.createAnswerForm();
+            answerForm.setAnswer("Username", true);
 
-        Form answerForm = searchForm.createAnswerForm();
-        answerForm.setAnswer("Username", true);
+            answerForm.setAnswer("search", userName);
 
-        answerForm.setAnswer("search", userName);
+            ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
 
-        ReportedData data = search.getSearchResults(answerForm, "search." + connection.getServiceName());
-
-        if (data.getRows() != null) {
-            Iterator<ReportedData.Row> it = data.getRows().iterator();
-            while (it.hasNext()) {
-                ReportedData.Row row = it.next();
-                return row.getValues("Username");
+            if (data.getRows() != null) {
+                Iterator<ReportedData.Row> it = data.getRows().iterator();
+                while (it.hasNext()) {
+                    ReportedData.Row row = it.next();
+                    return row.getValues("Username");
+                }
             }
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
         }
+
+
         return new LinkedList<>();
     }
 
@@ -373,7 +471,16 @@ public class Connection implements IConnection{
         List<Contact> list = new ArrayList<>();
         Collection<RosterEntry> entries = getRoster().getEntries();
         for(RosterEntry entry : entries){
-            list.add(new Contact(entry.getUser().split("@")[0], new Profile()));
+            Contact contact = new Contact(entry.getUser().split("@")[0], new Profile());
+            Presence presence = getRoster().getPresence(entry.getUser());
+            if(presence.isAvailable()){
+                contact.setStatus(Status.ONLINE);
+            } else if (presence.isAway()) {
+                contact.setStatus(Status.AWAY);
+            } else {
+                contact.setStatus(Status.OFFLINE);
+            }
+            list.add(contact);
         }
         return list;
     }
@@ -412,7 +519,10 @@ public class Connection implements IConnection{
     private MessageListener messageListener = new MessageListener() {
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
-            SystemUser.getInstance().getUser().addMessage(getMessage(message.getBody(), message.getLanguage()));
+            ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
+            Conversation conversation = SystemUser.getInstance().getUser().addMessage(clientMessage);
+            NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
+            notificationHandler.pushNewMessageNotification(conversation, clientMessage);
         }
     };
 
@@ -435,5 +545,43 @@ public class Connection implements IConnection{
         }
         return clientMessage;
     }
+
+    private PacketListener requestListener = new PacketListener() {
+        @Override
+        public void processPacket(Packet packet) throws SmackException.NotConnectedException {
+            if(packet instanceof Presence){
+                Presence presence = (Presence)packet;
+                if(presence.getType().equals(Presence.Type.subscribe)){
+                    String userName = packet.getFrom().split("@")[0];
+                    User user = SystemUser.getInstance().getUser();
+                    boolean exists = false;
+                    for(Contact contact : user.getContactList()){
+                        if(contact.getUsername().equals(userName)){
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(!exists) {
+                        user.addContact(packet.getFrom().split("@")[0]);
+                    }
+                } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
+                    String userName = packet.getFrom().split("@")[0];
+                    User user = SystemUser.getInstance().getUser();
+                    boolean exists = false;
+                    for(Contact contact : user.getContactList()){
+                        if(contact.getUsername().equals(userName)){
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(exists) {
+                        user.removeContact(new Contact(packet.getFrom().split("@")[0], new Profile()));
+                    }
+                }
+            }
+        }
+    };
 }
 

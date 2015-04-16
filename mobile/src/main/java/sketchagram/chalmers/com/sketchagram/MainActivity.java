@@ -3,17 +3,15 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,6 +46,7 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.network.Connection;
 
 
 public class MainActivity extends ActionBarActivity
@@ -84,11 +83,9 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         // Check if logged in, else start LoginActivity
-
         sendFragment = new SendFragment();
         contactSendFragment = new ContactSendFragment();
         conversationFragment = new ConversationFragment();
-        inConversationFragment = new InConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         drawingFragment = new DrawingFragment();
 
@@ -122,7 +119,6 @@ public class MainActivity extends ActionBarActivity
         mHandler = new Handler(this);
 
         fragmentManager = getFragmentManager();
-        displayFragment(conversationFragment);
 
         /*
          * Navigation drawer
@@ -141,7 +137,16 @@ public class MainActivity extends ActionBarActivity
 
         //Set observer
         SystemUser.getInstance().getUser().addObserver(this);
-    }
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(bundle != null) {    //Notification passed a conversationId.
+            inConversationFragment = InConversationFragment.newInstance(bundle.getInt("ConversationId"));
+            displayFragment(inConversationFragment);
+        } else {    //Normal startup
+            displayFragment(conversationFragment);
+        }
+     }
 
     public void startDrawingFragment(View v) {
         displayFragment(drawingFragment);
@@ -175,6 +180,8 @@ public class MainActivity extends ActionBarActivity
                 }
             });
             dialog.show();
+        }else if (id == R.id.action_change_password) {
+            changePassword();
         } else if (id == R.id.action_logout) {
             //Delete saved user
             SharedPreferences pref = getSharedPreferences(FILENAME, 0);
@@ -182,6 +189,7 @@ public class MainActivity extends ActionBarActivity
             prefs.clear();
             prefs.apply();
             SystemUser.getInstance().logout();
+            MyApplication.getInstance().getDatabase().update();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -191,9 +199,8 @@ public class MainActivity extends ActionBarActivity
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
         } else {
-            throw new IllegalStateException("Forbidden item selected in menu!");
+            throw new UnsupportedOperationException("Menu item selected not supported!");
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -208,13 +215,9 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onFragmentInteraction(String id) {
-        if (id.contains("conversation")) {
-            //Create a new fragment and replace the old fragment in layout.
-            displayFragment(inConversationFragment);
-        } else {
-            displayFragment(conversationFragment);
-        }
+    public void onFragmentInteraction(int conversationId) {
+        inConversationFragment = InConversationFragment.newInstance(conversationId);
+        displayFragment(inConversationFragment);
     }
 
     /**
@@ -230,7 +233,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        Log.d("NavDraw", "" + position);
         //Logic for item selection in navigation drawer.
         Fragment fragment = null;
         switch (position) {
@@ -248,6 +250,33 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    public void changePassword() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.change_password_dialog);
+        dialog.setTitle("Change password");
+        ((Button) dialog.findViewById(R.id.change_password_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Toast toast;
+                String password = ((EditText) dialog.findViewById(R.id.change_password_dialog)).getText().toString();
+                if (Connection.getInstance().changePassword(password)) {
+                    toast = Toast.makeText(getApplicationContext(),"Password changed.", Toast.LENGTH_LONG);
+                } else {
+                    toast = Toast.makeText(getApplicationContext(), "Password couldn't be changed.", Toast.LENGTH_LONG);
+                }
+                toast.show();
+            }
+        });
+        ((Button) dialog.findViewById(R.id.cancel_change_password_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     public void addContact(View view) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_contact_dialog);
@@ -256,14 +285,12 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Toast toast;
                 String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
                 if (SystemUser.getInstance().getUser().addContact(user)) {
-                    toast = Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
-                    toast = Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
                 }
-                toast.show();
             }
         });
         ((Button) dialog.findViewById(R.id.cancel_dialog_button)).setOnClickListener(new View.OnClickListener() {
@@ -309,7 +336,6 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-
     private List<Node> getNodes() {
         List<Node> nodes = new ArrayList<Node>();
         NodeApi.GetConnectedNodesResult rawNodes =
@@ -337,7 +363,6 @@ public class MainActivity extends ActionBarActivity
             }.execute();
         }
     };
-
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
@@ -373,25 +398,23 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        //Must be implemented?
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        //Must be implemented?
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        //Must be implemented?
     }
 
     @Override
     public boolean handleMessage(Message msg) {
         return false;
     }
-
-
 
     /**
      * This method will generate all the nodes that are attached to a Google Api Client.
@@ -438,12 +461,17 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-        @Override
-        public void update (Observable observable, Object data){
-            conversationFragment.updateList();
-            if (data != null) {
-                //Update relevant ListAdapters.
-                inConversationFragment.updateList((ClientMessage) data, this);
-            }
+    @Override
+    public void update (Observable observable, Object data){
+        conversationFragment.updateList();
+        if (data != null && inConversationFragment != null) {
+            //Update relevant ListAdapters.
+            inConversationFragment.updateList();
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+        //Currently not in use but has to be implemented, as defined by a fragment.
+    }
 }

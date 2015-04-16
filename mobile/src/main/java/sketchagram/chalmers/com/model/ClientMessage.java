@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,9 +13,10 @@ import java.util.Set;
 public class ClientMessage<T> {
     private final long timestamp;
     private final ADigitalPerson sender;
-    private final List<ADigitalPerson> receivers = new ArrayList<>();
+    private final List<ADigitalPerson> receivers = new ArrayList();
     private final T content;
     private final MessageType type;
+    private boolean read;
 
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
         this.timestamp = timestamp;
@@ -21,6 +24,12 @@ public class ClientMessage<T> {
         this.receivers.addAll(receiver);
         this.content = content;
         this.type = type;
+        this.read = sender.equals(SystemUser.getInstance().getUser());
+    }
+
+    public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
+        this(timestamp,sender,receiver,content,type);
+        this.read = read;
     }
 
     public T getContent(){
@@ -36,9 +45,18 @@ public class ClientMessage<T> {
     }
     public List<ADigitalPerson> getReceivers(){return receivers;}
     public long getTimestamp(){return timestamp;}
+
     @Override
     public String toString(){
-        return sender.getUsername() + ": " + content.toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date resultDate = new Date(timestamp);
+        return "[" + sdf.format(resultDate) + "] " + sender.getUsername() + ": " + content.toString();
+    }
+    public boolean isRead() {
+        return read;
     }
 
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 }

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
@@ -19,7 +21,6 @@ import sketchagram.chalmers.com.model.SystemUser;
  */
 public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
     private Context context;
-    private boolean useList = true;
 
     public InConversationListAdapter(Context context, List items) {
         super(context, android.R.layout.simple_list_item_1, items);
@@ -41,9 +42,9 @@ public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
      * @return
      */
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        ClientMessage item = (ClientMessage)getItem(position);
-        View viewToUse = null;
+        ViewHolder holder;
+        ClientMessage item = getItem(position);
+        View viewToUse;
 
         // This block exists to inflate the settings list item conditionally based on whether
         // we want to support a grid or list view.
@@ -59,9 +60,12 @@ public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
         holder.titleText.setText(item.toString());
-        if (item.getSender().getUsername().equals(SystemUser.getInstance().getUser().getUsername()))
-            holder.titleText.setText("Me: " + item.getContent().toString());
-
+        if (item.getSender().getUsername().equals(SystemUser.getInstance().getUser().getUsername())) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            Date resultDate = new Date(item.getTimestamp());
+            holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());
+        }
+        item.setRead(true); //Mark message as read.
         return viewToUse;
     }
 }
