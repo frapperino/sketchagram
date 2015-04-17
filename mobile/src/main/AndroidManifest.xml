@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sketchagram.chalmers.com.sketchagram"
-    process = "sketchagram.chalmers.com.sketchagramprocess">
+    android:process="sketchagram.chalmers.com.sketchagramprocess">
 
 
     <!-- To access Google+ APIs: -->
@@ -30,7 +30,7 @@
 
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustPan|stateHidden"> <!--android:windowSoftInputMode="adjustResize|stateHidden"-->
+            android:windowSoftInputMode="stateVisible|adjustPan"> <!--android:windowSoftInputMode="adjustResize|stateHidden"-->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
