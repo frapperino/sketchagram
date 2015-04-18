@@ -18,13 +18,13 @@ public class ConnectionTest extends AndroidTestCase {
     }
 
     public void chatTest(){
-        Connection conn1 = new Connection();
+        /*Connection conn1 = new Connection();
         Connection conn2 = new Connection();
         conn1.init();
         conn2.init();
         conn1.login("asdasd", "asdasd");
         conn2.login("olliver", "olliver");
         Contact contact = new Contact("olliver", new Profile());
-        conn1.createConversation(contact);
+        conn1.createConversation(contact);*/
     }
 }

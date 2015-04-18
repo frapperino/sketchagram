@@ -28,7 +28,11 @@ public class ClientMessage<T> {
     }
 
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
-        this(timestamp,sender,receiver,content,type);
+        this.timestamp = timestamp;
+        this.sender = sender;
+        this.receivers.addAll(receiver);
+        this.content = content;
+        this.type = type;
         this.read = read;
     }
 

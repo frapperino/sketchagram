@@ -13,7 +13,7 @@ public class Conversation implements Comparable{
     private int conversationId;
 
     public Conversation(List<ADigitalPerson> participants, int conversationId){
-        history = new ArrayList<ClientMessage>();
+        history = new ArrayList<>();
         this.participants = participants;
         this.conversationId = conversationId;
     }
@@ -75,9 +75,9 @@ public class Conversation implements Comparable{
         }
         final long myTimestamp = myHistory.get(myHistory.size()-1).getTimestamp();
         final long otherTimestamp = otherHistory.get(otherHistory.size()-1).getTimestamp();
-        if(myTimestamp > otherTimestamp) {
+        if(myTimestamp < otherTimestamp) {
             return 1;
-        } else if(myTimestamp < otherTimestamp){
+        } else if(myTimestamp > otherTimestamp){
             return -1;
         } else {
             return 0;

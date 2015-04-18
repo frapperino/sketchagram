@@ -29,7 +29,9 @@ public abstract class ADigitalPerson extends Observable{
 
     @Override
     public boolean equals(Object obj){
-        if(this.getClass() != obj.getClass()) {
+        if(obj == null) {
+            return false;
+        } else if(this.getClass() != obj.getClass()) {
             return false;
         } else if(this == obj) {
             return true;
@@ -38,6 +40,7 @@ public abstract class ADigitalPerson extends Observable{
         }
         return this.username.equals(((ADigitalPerson)obj).getUsername());
     }
+
     @Override
     public int hashCode(){
         return (int) username.hashCode() * profile.hashCode() * 17;
