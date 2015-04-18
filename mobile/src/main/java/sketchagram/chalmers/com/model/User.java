@@ -16,6 +16,7 @@ import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
+ * A representation of the application user's user information and its interface.
  * Created by Bosch on 10/02/15.
  */
 public class User extends ADigitalPerson  {

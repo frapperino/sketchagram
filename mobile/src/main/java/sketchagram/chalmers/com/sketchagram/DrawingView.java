@@ -311,6 +311,7 @@ public class DrawingView extends View {
                                     public void run() {
                                         Toast.makeText(MyApplication.getContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
                                         setChanged();
+
                                         notifyObservers(drawing);
                                     }
                                 });
