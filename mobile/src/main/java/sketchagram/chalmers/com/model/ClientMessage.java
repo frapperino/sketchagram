@@ -24,7 +24,7 @@ public class ClientMessage<T> {
         this.receivers.addAll(receiver);
         this.content = content;
         this.type = type;
-        this.read = sender.equals(SystemUser.getInstance().getUser());
+        this.read = sender.equals(SystemUser.getInstance().getUser());//TODO: Find why sender is null.
     }
 
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){

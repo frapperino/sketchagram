@@ -1,16 +1,10 @@
 package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
@@ -126,20 +120,21 @@ public class User extends ADigitalPerson  {
         participants.add(clientMessage.getSender());
 
         conversation = conversationExists(participants);
-        if(conversation == null){
+        /*if(conversation == null){
             exist = false;
-        }
+        }*/
 
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
             if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername())){
                 Connection.getInstance().sendMessage(clientMessage);
             }
-            if(!exist) {
+            /*if(!exist) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
             }
-            conversation.addMessage(clientMessage);
+            conversation.addMessage(clientMessage);*/
+            addMessage(clientMessage);
             updateObservers(clientMessage);
         }
     }
@@ -168,6 +163,7 @@ public class User extends ADigitalPerson  {
                 this.addConversation(conversation);
             }
             conversation.addMessage(clientMessage);
+            sortConversations();
             updateObservers(clientMessage);
         }
         return conversation;
@@ -234,5 +230,12 @@ public class User extends ADigitalPerson  {
 
     public List<String> search(String userName){
         return Connection.getInstance().searchUsers(userName);
+    }
+
+    /**
+     * Sorts conversations when an update has come.
+     */
+    private void sortConversations() {
+       Collections.sort(conversationList);
     }
 }

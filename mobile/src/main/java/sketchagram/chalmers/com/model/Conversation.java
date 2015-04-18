@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Created by Bosch on 10/02/15.
  */
-public class Conversation {
+public class Conversation implements Comparable{
     private List<ClientMessage> history;
     private List<ADigitalPerson> participants;
     private int conversationId;
@@ -57,5 +57,30 @@ public class Conversation {
         participants = participants.substring(1, participants.length()-1); //Remove [].
         getParticipants().add(SystemUser.getInstance().getUser());//to keep list consistent
         return participants;
+    }
+
+    @Override
+    public int compareTo(Object other) {
+        if (this == other)  {
+            return 0;
+        }
+        final List<ClientMessage> myHistory = this.getHistory();
+        final List<ClientMessage> otherHistory = ((Conversation)other).getHistory();
+        if(myHistory.isEmpty() && otherHistory.isEmpty()) {
+            return 0;
+        } else if(myHistory.isEmpty() && !otherHistory.isEmpty()) {
+            return -1;
+        } else if(!myHistory.isEmpty() && otherHistory.isEmpty()) {
+            return 1;
+        }
+        final long myTimestamp = myHistory.get(myHistory.size()-1).getTimestamp();
+        final long otherTimestamp = otherHistory.get(otherHistory.size()-1).getTimestamp();
+        if(myTimestamp > otherTimestamp) {
+            return 1;
+        } else if(myTimestamp < otherTimestamp){
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }
