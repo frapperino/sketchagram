@@ -46,6 +46,12 @@ public class ClientMessage<T> {
     public List<ADigitalPerson> getReceivers(){return receivers;}
     public long getTimestamp(){return timestamp;}
 
+    public String dateToShow(){
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date d = new Date(timestamp);
+        return sdf.format(d);
+    }
+
     @Override
     public String toString(){
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Parcel;
@@ -29,6 +30,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
@@ -81,7 +83,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         //Frappe
-        gridView = (GridView) view.findViewById(R.id.gridView);
+        gridView = (GridView) view.findViewById(R.id.conversation_list);
         gridView.setAdapter(new MyAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList()));
 
 
@@ -155,16 +157,17 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         {
             inflater = LayoutInflater.from(context);
 
-            //TODO: hur få getName, getDrawing + timestamp från servern?
-            items.add(new Item("Danny","12:54", R.drawable.danny));
-            items.add(new Item("Alex","14:22", R.drawable.alex));
-            items.add(new Item("Frappe","29 Mar, 2015", R.drawable.frappe));
-            items.add(new Item("Jabbe","1 Feb, 2015", R.drawable.jabbe));
-            items.add(new Item("Olliver","3 Jan, 2015", R.drawable.olliver));
-            items.add(new Item("Huttu", "2014",R.drawable.huttu));
-            items.add(new Item("Fring", "2014",R.drawable.gustavo_fring));
-            items.add(new Item("Glader", "2014",R.drawable.happyface));
-            items.add(new Item("Arger?", "2013",R.drawable.madface));
+            if(conversations!=null){
+                for (int i = 0; i < conversations.size(); i++){
+                    items.add(new Item(
+                            SystemUser.getInstance().getUser().getConversationList().get(i).getParticipants().get(0).getUsername().toString(),
+                            String.valueOf((SystemUser.getInstance().getUser().getConversationList().get(i).getHistory().get(SystemUser.getInstance().getUser()
+                                    .getConversationList().get(i).getHistory().size()-1).dateToShow())),
+                            R.drawable.frappe
+                    ));
+                }
+            }
+
         }
 
         @Override
