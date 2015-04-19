@@ -29,8 +29,10 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.SystemUser;
 
 /**
@@ -148,8 +150,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
 
     //Frappe
-    private class MyAdapter extends BaseAdapter
-    {
+    private class MyAdapter extends BaseAdapter {
         private List<Item> items = new ArrayList<Item>();
         private LayoutInflater inflater;
 
@@ -158,13 +159,19 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             inflater = LayoutInflater.from(context);
 
             if(conversations!=null){
-                for (int i = 0; i < conversations.size(); i++){
-                    items.add(new Item(
-                            SystemUser.getInstance().getUser().getConversationList().get(i).getParticipants().get(0).getUsername().toString(),
-                            String.valueOf((SystemUser.getInstance().getUser().getConversationList().get(i).getHistory().get(SystemUser.getInstance().getUser()
-                                    .getConversationList().get(i).getHistory().size()-1).dateToShow())),
-                            R.drawable.frappe
-                    ));
+                for (Conversation c: conversations){
+                    List<ClientMessage> history = c.getHistory();
+                    ClientMessage lastMessage = c.getHistory().get(history.size()-1);
+                    if(lastMessage.getType() == MessageType.DRAWING) {
+                        items.add(new Item(
+                                c.getParticipants().get(0).getUsername().toString(),
+                               lastMessage.dateToShow(),
+                                ((Drawing)lastMessage.getContent()).getStaticDrawing()));
+                    } else {
+                        items.add(new Item(
+                                c.getParticipants().get(0).getUsername().toString(),
+                                history.get(history.size()-1).dateToShow(), null));
+                    }
                 }
             }
 
@@ -182,9 +189,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         }
 
         @Override
-        public long getItemId(int i)
-        {
-            return items.get(i).drawableId;
+        public long getItemId(int position) {
+            return 0;
         }
 
         @Override
@@ -209,7 +215,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
             Item item = (Item)getItem(i);
 
-            picture.setImageResource(item.drawableId);
+            if(item.drawing != null) {
+                picture.setImageBitmap(item.drawing);
+            }
             name.setText(item.name);
             time.setText(item.time);
 
@@ -220,13 +228,12 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         {
             final String time;
             final String name;
-            final int drawableId;
+            final Bitmap drawing;
 
-            Item(String name, String time, int drawableId)
-            {
+            Item(String name, String time, Bitmap drawing) {
                 this.time = time;
                 this.name = name;
-                this.drawableId = drawableId;
+                this.drawing = drawing;
             }
         }
     }
