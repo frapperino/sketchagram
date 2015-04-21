@@ -21,18 +21,18 @@ public class Drawing {
         events = new LinkedList<>();
     }
 
-    public Drawing(DataMap data) {
+    public Drawing(float[] xFloat, float[] yFloat, long[] longTimes, String[] actionsString) {
 
         events = new LinkedList<>();
 
-        float[] yf = data.getFloatArray("y-coordinates");
-        float[] xf = data.getFloatArray("x-coordinates");
-        long[] times = data.getLongArray("drawing-times");
-        List<String> actions = data.getStringArrayList("actions");
+        float[] yf = yFloat;
+        float[] xf = xFloat;
+        long[] times = longTimes;
+        String[] actions = actionsString;
 
         int i = 0;
         for(float f : yf) {
-            events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions.get(i))));
+            events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions[i])));
         }
 
     }
