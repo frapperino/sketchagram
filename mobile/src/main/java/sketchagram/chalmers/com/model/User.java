@@ -22,7 +22,7 @@ public class User extends ADigitalPerson  {
 
     public User(String username, Profile profile) {
         super(username, profile);
-        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username);
+        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username.toLowerCase());
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
     }
 

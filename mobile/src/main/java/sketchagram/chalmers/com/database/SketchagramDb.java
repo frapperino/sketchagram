@@ -63,7 +63,7 @@ public class SketchagramDb {
     public boolean insertContact  (Contact contact)
     {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_USERNAME, contact.getUsername());
+        contentValues.put(ContactTable.COLUMN_NAME_CONTACT_USERNAME, contact.getUsername().toLowerCase());
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_NAME, contact.getProfile().getName());
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_EMAIL, contact.getProfile().getEmail());
         db.insert(ContactTable.TABLE_NAME, null, contentValues);
@@ -74,7 +74,7 @@ public class SketchagramDb {
     {
         return db.delete(ContactTable.TABLE_NAME,
                 ContactTable.COLUMN_NAME_CONTACT_USERNAME + EQUALS + QUESTION_MARK,
-                new String[] { contact.getUsername() });
+                new String[] { contact.getUsername().toLowerCase() });
     }
 
     public boolean updateContact (Contact contact )
@@ -106,7 +106,7 @@ public class SketchagramDb {
     private Contact getContact(String userName){
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + ContactTable.TABLE_NAME +
                 WHERE + ContactTable.COLUMN_NAME_CONTACT_USERNAME + EQUALS + QUESTION_MARK
-                , new String[]{userName} );
+                , new String[]{userName.toLowerCase()} );
         res.moveToFirst();
         if(!res.isAfterLast()) {
             String name = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_NAME));
@@ -127,7 +127,7 @@ public class SketchagramDb {
         participants.addAll(message.getReceivers());
         boolean exists = false;
         for(ADigitalPerson participant : participants){
-            if(participant.getUsername().equals(message.getSender().getUsername())){
+            if(participant.getUsername().toLowerCase().equals(message.getSender().getUsername().toLowerCase())){
                 exists = true;
             }
         }
@@ -138,7 +138,7 @@ public class SketchagramDb {
         if(i < 0){
             return i;
         }
-        contentValues.put(MessagesTable.COLUMN_NAME_SENDER, message.getSender().getUsername());
+        contentValues.put(MessagesTable.COLUMN_NAME_SENDER, message.getSender().getUsername().toLowerCase());
         contentValues.put(MessagesTable.COLUMN_NAME_CONVERSATION_ID, i);
         contentValues.put(MessagesTable.COLUMN_NAME_TIMESTAMP, message.getTimestamp());
         contentValues.put(MessagesTable.COLUMN_NAME_TYPE, message.getType().toString());
@@ -152,7 +152,7 @@ public class SketchagramDb {
     {
         return db.delete(MessagesTable.TABLE_NAME,
                 (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + QUESTION_MARK + AND + MessagesTable.COLUMN_NAME_SENDER + EQUALS + QUESTION_MARK ),
-                new String[] { String.valueOf(message.getTimestamp()), message.getSender().getUsername() });
+                new String[] { String.valueOf(message.getTimestamp()), message.getSender().getUsername().toLowerCase() });
     }
 
     private int insertConversation(List<ADigitalPerson> participants){
@@ -162,7 +162,7 @@ public class SketchagramDb {
             for (ADigitalPerson person : participants) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(ConversationTable.COLUMN_NAME_CONVERSATION_ID, i);
-                contentValues.put(ConversationTable.COLUMN_NAME_PARTICIPANT, person.getUsername());
+                contentValues.put(ConversationTable.COLUMN_NAME_PARTICIPANT, person.getUsername().toLowerCase());
                 db.insert(ConversationTable.TABLE_NAME, null, contentValues);
             }
             return i;
@@ -220,7 +220,7 @@ public class SketchagramDb {
                 query += AND + " (" + SELECT + ConversationTable.COLUMN_NAME_CONVERSATION_ID + FROM + ConversationTable.TABLE_NAME +
                         WHERE + ConversationTable.COLUMN_NAME_PARTICIPANT + EQUALS + QUESTION_MARK + " ) ";
             }
-            queryParticipants[i] = participant.getUsername();
+            queryParticipants[i] = participant.getUsername().toLowerCase();
             i++;
 
         }
@@ -294,7 +294,7 @@ public class SketchagramDb {
         List<Conversation> userConversations = new ArrayList<>();
         for(Conversation conversation : getAllConversations()){
             for(ADigitalPerson participant : conversation.getParticipants()){
-                if(participant.getUsername().equals(user)){
+                if(participant.getUsername().toLowerCase().equals(user.toLowerCase())){
                     userConversations.add(conversation);
                 }
             }

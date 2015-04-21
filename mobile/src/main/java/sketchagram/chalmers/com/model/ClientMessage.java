@@ -63,4 +63,11 @@ public class ClientMessage<T> {
     public void setRead(boolean read) {
         this.read = read;
     }
+
+    public boolean equals(Object obj){
+        if(this == obj) return true;
+        else if (!(obj instanceof ClientMessage)) return false;
+        ClientMessage other = (ClientMessage)obj;
+        return false;
+    }
 }
