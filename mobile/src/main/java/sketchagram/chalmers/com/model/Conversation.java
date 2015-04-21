@@ -52,10 +52,10 @@ public class Conversation implements Comparable{
 
     @Override
     public String toString(){
-        getParticipants().remove(SystemUser.getInstance().getUser());// to not display user
         String participants = getParticipants().toString();
         participants = participants.substring(1, participants.length()-1); //Remove [].
-        getParticipants().add(SystemUser.getInstance().getUser());//to keep list consistent
+        participants = participants.replace(SystemUser.getInstance().getUser().getUsername(), ""); //To remove username of current user when printing
+        participants = participants.replace(",", " ");//To remove commas
         return participants;
     }
 
