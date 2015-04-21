@@ -36,6 +36,7 @@ public class Drawing {
         float[] xf = data.getFloatArray("x-coordinates");
         long[] times = data.getLongArray("drawing-times");
         String[] actions = data.getStringArray("actions");
+        staticDrawing = data.getByteArray("staticDrawing");
 
         for(int i = 0; i < times.length; i++)
             events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions[i])));
@@ -119,5 +120,9 @@ public class Drawing {
 
     public Bitmap getStaticDrawing() {
         return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
+    }
+
+    public byte[] getStaticDrawingByteArray() {
+        return staticDrawing;
     }
 }

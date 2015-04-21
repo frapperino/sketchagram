@@ -1,5 +1,8 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,14 +19,19 @@ import java.util.List;
  */
 public class Drawing {
     List<DrawingEvent> events;
+    private final int COLOR = Color.MAGENTA;
+
+    private byte[] staticDrawing;
 
     public Drawing() {
         events = new LinkedList<>();
     }
 
-    public Drawing(float[] xFloat, float[] yFloat, long[] longTimes, String[] actionsString) {
+    public Drawing(float[] xFloat, float[] yFloat, long[] longTimes, String[] actionsString, byte[] staticDrawing) {
 
         events = new LinkedList<>();
+
+        this.setStaticDrawing(staticDrawing);
 
         float[] yf = yFloat;
         float[] xf = xFloat;
@@ -74,6 +82,20 @@ public class Drawing {
         data.putFloatArray("y-coordinates", yf);
         data.putLongArray("drawing-times", times);
         data.putStringArray("actions", actions);
+        data.putByteArray("staticDrawing", staticDrawing);
         return data;
+    }
+
+
+    public void setStaticDrawing(byte[] staticDrawing) {
+        this.staticDrawing = staticDrawing;
+    }
+
+    public Bitmap getStaticDrawing() {
+        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
+    }
+
+    public byte[] getStaticDrawingByteArray() {
+        return staticDrawing;
     }
 }

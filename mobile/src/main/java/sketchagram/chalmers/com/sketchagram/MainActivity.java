@@ -73,7 +73,6 @@ public class MainActivity extends ActionBarActivity
     private Handler mHandler;
     private DataMap dataMap;
 
-    private int convId;
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -368,50 +367,59 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().contains("contacts")) {
+        if(messageEvent.getPath().contains("contacts")) { //From contact-activity
             ContactsSync cs = new ContactsSync(SystemUser.getInstance().getUser().getContactList());
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
-        } else if(messageEvent.getPath().contains("messageTo")) {
+        } else if(messageEvent.getPath().contains("messageTo")) { //From clock emoji-message
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
             for(Contact c : cs.getContacts()) {
                 List<ADigitalPerson> ls = new ArrayList<>();
                 ls.add(c);
                 ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
-                        ls, "Massmessage from wear", MessageType.TEXTMESSAGE);
+                        ls, "Emoticon from wear", MessageType.TEXTMESSAGE);
                 SystemUser.getInstance().getUser().sendMessage(clientMessage);
             }
-        } else if(messageEvent.getPath().contains("conversations")) {
-
+        } else if(messageEvent.getPath().contains("conversations")) { //From clock conversationListView
             ConversationsSync cs = new ConversationsSync();
             sendToWatch("conversationList", cs.putToDataMap(dataMap).toByteArray());
-        } else if(messageEvent.getPath().contains("username")) {
+        } else if(messageEvent.getPath().contains("username")) { //From MainActivity in clock
             dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
             sendToWatch("username", dataMap.toByteArray());
-        } else if(messageEvent.getPath().contains("drawing")) {
+        } else if(messageEvent.getPath().contains("drawing")) { //From DrawingActivity in clock
             Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
             ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
             SystemUser.getInstance().getUser().sendMessage(cm);
-        } else if(messageEvent.getPath().contains("conversationId")) { //send back all drawings in a specific conversation
-            dataMap = DataMap.fromByteArray(messageEvent.getData());
-            convId = dataMap.getInt("conversationNr");
+        } else if(messageEvent.getPath().contains("inConversation")) { // From ConversationViewActivity
+            String convid = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
+            Contact contact = null;
+            Conversation conversation = null;
+            for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
+                if (c.getUsername().equals(convid))
+                    contact = c;
+            }
 
-        } else if(messageEvent.getPath().contains("inConversation")) {
-            int convid = DataMap.fromByteArray(messageEvent.getData()).getInt("convid");
-            List<ClientMessage> conversation = SystemUser.getInstance().getUser().getConversationList().get(convid).getHistory();
+            for (Conversation c : SystemUser.getInstance().getUser().getConversationList()) {
+                for(ADigitalPerson p : c.getParticipants()){
+                    if(contact.getUsername().equals(p.getUsername()))
+                        conversation = c;
+                }
 
+            }
             dataMap.clear();
             int i = 0;
-            for(ClientMessage message : conversation) {
+            for(ClientMessage message : conversation.getHistory()) {
                 if(message.getType().equals(MessageType.DRAWING)) {
                     Drawing drawing = (Drawing) message.getContent();
                     dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
                     dataMap.putFloatArray("y-coordinates " + i, drawing.getY());
                     dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
                     dataMap.putStringArray("actions " + i, drawing.getActions());
+                    dataMap.putByteArray("staticDrawing " + i, drawing.getStaticDrawingByteArray());
                     i++;
                 }
+
             }
             dataMap.putInt("amountOfDrawings", i-1);
 

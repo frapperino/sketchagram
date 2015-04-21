@@ -61,7 +61,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
                 conversations = new ArrayList<>();
-                messagePhone("conversations", null);
+                messagePhone("contacts", null);
                 loadAdapter();
 
             }
@@ -153,7 +153,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
         DataMap dm = new DataMap();
-        dm.putInt("convid", viewHolder.getPosition());
+        dm.putString("convid", conversations.get(viewHolder.getPosition()));
         messagePhone("inConversation", dm.toByteArray());
 
     }
@@ -195,12 +195,11 @@ public class ConversationListActivity extends Activity implements WearableListVi
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.e("WATCH", "Conversation here");
-        if(messageEvent.getPath().contains("conversationList")) {
-            conversations.clear();
+        if(messageEvent.getPath().contains("contacts")) {
 
-            ConversationSync conversationSync = new ConversationSync(DataMap.fromByteArray(messageEvent.getData()));
+            ContactSync contactsSync = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
 
-            conversations = conversationSync.getConversations();
+            conversations = contactsSync.getContacts();
 
             String username = getSharedPreferences("user", 0).getString("username", null);
             Log.e("WATCH", "username=" + username);
@@ -223,7 +222,8 @@ public class ConversationListActivity extends Activity implements WearableListVi
                 Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
                         , data.getFloatArray("x-coordinates " + i)
                         , data.getLongArray("drawing-times " + i)
-                        , data.getStringArray("actions " + i));
+                        , data.getStringArray("actions " + i)
+                        , data.getByteArray("staticDrawing " + i));
                 drawings.add(drawing);
 
             }

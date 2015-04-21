@@ -99,6 +99,7 @@ public class DrawingActivity extends Activity implements Observer,
     @Override
     public void update(Observable observable, Object data) {
         Drawing mDrawing = (Drawing)data;
+        mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
         drawView.clearCanvas();
         DrawingHolder.getInstance().resetDrawing();
         DrawingHolder.getInstance().setDrawing(mDrawing);
