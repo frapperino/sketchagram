@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -195,7 +194,7 @@ public class MainActivity extends ActionBarActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.action_new_message) {
-            displayFragment(contactSendFragment);
+            showContactSendFragment();
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
@@ -205,6 +204,14 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void showContactSendFragment() {
+        displayFragment(contactSendFragment);
+    }
+
+    public void newMessage(View view) {
+        displayFragment(contactSendFragment);
+    }
+
     @Override
     public void onFragmentInteraction(Uri uri) {
         SharedPreferences preferences = getSharedPreferences(MESSAGE, 0);
@@ -212,7 +219,7 @@ public class MainActivity extends ActionBarActivity
                 .clear()
                 .putString(MESSAGE, ":D")
                 .apply();
-        displayFragment(contactSendFragment);
+        showContactSendFragment();
     }
 
     @Override
@@ -507,4 +514,5 @@ public class MainActivity extends ActionBarActivity
     public void onFragmentInteraction(String id) {
         //Currently not in use but has to be implemented, as defined by a fragment.
     }
+
 }

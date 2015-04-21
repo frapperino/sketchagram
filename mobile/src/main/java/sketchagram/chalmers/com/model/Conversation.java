@@ -54,8 +54,10 @@ public class Conversation implements Comparable{
     public String toString(){
         String participants = getParticipants().toString();
         participants = participants.substring(1, participants.length()-1); //Remove [].
-        participants = participants.replace(SystemUser.getInstance().getUser().getUsername(), ""); //To remove username of current user when printing
         participants = participants.replace(",", " ");//To remove commas
+        participants = participants.replace(SystemUser.getInstance().getUser().getUsername().toLowerCase(), ""); //To remove username of current user when printing
+        participants = participants.replace(SystemUser.getInstance().getUser().getUsername(), ""); //To remove username of current user when printing
+
         return participants;
     }
 

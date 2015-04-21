@@ -138,11 +138,22 @@ public class Connection implements IConnection{
             protected Object doInBackground(Object[] params) {
                 try {
                     if (presence != null){
-                        connection.disconnect(presence);
+                        while(connection.isConnected()) {
+                            connection.sendPacket(presence);
+                            try {
+                                Thread.sleep((long)2);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            connection.disconnect();
+
+                        }
+                        reset();
                     }else {
                         while(connection.isConnected()) {
                             connection.disconnect();
                         }
+                        reset();
                     }
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
@@ -152,6 +163,14 @@ public class Connection implements IConnection{
         };
         task.execute();
 
+    }
+
+    private void reset(){
+        getChatManager().removeChatListener(chatManagerListener);
+        getRoster().removeRosterListener(rosterListener);
+        connection.removePacketListener(requestListener);
+        connection = null;
+        myInstance = null;
     }
 
     private ChatManager getChatManager(){
@@ -173,7 +192,7 @@ public class Connection implements IConnection{
         Presence presence = new Presence(Presence.Type.unavailable);
         presence.setMode(Presence.Mode.away);
         if(connection.isConnected()){
-            disconnect(null);
+            disconnect(presence);
             loggedIn = false;
         }
 
@@ -223,69 +242,21 @@ public class Connection implements IConnection{
                 try {
                     if(connection.isConnected()){
                         connection.login(userName, password);
-                        getChatManager().addChatListener(new ChatManagerListener() {
-                            @Override
-                            public void chatCreated(Chat chat, boolean b) {
-                                if (!b) {
-                                    if (!chatList.contains(chat)) {
-                                        chatList.add(chat);
-                                    }
-                                    Chat c = chatList.get(chatList.indexOf(chat));
-                                    c.addMessageListener(messageListener);
+                        getChatManager().addChatListener(chatManagerListener);
 
-
-                                }
-                            }
-                        });
-                        MultiUserChat.addInvitationListener(connection, new InvitationListener() {
-                            @Override
-                            public void invitationReceived(XMPPConnection xmppConnection, String room, String inviter, String reason, String password, org.jivesoftware.smack.packet.Message message) {
-                                MultiUserChat muc = new MultiUserChat(connection, room);
-                                try {
-                                    muc.join(SystemUser.getInstance().getUser().getUsername());
-                                    groupChatList.add(muc);
-                                } catch (SmackException.NoResponseException e) {
-                                    e.printStackTrace();
-                                } catch (XMPPException.XMPPErrorException e) {
-                                    e.printStackTrace();
-                                } catch (SmackException.NotConnectedException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-                        });
-
-                        getRoster().addRosterListener(new RosterListener() {
-                               @Override
-                               public void entriesAdded(Collection<String> strings) {
-                                    Log.d("REQUEST", "ENTRIES ADDED REQUEST");
-                               }
-
-                               @Override
-                               public void entriesUpdated(Collection<String> strings) {
-
-                               }
-
-                               @Override
-                               public void entriesDeleted(Collection<String> strings) {
-
-                               }
-
-                               @Override
-                               public void presenceChanged(Presence presence) {
-                                   Presence prec = presence;
-                                   Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
-                               }
-                       });
+                        getRoster().addRosterListener(rosterListener);
                        }
                 } catch (XMPPException e) {
                     e.printStackTrace();
+                    disconnect(null);
                     return false;
                 } catch (SmackException e) {
                     e.printStackTrace();
+                    disconnect(null);
                     return false;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    disconnect(null);
                     return false;
                 }
                 return true;
@@ -525,6 +496,43 @@ public class Connection implements IConnection{
             Conversation conversation = SystemUser.getInstance().getUser().addMessage(clientMessage);
             NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
             notificationHandler.pushNewMessageNotification(conversation, clientMessage);
+        }
+    };
+    private RosterListener rosterListener = new RosterListener() {
+        @Override
+        public void entriesAdded(Collection<String> strings) {
+            Log.d("REQUEST", "ENTRIES ADDED REQUEST");
+        }
+
+        @Override
+        public void entriesUpdated(Collection<String> strings) {
+
+        }
+
+        @Override
+        public void entriesDeleted(Collection<String> strings) {
+
+        }
+
+        @Override
+        public void presenceChanged(Presence presence) {
+            Presence prec = presence;
+            Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
+        }
+    };
+
+    private ChatManagerListener chatManagerListener = new ChatManagerListener() {
+        @Override
+        public void chatCreated(Chat chat, boolean b) {
+            if (!b) {
+                if (!chatList.contains(chat)) {
+                    chatList.add(chat);
+                }
+                Chat c = chatList.get(chatList.indexOf(chat));
+                c.addMessageListener(messageListener);
+
+
+            }
         }
     };
 
