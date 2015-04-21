@@ -16,13 +16,15 @@
         android:stretchMode="columnWidth"
         android:gravity="center"
         android:layout_margin="3dp" />
+
     <ImageButton
         android:layout_width="68dp"
         android:layout_height="68dp"
         android:id="@+id/imageButton"
         android:background="@drawable/fab"
         android:layout_gravity="bottom|right"
-        android:src="@drawable/ic_add_white_36dp"
+        android:src="@drawable/ic_mode_edit_white_36dp"
+        android:onClick="newMessage"
         android:elevation="10dp"
         android:clickable="true"
         android:layout_margin="20dp" />

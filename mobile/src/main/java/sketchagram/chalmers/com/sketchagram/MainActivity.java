@@ -194,7 +194,7 @@ public class MainActivity extends ActionBarActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.action_new_message) {
-            displayFragment(contactSendFragment);
+            newMessage();
         } else if (id == android.R.id.home) {
             //Open or close navigation drawer on ActionBar click.
             mDrawerLayout.closeDrawers();
@@ -204,6 +204,10 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void newMessage() {
+        displayFragment(contactSendFragment);
+    }
+
     @Override
     public void onFragmentInteraction(Uri uri) {
         SharedPreferences preferences = getSharedPreferences(MESSAGE, 0);
@@ -211,7 +215,7 @@ public class MainActivity extends ActionBarActivity
                 .clear()
                 .putString(MESSAGE, ":D")
                 .apply();
-        displayFragment(contactSendFragment);
+        newMessage();
     }
 
     @Override
@@ -474,4 +478,5 @@ public class MainActivity extends ActionBarActivity
     public void onFragmentInteraction(String id) {
         //Currently not in use but has to be implemented, as defined by a fragment.
     }
+
 }
