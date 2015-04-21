@@ -140,7 +140,9 @@ public class Connection implements IConnection{
                     if (presence != null){
                         connection.disconnect(presence);
                     }else {
-                        connection.disconnect();
+                        while(connection.isConnected()) {
+                            connection.disconnect();
+                        }
                     }
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
@@ -171,7 +173,7 @@ public class Connection implements IConnection{
         Presence presence = new Presence(Presence.Type.unavailable);
         presence.setMode(Presence.Mode.away);
         if(connection.isConnected()){
-            disconnect(presence);
+            disconnect(null);
             loggedIn = false;
         }
 
