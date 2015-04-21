@@ -1,14 +1,14 @@
 package sketchagram.chalmers.com.model;
 
 /**
- * Created by Olliver on 15-03-11.
+ * Created by Olliver on 2015-04-12.
  */
-public enum MessageType {
-    TEXTMESSAGE("TEXTMESSAGE"), EMOTICON("EMOTICON"), DRAWING("DRAWING");
+public enum Status {
+    ONLINE("ONLINE"), OFFLINE("OFFLINE"), AWAY("AWAY");
 
     private final String type;
 
-    MessageType(String type){
+    Status(String type){
         this.type = type;
     }
 

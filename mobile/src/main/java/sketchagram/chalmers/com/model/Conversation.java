@@ -7,35 +7,80 @@ import java.util.Set;
 /**
  * Created by Bosch on 10/02/15.
  */
-public class Conversation {
+public class Conversation implements Comparable{
     private List<ClientMessage> history;
-    private List<ADigitalPerson> otherParticipants;
+    private List<ADigitalPerson> participants;
+    private int conversationId;
 
-    public Conversation(List<ADigitalPerson> participants){
-        history = new ArrayList<ClientMessage>();
-        this.otherParticipants = participants;
+    public Conversation(List<ADigitalPerson> participants, int conversationId){
+        history = new ArrayList<>();
+        this.participants = participants;
+        this.conversationId = conversationId;
     }
-    public Conversation(List<ADigitalPerson> participants, List<ClientMessage> oldMessages){
+    public Conversation(List<ADigitalPerson> participants, List<ClientMessage> oldMessages, int conversationId){
         history = oldMessages;
-        this.otherParticipants = participants;
+        this.participants = participants;
+        this.conversationId = conversationId;
     }
 
     public List<ClientMessage> getHistory() {
         return history;
     }
 
+    public int getConversationId(){ return  conversationId; }
+
     public List<ADigitalPerson> getParticipants() {
-        return otherParticipants;
+        return participants;
     }
 
     public void addMessage(ClientMessage clientMessage) {
         history.add(clientMessage);
     }
 
+    /**
+     * Determines whether or not this conversation has unread messages.
+     * @return true if there exists unread messages. false otherwise.
+     */
+    public boolean hasUnreadMessages() {
+        for(ClientMessage c: history) {
+            if(!c.isRead()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString(){
         String participants = getParticipants().toString();
         participants = participants.substring(1, participants.length()-1); //Remove [].
+        participants = participants.replace(SystemUser.getInstance().getUser().getUsername(), ""); //To remove username of current user when printing
+        participants = participants.replace(",", " ");//To remove commas
         return participants;
+    }
+
+    @Override
+    public int compareTo(Object other) {
+        if (this == other)  {
+            return 0;
+        }
+        final List<ClientMessage> myHistory = this.getHistory();
+        final List<ClientMessage> otherHistory = ((Conversation)other).getHistory();
+        if(myHistory.isEmpty() && otherHistory.isEmpty()) {
+            return 0;
+        } else if(myHistory.isEmpty() && !otherHistory.isEmpty()) {
+            return -1;
+        } else if(!myHistory.isEmpty() && otherHistory.isEmpty()) {
+            return 1;
+        }
+        final long myTimestamp = myHistory.get(myHistory.size()-1).getTimestamp();
+        final long otherTimestamp = otherHistory.get(otherHistory.size()-1).getTimestamp();
+        if(myTimestamp < otherTimestamp) {
+            return 1;
+        } else if(myTimestamp > otherTimestamp){
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }

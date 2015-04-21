@@ -38,9 +38,7 @@ public class DrawingActivity extends Activity implements Observer,
 
 
     private GoogleApiClient mGoogleApiClient;
-    private DrawingHelper helper;
 
-    private DataMap dataMap;
 
 
     @Override
@@ -51,9 +49,7 @@ public class DrawingActivity extends Activity implements Observer,
         //Get view that is displayed in the Activity on which we can call
         //the methods in the DrawingView class.
         drawView = (DrawingView) findViewById(R.id.drawing);
-        helper = new DrawingHelper();
-        drawView.setHelper(helper);
-        helper.addObserver(this);
+        drawView.addHelperObserver(this);
 
 
 
@@ -70,8 +66,6 @@ public class DrawingActivity extends Activity implements Observer,
                 .build();
         mGoogleApiClient.connect();
 
-
-        dataMap = new DataMap();
 
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -104,14 +98,12 @@ public class DrawingActivity extends Activity implements Observer,
 
     @Override
     public void update(Observable observable, Object data) {
-        drawView.startNew();
-        drawView.displayDrawing(helper.getDrawing());
-        if(drawView.isDrawingFinished()) {
-            DrawingHolder.getInstance().resetDrawing();
-            DrawingHolder.getInstance().setDrawing(helper.getDrawing());
-            Intent intent = new Intent(this, ContactListActivity.class);
-            startActivity(intent);
-        }
+        Drawing mDrawing = (Drawing)data;
+        drawView.clearCanvas();
+        DrawingHolder.getInstance().resetDrawing();
+        DrawingHolder.getInstance().setDrawing(mDrawing);
+        Intent intent = new Intent(this, ContactListActivity.class);
+        startActivity(intent);
     }
 
 

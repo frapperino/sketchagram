@@ -13,7 +13,6 @@ import java.util.Observer;
 
 public class ConversationViewFragment extends Fragment implements Observer {
 
-    private DrawingHelper helper;
     private DrawingView drawingView;
     private Drawing drawing;
     private boolean displayed;
@@ -28,9 +27,7 @@ public class ConversationViewFragment extends Fragment implements Observer {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
         drawingView = (DrawingView) view.findViewById(R.id.drawing);
-        helper = new DrawingHelper();
-        helper.addObserver(this);
-        drawingView.setHelper(helper);
+        drawingView.addHelperObserver(this);
         displayed = false;
         return view;
     }

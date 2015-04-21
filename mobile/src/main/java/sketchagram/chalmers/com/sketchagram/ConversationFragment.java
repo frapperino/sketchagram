@@ -2,8 +2,11 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +37,6 @@ import sketchagram.chalmers.com.model.SystemUser;
  * interface.
  */
 public class ConversationFragment extends Fragment implements AbsListView.OnItemClickListener {
-
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -48,6 +50,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      */
     private ListAdapter mAdapter;
 
+    private List<Conversation> conversationList;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -58,10 +62,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<Conversation>(getActivity(),
-                android.R.layout.simple_list_item_1, SystemUser.getInstance().getUser().getConversationList());
+        conversationList = SystemUser.getInstance().getUser().getConversationList();
+        mAdapter = new ConversationListAdapter(getActivity(), conversationList);
     }
 
     @Override
@@ -102,15 +104,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            String participants = SystemUser.getInstance().getUser().
-                    getConversationList().get(position).getParticipants().toString();
-            participants = participants.substring(1, participants.length()-1); //Remove [].
-            getActivity().getSharedPreferences("Participants", 0)
-                    .edit()
-                    .clear()
-                    .putString("Participants", participants)
-                    .commit();
-            mListener.onFragmentInteraction("conversation " + participants); //TODO: how to find right conversation.
+            mListener.onFragmentInteraction(conversationList.get(position).getConversationId());
         }
     }
 
@@ -120,19 +114,6 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     public void updateList() {
         BaseAdapter adapter = (BaseAdapter)mAdapter;
         adapter.notifyDataSetChanged();
-    }
-
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
     }
 
     /**
@@ -147,7 +128,6 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(int conversationId);
     }
-
 }

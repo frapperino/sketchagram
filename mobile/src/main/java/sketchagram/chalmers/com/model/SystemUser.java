@@ -10,14 +10,13 @@ import sketchagram.chalmers.com.sketchagram.MyApplication;
 public class SystemUser {
     private static SystemUser ourInstance;
     private User user;
-    private IConnection connection = new Connection();
 
     public static SystemUser getInstance() {
         return ourInstance;
     }
 
     private SystemUser() {
-        this.connection.init();
+
     }
 
     public static void initInstance(){
@@ -31,15 +30,10 @@ public class SystemUser {
     public void setUser(User user) {
         this.user = user;
     }
-    public IConnection getConnection() {return connection;}
-    public void newConnection() {
-        this.connection = new Connection();
-        this.connection.init();
-    }
 
     public boolean login(String userName, String password) {
-        if(this.connection.login(userName,password)){
-            for ( Contact user : connection.getContacts()){
+        if(Connection.getInstance().login(userName,password)){
+            for ( Contact user : Connection.getInstance().getContacts()){
                 boolean exists = false;
                 for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
                     if(contact.getUsername().equals(user.getUsername())){
@@ -59,10 +53,10 @@ public class SystemUser {
     }
 
     public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException {
-        this.connection.createAccount(userName, password);
+        Connection.getInstance().createAccount(userName, password);
     }
 
     public void logout(){
-        this.connection.logout();
+        Connection.getInstance().logout();
     }
 }
