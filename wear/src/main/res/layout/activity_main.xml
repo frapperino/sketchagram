@@ -1,41 +1,73 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sketchagram.chalmers.com.sketchagram.MessageFragment">
+    tools:context="sketchagram.chalmers.com.sketchagram.MessageFragment"
+    android:paddingLeft="10dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
     <!-- TODO: Update blank fragment layout -->
 
     <ImageButton
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:scaleType="fitCenter"
-        android:text="Conversations"
-        android:background="@null"
-        android:id="@+id/conversationButton"
-        android:layout_gravity="center_horizontal|bottom"
-        android:onClick="showConversations"
-        android:src="@drawable/ic_message" />
-
-    <ImageButton
         android:scaleType="fitCenter"
         android:background="@null"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:text="New Drawing"
         android:id="@+id/drawingButton"
-        android:layout_gravity="center_horizontal|top"
+        android:layout_gravity="left|top"
         android:onClick="sendDrawing"
         android:singleLine="false"
         android:src="@drawable/ic_draw" />
 
     <ImageButton
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:scaleType="fitCenter"
         android:id="@+id/messageButton"
-        android:layout_gravity="center"
+        android:layout_gravity="left|center_vertical"
         android:onClick="sendMessage"
         android:background="@null"
         android:src="@drawable/ic_emoji" />
+
+    <ImageButton
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:scaleType="fitCenter"
+        android:text="Conversations"
+        android:background="@null"
+        android:id="@+id/conversationButton"
+        android:layout_gravity="left|bottom"
+        android:onClick="showConversations"
+        android:src="@drawable/ic_message" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Draw"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal|top"
+        android:paddingTop="15dp"
+        android:paddingLeft="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Emoji"
+        android:id="@+id/textView2"
+        android:layout_gravity="center"
+        android:paddingLeft="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Convo"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal|bottom"
+        android:paddingBottom="12dp"
+        android:paddingLeft="4dp" />
 
 </FrameLayout>
