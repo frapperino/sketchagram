@@ -5,13 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
-import android.support.wearable.view.WearableListView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +22,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -71,7 +70,7 @@ public class ConversationViewActivity extends Activity  implements
                 return insets;
             }
         });
-        pager.setAdapter(new SampleGridPagerAdapter(this, getFragmentManager()));
+        pager.setAdapter(new ConversationViewPagerAdapter(this, getFragmentManager()));
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
 
@@ -93,62 +92,6 @@ public class ConversationViewActivity extends Activity  implements
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
-
-        drawings = new ArrayList<>();
-        messagePhone("inConversation", null);
-    }
-
-
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * Now, theoretically, only one should be: the phone. However, they return us more
-     * a list. In the case where the phone happens to not be the first/only, I decided to
-     * make a List of all the nodes and we'll loop through them and send each of them
-     * a message. After getting the list of nodes, it sends a message to each of them telling
-     * it to start. One the last successful node, it saves it as our one peerNode.
-     */
-    private void messagePhone(final String message, final byte[] byteMap){
-
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
-                    Log.e("WATCH", "Sending to: " + message.toString());
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            message.toString(),
-                            byteMap
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.e("DEVELOPER", "......Phone: " + sendMessageResult.getStatus().getStatusMessage());
-
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    private List<Node> getNodes() {
-        List<Node> nodes = new ArrayList<Node>();
-        NodeApi.GetConnectedNodesResult rawNodes =
-                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-        for (Node node : rawNodes.getNodes()) {
-            nodes.add(node);
-        }
-        return nodes;
     }
 
 
@@ -186,21 +129,6 @@ public class ConversationViewActivity extends Activity  implements
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().contains("drawings")) {
-            DataMap data = DataMap.fromByteArray(messageEvent.getData());
-            int drawingsAmount = data.getInt("amountOfDrawings");
-            for(int i = 0; i < drawingsAmount; i++) {
-                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
-                        , data.getFloatArray("x-coordinates " + i)
-                        , data.getLongArray("drawingtimes " + i)
-                        , data.getStringArray("actions " + i));
-                drawings.add(drawing);
-            }
-        }
-        Log.e("drawings", "new drawings");
-        DrawingHolder.getInstance().setDrawings(drawings);
-
-        pager.setAdapter(new SampleGridPagerAdapter(this, getFragmentManager()));
     }
 
     public class MessageReceiver extends BroadcastReceiver {

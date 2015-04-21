@@ -98,7 +98,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      * the adapter should be updated.
      */
     private void loadAdapter(){
-        choices = contacts.getContactChoices();
+        choices = contacts.getContacts();
         mAdapter = new MyListAdapter(this, choices);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(ContactListActivity.this);
@@ -172,7 +172,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      */
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == choices.size()-1){
+            receivers.addContact(choices.get(viewHolder.getPosition()));
             receivers.putToDataMap(dataMap);
             Drawing drawing = DrawingHolder.getInstance().getDrawing();
             if(drawing != null) {
@@ -183,10 +183,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             }
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-        } else {
-            receivers.addContact(choices.get(viewHolder.getPosition()));
-        }
-        Log.e("contacts", viewHolder.getPosition() + " : " + choices.size());
+
     }
 
     @Override
@@ -263,10 +260,6 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i >= items.size()-1) {
-                txt.setBackgroundColor(Color.GREEN);
-                txt.setTextColor(Color.BLACK);
-            }
 
 
         }

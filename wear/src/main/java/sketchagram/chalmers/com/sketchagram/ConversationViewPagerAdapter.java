@@ -42,7 +42,7 @@ import java.util.List;
  * loaded from an background task and then updated using {@link #notifyRowBackgroundChanged(int)}
  * and {@link #notifyPageBackgroundChanged(int, int)}.
  */
-public class SampleGridPagerAdapter extends FragmentGridPagerAdapter {
+public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     private static final int TRANSITION_DURATION_MILLIS = 100;
 
     private final Context mContext;
@@ -51,14 +51,16 @@ public class SampleGridPagerAdapter extends FragmentGridPagerAdapter {
 
     private ColorDrawable mClearBg;
 
-    public SampleGridPagerAdapter(Context ctx, FragmentManager fm) {
+    public ConversationViewPagerAdapter(Context ctx, FragmentManager fm) {
         super(fm);
         mContext = ctx;
 
         mRows = new ArrayList<Row>();
 
-        mRows.add(new Row(cardFragment(R.string.welcometitle, R.string.welcometext)));
-        mRows.add(new Row(new ConversationViewFragment()));
+        int messageAmount = DrawingHolder.getInstance().getDrawingsAmount();
+        //mRows.add(new Row(cardFragment(R.string.welcometitle, R.string.welcometext)));
+        for(int i = 0; i < messageAmount; i++)
+            mRows.add(new Row(new ConversationViewFragment()));
         mDefaultBg = new ColorDrawable(R.color.light_grey);
         mClearBg = new ColorDrawable(android.R.color.transparent);
     }

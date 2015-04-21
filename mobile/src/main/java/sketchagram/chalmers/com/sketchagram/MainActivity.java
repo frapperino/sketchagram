@@ -358,7 +358,7 @@ public class MainActivity extends ActionBarActivity
         } else if(messageEvent.getPath().contains("conversations")) {
 
             ConversationsSync cs = new ConversationsSync();
-            sendToWatch("conversations", cs.putToDataMap(dataMap).toByteArray());
+            sendToWatch("conversationList", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("username")) {
             dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
             sendToWatch("username", dataMap.toByteArray());
@@ -373,8 +373,8 @@ public class MainActivity extends ActionBarActivity
             convId = dataMap.getInt("conversationNr");
 
         } else if(messageEvent.getPath().contains("inConversation")) {
-
-            List<ClientMessage> conversation = SystemUser.getInstance().getUser().getConversationList().get(convId).getHistory();
+            int convid = DataMap.fromByteArray(messageEvent.getData()).getInt("convid");
+            List<ClientMessage> conversation = SystemUser.getInstance().getUser().getConversationList().get(convid).getHistory();
 
             dataMap.clear();
             int i = 0;

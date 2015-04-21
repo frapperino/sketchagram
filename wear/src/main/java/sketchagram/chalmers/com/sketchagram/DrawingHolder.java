@@ -47,4 +47,10 @@ public class DrawingHolder {
         drawing = null;
     }
 
+    public int getDrawingsAmount(){
+        if(drawings != null)
+            return drawings.size();
+        return 0;
+    }
+
 }

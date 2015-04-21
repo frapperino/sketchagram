@@ -31,7 +31,6 @@ public class ConversationViewFragment extends Fragment implements Observer {
         helper = new DrawingHelper();
         helper.addObserver(this);
         drawingView.setHelper(helper);
-        drawingView.willNotDraw();
         displayed = false;
         return view;
     }
@@ -44,12 +43,13 @@ public class ConversationViewFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        if(drawing != null) {
-            displayDrawing();
-            Log.e("drawing", "being displayed");
-        } else {
-            if(DrawingHolder.getInstance().getDrawings() != null)
+        Log.e("Drawing", "update");
+        if(drawing == null) {
+            Log.e("Drawing", "null");
+            if(DrawingHolder.getInstance().getDrawings() != null) {
                 drawing = DrawingHolder.getInstance().getFirstDrawing();
+                drawingView.displayDrawing(drawing);
+            }
         }
     }
 }

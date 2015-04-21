@@ -8,8 +8,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
@@ -44,6 +46,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private List<String> conversations;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void loadAdapter(){
@@ -149,10 +153,8 @@ public class ConversationListActivity extends Activity implements WearableListVi
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
         DataMap dm = new DataMap();
-        dm.putInt("conversationNr", viewHolder.getPosition());
+        dm.putInt("convid", viewHolder.getPosition());
         messagePhone("inConversation", dm.toByteArray());
-        Intent intent = new Intent(this, ConversationViewActivity.class);
-        startActivity(intent);
 
     }
 
@@ -202,6 +204,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
             String username = getSharedPreferences("user", 0).getString("username", null);
             Log.e("WATCH", "username=" + username);
+            Log.e("WATCH", "conversations" + conversations.toString());
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -210,6 +213,26 @@ public class ConversationListActivity extends Activity implements WearableListVi
                     loadAdapter();
                 }
             });
+        }
+
+        if(messageEvent.getPath().contains("drawings")) {
+            List<Drawing> drawings = new ArrayList<>();
+            DataMap data = DataMap.fromByteArray(messageEvent.getData());
+            int drawingsAmount = data.getInt("amountOfDrawings");
+            for(int i = 0; i < drawingsAmount; i++) {
+                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
+                        , data.getFloatArray("x-coordinates " + i)
+                        , data.getLongArray("drawing-times " + i)
+                        , data.getStringArray("actions " + i));
+                drawings.add(drawing);
+
+            }
+            Log.e("drawings", "new drawings");
+            DrawingHolder.getInstance().setDrawings(drawings);
+
+
+            Intent intent = new Intent(this, ConversationViewActivity.class);
+            startActivity(intent);
         }
     }
 
