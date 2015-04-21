@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.MessageType;
@@ -73,6 +74,7 @@ public class MainActivity extends ActionBarActivity
     private Handler mHandler;
     private DataMap dataMap;
 
+    private int convId;
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -366,6 +368,29 @@ public class MainActivity extends ActionBarActivity
             ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
             SystemUser.getInstance().getUser().sendMessage(cm);
+        } else if(messageEvent.getPath().contains("conversationId")) { //send back all drawings in a specific conversation
+            dataMap = DataMap.fromByteArray(messageEvent.getData());
+            convId = dataMap.getInt("conversationNr");
+
+        } else if(messageEvent.getPath().contains("inConversation")) {
+
+            List<ClientMessage> conversation = SystemUser.getInstance().getUser().getConversationList().get(convId).getHistory();
+
+            dataMap.clear();
+            int i = 0;
+            for(ClientMessage message : conversation) {
+                if(message.getType().equals(MessageType.DRAWING)) {
+                    Drawing drawing = (Drawing) message.getContent();
+                    dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
+                    dataMap.putFloatArray("y-coordinates " + i, drawing.getY());
+                    dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
+                    dataMap.putStringArray("actions " + i, drawing.getActions());
+                    i++;
+                }
+            }
+            dataMap.putInt("amountOfDrawings", i-1);
+
+            sendToWatch("drawings", dataMap.toByteArray());
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }

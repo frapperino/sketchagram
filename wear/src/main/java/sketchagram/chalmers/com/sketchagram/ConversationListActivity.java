@@ -40,9 +40,9 @@ public class ConversationListActivity extends Activity implements WearableListVi
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
 
+    private GoogleApiClient mGoogleApiClient;
     private WearableListView mListView;
     private MyListAdapter mAdapter;
-    private GoogleApiClient mGoogleApiClient;
     private List<String> conversations;
 
     @Override
@@ -148,6 +148,11 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
+        DataMap dm = new DataMap();
+        dm.putInt("conversationNr", viewHolder.getPosition());
+        messagePhone("inConversation", dm.toByteArray());
+        Intent intent = new Intent(this, ConversationViewActivity.class);
+        startActivity(intent);
 
     }
 
@@ -188,23 +193,24 @@ public class ConversationListActivity extends Activity implements WearableListVi
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.e("WATCH", "Conversation here");
-        conversations.clear();
+        if(messageEvent.getPath().contains("conversationList")) {
+            conversations.clear();
 
-        ConversationSync conversationSync = new ConversationSync(DataMap.fromByteArray(messageEvent.getData()));
+            ConversationSync conversationSync = new ConversationSync(DataMap.fromByteArray(messageEvent.getData()));
 
-        conversations = conversationSync.getConversations();
+            conversations = conversationSync.getConversations();
 
-        String username = getSharedPreferences("user",0).getString("username", null);
-        Log.e("WATCH", "username=" + username);
+            String username = getSharedPreferences("user", 0).getString("username", null);
+            Log.e("WATCH", "username=" + username);
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-                loadAdapter();
-            }
-        });
-        Log.e("WATCH", conversations.toString());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                    loadAdapter();
+                }
+            });
+        }
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
