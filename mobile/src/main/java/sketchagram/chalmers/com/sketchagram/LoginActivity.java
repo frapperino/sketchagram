@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
@@ -36,22 +38,25 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
     private final long LOCKOUT_TIME_IN_MILI = 300000;    //5 minutes.
     private final int ATTEMPTS_ALLOWED = 5;
 
+    private int currentApiVersion;
     private LoginFragment loginFragment;
     private SharedPreferences sharedPreferences;
     private int attemptsMade = 0;
     private boolean lockoutActive = false;
     private long lockoutTimestamp;
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         sharedPreferences = getSharedPreferences(FILENAME, 0);
 
-        String userName= sharedPreferences.getString("username", null);
-        if(userName != null) {
-            if(SystemUser.getInstance().login(userName, sharedPreferences.getString("password", null))) {
+        String userName = sharedPreferences.getString("username", null);
+        if (userName != null) {
+            if (SystemUser.getInstance().login(userName, sharedPreferences.getString("password", null))) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -61,10 +66,56 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().add(R.id.fragment_frame, loginFragment).commit();
+
+        currentApiVersion = android.os.Build.VERSION.SDK_INT;
+
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        // This work only for android 4.4+
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT) {
+
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+
+            // Code below is to handle presses of Volume up or Volume down.
+            // Without this, after pressing volume buttons, the navigation bar will
+            // show up and won't hide
+            final View decorView = getWindow().getDecorView();
+            decorView
+                    .setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+
+                        @Override
+                        public void onSystemUiVisibilityChange(int visibility) {
+                            if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                                decorView.setSystemUiVisibility(flags);
+                            }
+                        }
+                    });
+        }
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     /**
      * Attempts to create a new account using the server.
+     *
      * @param view
      */
     public void createAccount(View view) {
@@ -84,19 +135,19 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         String passwordError = checkPasswordValid(mPassword);
         String reenterPasswordError = checkPasswordValid(mReEnterPassword);
 
-        if(usernameError != null) {
+        if (usernameError != null) {
             usernameView.setError(usernameError);
         }
-        if(passwordError != null) {
+        if (passwordError != null) {
             passwordView.setError(passwordError);
         }
-        if(reenterPasswordError != null) {
+        if (reenterPasswordError != null) {
             reenterPasswordView.setError(reenterPasswordError);
         }
         if (!mPassword.equals(mReEnterPassword)) {
             Toast toast = Toast.makeText(getApplicationContext(), "Passwords does not match.", Toast.LENGTH_SHORT);
             toast.show();
-        } else if(usernameError == null && passwordError == null && reenterPasswordError == null){
+        } else if (usernameError == null && passwordError == null && reenterPasswordError == null) {
             try {
                 loginFragment.showProgressBar();
                 SystemUser.getInstance().createAccount(mUserName, mPassword);
@@ -107,14 +158,14 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
                 ft.commit();
                 Toast toast = Toast.makeText(getApplicationContext(), "Account created successfully!", Toast.LENGTH_SHORT);
                 toast.show();
-                InputMethodManager imm = (InputMethodManager)getSystemService(
+                InputMethodManager imm = (InputMethodManager) getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 usernameView.setText("");
                 passwordView.setText("");
                 reenterPasswordView.setText("");
                 loginFragment.hideProgressBar();
-            } catch(NetworkException.UsernameAlreadyTakenException e) {
+            } catch (NetworkException.UsernameAlreadyTakenException e) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -144,14 +195,14 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         String usernameError = checkUsernameValid(username);
         String passwordError = checkPasswordValid(password);
 
-        if(usernameError != null) {
+        if (usernameError != null) {
             mUserNameView.setError(usernameError);
         }
-        if(passwordError != null) {
+        if (passwordError != null) {
             mPasswordView.setError(passwordError);
         }
-        if(usernameError == null && passwordError == null) {
-            if(loginServer(username, password)) {
+        if (usernameError == null && passwordError == null) {
+            if (loginServer(username, password)) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("username", username);
                 editor.putString("password", password);
@@ -163,22 +214,23 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
     /**
      * Handles counting of attempts made and lockout time for
      * a user who's made too many unsuccessful attempts.
+     *
      * @return true if user is locked out, false otherwise.
      */
     private boolean isLockedOut() {
         attemptsMade += 1;
         //User has exceeded allowed attempts.
-        if(attemptsMade >= ATTEMPTS_ALLOWED) {
-            if(!lockoutActive) {
+        if (attemptsMade >= ATTEMPTS_ALLOWED) {
+            if (!lockoutActive) {
                 lockoutActive = true;
                 lockoutTimestamp = System.currentTimeMillis() + LOCKOUT_TIME_IN_MILI;
             }
             //User has been locked out long enough.
-            if(System.currentTimeMillis() >= lockoutTimestamp && lockoutActive) {
+            if (System.currentTimeMillis() >= lockoutTimestamp && lockoutActive) {
                 attemptsMade = 0;
                 lockoutActive = false;
             } else {
-                double lockoutTimeMinutes = ((double)(lockoutTimestamp - System.currentTimeMillis())/60000);
+                double lockoutTimeMinutes = ((double) (lockoutTimestamp - System.currentTimeMillis()) / 60000);
                 DecimalFormat numberFormat = new DecimalFormat("#.00"); //Maximum two decimals.
                 String lockoutText = "Too many login attempts has been made! "
                         + numberFormat.format(lockoutTimeMinutes) + " minutes left until you can try again.";
@@ -192,6 +244,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
     /**
      * Attempts to login on the server.
+     *
      * @param username the provided username from user.
      * @param password the provided password from user.
      * @return true if logged in, false otherwise.
@@ -199,7 +252,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
     private boolean loginServer(String username, String password) {
         loginFragment.showProgressBar();
         boolean success = SystemUser.getInstance().login(username, password);
-        if (success){
+        if (success) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -214,13 +267,14 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
     /**
      * Logic for account check.
+     *
      * @param username
      * @return A corresponding error message if faulty, otherwise null.
      */
     private String checkUsernameValid(String username) {
-        if(username.length() == 0) {
+        if (username.length() == 0) {
             return "No username has been entered.";
-        } else if(username.length() <= 3) {
+        } else if (username.length() <= 3) {
             return "Username too short";
         }
         return null;
@@ -228,15 +282,16 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
     /**
      * Logic for password check.
+     *
      * @param password
      * @return A corresponding error message if faulty, otherwise null.
      */
     private String checkPasswordValid(String password) {
-        if(password.length() == 0) {
+        if (password.length() == 0) {
             return "No password has been entered.";
-        } else if(password.length() <= 3) {
-           return "Password length too short. Has to be at least 4 characters.";
-        } else if(password.length() >= 30) {
+        } else if (password.length() <= 3) {
+            return "Password length too short. Has to be at least 4 characters.";
+        } else if (password.length() >= 30) {
             return "Password length too long. Should be less than 30 characters.";
         }
         return null;
@@ -249,11 +304,12 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
     //TODO: blur
 
-    public void scrollToTop(View view){
+    public void scrollToTop(View view) {
         ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
         scrollView.fullScroll(ScrollView.FOCUS_UP);
     }
-    public void scrollToBottom(View view){
+
+    public void scrollToBottom(View view) {
         ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
         scrollView.fullScroll(ScrollView.FOCUS_DOWN);
     }

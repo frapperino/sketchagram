@@ -1,41 +1,28 @@
 package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
+ * A representation of the application user's user information and its interface.
  * Created by Bosch on 10/02/15.
  */
 public class User extends ADigitalPerson  {
-    private String password = "password";   //TODO: replace with real password.
-    private boolean requireLogin = true;
+    //private String password = "password";   //TODO: replace with real password.
+    //private boolean requireLogin = true;
     private List<Conversation> conversationList;
     private List<Contact> contactList;
 
 
     public User(String username, Profile profile) {
         super(username, profile);
-        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username);
-        /*for(Contact contact : getContactList()) {
-            List<ClientMessage> messageList = MyApplication.getInstance().getDatabase().getAllMessagesFromAContact(contact);
-            if(!messageList.isEmpty()) {
-                List<ADigitalPerson> participants = new ArrayList<>();
-                participants.add(contact);
-                conversationList.add(new Conversation(participants, messageList));
-            }
-        }*/
+        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username.toLowerCase());
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
         setStatuses();
     }
@@ -45,7 +32,7 @@ public class User extends ADigitalPerson  {
      *
      * @param conversation the conversation to be added.
      */
-    public void addConversation(Conversation conversation){
+    private void addConversation(Conversation conversation){
         boolean exist = false;
         for(Conversation c : conversationList){
             if(c.getParticipants().equals(conversation.getParticipants())) {
@@ -119,27 +106,16 @@ public class User extends ADigitalPerson  {
      * @param clientMessage The message to be sent contains receivers
      */
     public void sendMessage(ClientMessage clientMessage){
-        boolean exist = true;
-        Conversation conversation = null;
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
-
-        conversation = conversationExists(participants);
-        if(conversation == null){
-            exist = false;
-        }
 
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
             if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername())){
                 Connection.getInstance().sendMessage(clientMessage);
             }
-            if(!exist) {
-                conversation = new Conversation(participants, conversationId);
-                this.addConversation(conversation);
-            }
-            conversation.addMessage(clientMessage);
+            addMessage(clientMessage);
             updateObservers(clientMessage);
         }
     }
@@ -156,18 +132,14 @@ public class User extends ADigitalPerson  {
         participants.add(clientMessage.getSender());
 
         conversation = conversationExists(participants);
-        boolean exist = true;
-
-        if(conversation == null) {
-            exist = false;
-        }
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
-            if(!exist) {
+            if(conversation == null) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
             }
             conversation.addMessage(clientMessage);
+            sortConversations();
             updateObservers(clientMessage);
         }
         return conversation;
@@ -234,5 +206,12 @@ public class User extends ADigitalPerson  {
 
     public List<String> search(String userName){
         return Connection.getInstance().searchUsers(userName);
+    }
+
+    /**
+     * Sorts conversations when an update has come.
+     */
+    private void sortConversations() {
+       Collections.sort(conversationList);
     }
 }
