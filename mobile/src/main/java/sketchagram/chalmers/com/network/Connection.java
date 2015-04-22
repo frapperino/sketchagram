@@ -144,12 +144,18 @@ public class Connection implements IConnection{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            getChatManager().removeChatListener(chatManagerListener);
+                            getRoster().removeRosterListener(rosterListener);
+                            connection.removePacketListener(requestListener);
                             connection.disconnect();
 
                         }
                         reset();
                     }else {
                         while(connection.isConnected()) {
+                            getChatManager().removeChatListener(chatManagerListener);
+                            getRoster().removeRosterListener(rosterListener);
+                            connection.removePacketListener(requestListener);
                             connection.disconnect();
                         }
                         reset();
@@ -165,9 +171,6 @@ public class Connection implements IConnection{
     }
 
     private void reset(){
-        getChatManager().removeChatListener(chatManagerListener);
-        getRoster().removeRosterListener(rosterListener);
-        connection.removePacketListener(requestListener);
         connection = null;
         myInstance = null;
     }
