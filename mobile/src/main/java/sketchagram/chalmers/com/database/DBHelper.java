@@ -35,7 +35,8 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String  CONTACT_TABLE_CREATE = CREATE_TABLE + ContactTable.TABLE_NAME +" (" +
             ContactTable.COLUMN_NAME_CONTACT_USERNAME + TEXT + PRIMARY_KEY + COMMA +
             ContactTable.COLUMN_NAME_CONTACT_NAME + TEXT + COMMA +
-            ContactTable.COLUMN_NAME_CONTACT_EMAIL + TEXT + ") ";
+            ContactTable.COLUMN_NAME_CONTACT_EMAIL + TEXT + COMMA +
+            ContactTable.COLUMN_NAME_LAST_ACCESSED + INTEGER + ") ";
 
     private static final String CONVERSATION_TABLE_CREATE = CREATE_TABLE + ConversationTable.TABLE_NAME + " (" +
             ConversationTable.COLUMN_NAME_CONVERSATION_ID + INTEGER + COMMA +
