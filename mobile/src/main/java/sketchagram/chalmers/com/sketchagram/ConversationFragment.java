@@ -47,6 +47,10 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
     private OnFragmentInteractionListener mListener;
 
+    private final int IMAGE_WIDTH = 100;
+
+    private final int IMAGE_HEIGHT = 100;
+
     /**
      * The fragment's ListView/GridView.
      */
@@ -71,7 +75,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         conversationList = MyApplication.getInstance().getUser().getConversationList();
-        mAdapter = new ConversationListAdapter(getActivity(), conversationList);
+        mAdapter = new MyAdapter(getActivity(), conversationList);
     }
 
     @Override
@@ -85,7 +89,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         //Frappe
         gridView = (GridView) view.findViewById(R.id.conversation_list);
-        gridView.setAdapter(new MyAdapter(getActivity(), MyApplication.getInstance().getUser().getConversationList()));
+        gridView.setAdapter(mAdapter);
 
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -165,7 +169,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                         items.add(new Item(
                                 c.getParticipants().get(0).getUsername().toString(),
                                lastMessage.dateToShow(),
-                                ((Drawing)lastMessage.getContent()).getStaticDrawing()));
+                                ((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_WIDTH, IMAGE_HEIGHT)));
                     } else {
                         items.add(new Item(
                                 c.getParticipants().get(0).getUsername().toString(),
