@@ -28,7 +28,6 @@ public class Drawing {
     }
 
     public Drawing(DataMap data) {
-
         events = new LinkedList<>();
 
         float[] yf = data.getFloatArray("y-coordinates");
@@ -38,8 +37,6 @@ public class Drawing {
 
         for(int i = 0; i < times.length; i++)
             events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions[i])));
-
-
     }
 
     public int getCOLOR() {

@@ -93,9 +93,7 @@ public class DrawingFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        Drawing mDrawing = (Drawing)data;
-        mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
-        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), MyApplication.getInstance().getUser(), receivers, mDrawing, MessageType.DRAWING);
+        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), MyApplication.getInstance().getUser(), receivers, (Drawing)data, MessageType.DRAWING);
         MyApplication.getInstance().getUser().addMessage(message, true);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
