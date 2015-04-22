@@ -26,7 +26,6 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.DrawingEvent;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 
 /**

@@ -12,7 +12,6 @@ import android.support.v4.app.NotificationCompat;
 
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MainActivity;
 import sketchagram.chalmers.com.sketchagram.R;
 

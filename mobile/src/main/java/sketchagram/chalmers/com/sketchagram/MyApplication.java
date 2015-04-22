@@ -10,7 +10,11 @@ import android.preference.PreferenceManager;
 
 import com.google.android.gms.internal.ge;
 
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.network.Connection;
+import sketchagram.chalmers.com.network.NetworkException;
 import sketchagram.chalmers.com.network.NetworkService;
 
 /**
@@ -21,6 +25,7 @@ public class MyApplication extends Application {
     private static SketchagramDb db = null;
     private static Context context;
     private static String FIRST_STARTUP = "FIRST_STARTUP";
+    private User user;
 
     public static MyApplication getInstance(){
         return ourInstance;
@@ -44,7 +49,6 @@ public class MyApplication extends Application {
     protected void initSingletons()
     {
         // Initialize the instance of MySingleton
-        SystemUser.initInstance();
         db = new SketchagramDb(getApplicationContext());
     }
 
@@ -64,5 +68,38 @@ public class MyApplication extends Application {
 
     public static Context getContext(){
         return context;
+    }
+
+    public boolean login(String userName, String password) {
+        if(Connection.getInstance().login(userName,password)){
+            for ( Contact user : Connection.getInstance().getContacts()){
+                boolean exists = false;
+                for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
+                    if(contact.getUsername().equals(user.getUsername())){
+                        exists = true;
+                        break;
+                    }
+                }
+                if(!exists) {
+                    MyApplication.getInstance().getDatabase().insertContact(user);
+                }
+            }
+            user = new User(userName, new Profile());
+
+            return true;
+        }
+        return false;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException {
+        Connection.getInstance().createAccount(userName, password);
+    }
+
+    public void logout(){
+        Connection.getInstance().logout();
     }
 }

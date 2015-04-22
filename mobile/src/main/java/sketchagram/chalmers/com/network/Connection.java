@@ -48,7 +48,6 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.Status;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 import sketchagram.chalmers.com.model.User;
 
@@ -493,7 +492,7 @@ public class Connection implements IConnection{
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
             ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
-            Conversation conversation = SystemUser.getInstance().getUser().addMessage(clientMessage);
+            Conversation conversation = MyApplication.getInstance().getUser().addMessage(clientMessage);
             NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
             notificationHandler.pushNewMessageNotification(conversation, clientMessage);
         }
@@ -563,7 +562,7 @@ public class Connection implements IConnection{
                 Presence presence = (Presence)packet;
                 if(presence.getType().equals(Presence.Type.subscribe)){
                     String userName = packet.getFrom().split("@")[0];
-                    User user = SystemUser.getInstance().getUser();
+                    User user = MyApplication.getInstance().getUser();
                     boolean exists = false;
                     for(Contact contact : user.getContactList()){
                         if(contact.getUsername().equals(userName)){
@@ -577,7 +576,7 @@ public class Connection implements IConnection{
                     }
                 } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
                     String userName = packet.getFrom().split("@")[0];
-                    User user = SystemUser.getInstance().getUser();
+                    User user = MyApplication.getInstance().getUser();
                     boolean exists = false;
                     for(Contact contact : user.getContactList()){
                         if(contact.getUsername().equals(userName)){

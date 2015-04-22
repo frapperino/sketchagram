@@ -10,7 +10,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Olliver on 15-03-06.
@@ -55,20 +55,20 @@ public class NetworkMessage<T> {
         List<String> receivers = getReceivers();
         List<ADigitalPerson> personReceivers = new ArrayList<>();
         for(String user : receivers){
-            for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
+            for(Contact contact : MyApplication.getInstance().getUser().getContactList()){
                 if(user.equals(contact.getUsername())){
                     personReceivers.add(contact);
                     break;
-                } else if (user.equals(SystemUser.getInstance().getUser().getUsername())){
-                    personReceivers.add(SystemUser.getInstance().getUser());
+                } else if (user.equals(MyApplication.getInstance().getUser().getUsername())){
+                    personReceivers.add(MyApplication.getInstance().getUser());
                     break;
                 }
             }
 
         }
         Set<ADigitalPerson> allUsers = new HashSet<>();
-        allUsers.addAll(SystemUser.getInstance().getUser().getContactList());
-        allUsers.add(SystemUser.getInstance().getUser());
+        allUsers.addAll(MyApplication.getInstance().getUser().getContactList());
+        allUsers.add(MyApplication.getInstance().getUser());
         ADigitalPerson sender = null;
         for(ADigitalPerson person : allUsers){
             if(person.getUsername().equals(getSender())){

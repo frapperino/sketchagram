@@ -18,10 +18,8 @@ import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
 
 
 /**
@@ -97,8 +95,8 @@ public class DrawingFragment extends Fragment implements Observer {
     public void update(Observable observable, Object data) {
         Drawing mDrawing = (Drawing)data;
         mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
-        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers, mDrawing, MessageType.DRAWING);
-        SystemUser.getInstance().getUser().sendMessage(message);
+        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), MyApplication.getInstance().getUser(), receivers, mDrawing, MessageType.DRAWING);
+        MyApplication.getInstance().getUser().sendMessage(message);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();

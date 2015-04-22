@@ -6,7 +6,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
@@ -31,7 +30,7 @@ public class NetworkService extends Service {
             connection.logout();
         }
         if(userName != null && password != null) {
-            SystemUser.getInstance().login(userName, password);
+            MyApplication.getInstance().login(userName, password);
         }
         firstStart = false;
         Log.d("SERVICE", "SERVICE STARTED");

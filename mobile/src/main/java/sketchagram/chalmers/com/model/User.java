@@ -88,7 +88,7 @@ public class User extends ADigitalPerson  {
         if(success){
             List<ADigitalPerson> participants = new ArrayList<>();
             participants.add(contact);
-            participants.add(SystemUser.getInstance().getUser());
+            participants.add(MyApplication.getInstance().getUser());
             Conversation conversation = conversationExists(participants);
             if(conversation != null) {
                 MyApplication.getInstance().getDatabase().removeConversation(conversation);
@@ -151,7 +151,7 @@ public class User extends ADigitalPerson  {
      * @return
      */
     private Conversation conversationExists(List<ADigitalPerson> participants){
-        List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
+        List<Conversation> convList = MyApplication.getInstance().getUser().getConversationList();
         for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {

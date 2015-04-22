@@ -33,7 +33,6 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A fragment representing a list of Items.
@@ -71,7 +70,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        conversationList = SystemUser.getInstance().getUser().getConversationList();
+        conversationList = MyApplication.getInstance().getUser().getConversationList();
         mAdapter = new ConversationListAdapter(getActivity(), conversationList);
     }
 
@@ -86,7 +85,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         //Frappe
         gridView = (GridView) view.findViewById(R.id.conversation_list);
-        gridView.setAdapter(new MyAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList()));
+        gridView.setAdapter(new MyAdapter(getActivity(), MyApplication.getInstance().getUser().getConversationList()));
 
 
         // Set OnItemClickListener so we can be notified on item clicks

@@ -44,7 +44,6 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.network.Connection;
 
 
@@ -135,7 +134,7 @@ public class MainActivity extends ActionBarActivity
         dataMap = new DataMap();
 
         //Set observer
-        SystemUser.getInstance().getUser().addObserver(this);
+        MyApplication.getInstance().getUser().addObserver(this);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -187,7 +186,7 @@ public class MainActivity extends ActionBarActivity
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
             prefs.apply();
-            SystemUser.getInstance().logout();
+            MyApplication.getInstance().logout();
             MyApplication.getInstance().getDatabase().update();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -293,7 +292,7 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v) {
                 dialog.dismiss();
                 String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
-                if (SystemUser.getInstance().getUser().addContact(user)) {
+                if (MyApplication.getInstance().getUser().addContact(user)) {
                     Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
@@ -374,30 +373,30 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().contains("contacts")) {
-            ContactsSync cs = new ContactsSync(SystemUser.getInstance().getUser().getContactList());
+            ContactsSync cs = new ContactsSync(MyApplication.getInstance().getUser().getContactList());
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("messageTo")) {
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
             for(Contact c : cs.getContacts()) {
                 List<ADigitalPerson> ls = new ArrayList<>();
                 ls.add(c);
-                ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
+                ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                         ls, "Massmessage from wear", MessageType.TEXTMESSAGE);
-                SystemUser.getInstance().getUser().sendMessage(clientMessage);
+                MyApplication.getInstance().getUser().sendMessage(clientMessage);
             }
         } else if(messageEvent.getPath().contains("conversations")) {
 
             ConversationsSync cs = new ConversationsSync();
             sendToWatch("conversations", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("username")) {
-            dataMap.putString("username", SystemUser.getInstance().getUser().getUsername());
+            dataMap.putString("username", MyApplication.getInstance().getUser().getUsername());
             sendToWatch("username", dataMap.toByteArray());
         } else if(messageEvent.getPath().contains("drawing")) {
             Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
-            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), SystemUser.getInstance().getUser(),
+            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
-            SystemUser.getInstance().getUser().sendMessage(cm);
+            MyApplication.getInstance().getUser().sendMessage(cm);
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }
