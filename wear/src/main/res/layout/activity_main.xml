@@ -4,7 +4,8 @@
     tools:context="sketchagram.chalmers.com.sketchagram.MessageFragment"
     android:paddingLeft="10dp"
     android:paddingTop="5dp"
-    android:paddingBottom="5dp">
+    android:paddingBottom="5dp"
+    android:background="#FFFFFF">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -44,7 +45,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Draw"
-        android:textColor="@color/sg_light"
+        android:textColor="@color/sg_dark"
         android:clickable="true"
         android:onClick="sendDrawing"
         android:id="@+id/textDraw"
@@ -57,7 +58,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Emoji"
-        android:textColor="@color/sg_light"
+        android:textColor="@color/sg_dark"
         android:id="@+id/textEmoji"
         android:clickable="true"
         android:onClick="sendMessage"
@@ -72,7 +73,7 @@
         android:clickable="true"
         android:onClick="showConversations"
         android:id="@+id/textConvo"
-        android:textColor="@color/sg_light"
+        android:textColor="@color/sg_dark"
         android:layout_gravity="center_horizontal|bottom"
         android:paddingBottom="12dp"
         android:paddingLeft="4dp" />

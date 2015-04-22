@@ -53,7 +53,6 @@ public class MainActivity extends Activity implements
 
         btn = findViewById(R.id.messageButton);
 
-
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
