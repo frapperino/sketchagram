@@ -102,38 +102,23 @@ public class User extends ADigitalPerson  {
     }
 
     /**
-     * Sends the specified message
-     * @param clientMessage The message to be sent contains receivers
-     */
-    public void sendMessage(ClientMessage clientMessage){
-        List<ADigitalPerson> participants = new ArrayList<>();
-        participants.addAll(clientMessage.getReceivers());
-        participants.add(clientMessage.getSender());
-
-        int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
-        if(conversationId >= 0) {
-            if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername())){
-                Connection.getInstance().sendMessage(clientMessage);
-            }
-            getConversation(conversationId).addMessage(clientMessage);
-            updateObservers(clientMessage);
-        }
-    }
-
-    /**
      * Adds a message that was received from the server to the proper conversation.
      * @param clientMessage The message received.
+     * @param send If the message is to be sent via the server
      * @return The conversation which the message was appended to.
      */
-    public Conversation addMessage(ClientMessage clientMessage){
-        Conversation conversation;
+    public Conversation addMessage(ClientMessage clientMessage, boolean send){
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
+        Conversation conversation = null;
 
-        conversation = conversationExists(participants);
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
         if(conversationId >= 0) {
+            if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername()) && send){
+                Connection.getInstance().sendMessage(clientMessage);
+            }
+            conversation = getConversation(conversationId);
             if(conversation == null) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
