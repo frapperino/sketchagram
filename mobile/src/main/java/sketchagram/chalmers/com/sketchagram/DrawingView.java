@@ -209,6 +209,7 @@ public class DrawingView extends View {
     /**
      * Instantly displays the drawing on canvas.
      * @param drawing
+     * @deprecated No longer in any use.
      */
     public void displayStaticDrawing(Drawing drawing) {
         List<DrawingEvent> motions = drawing.getMotions();
