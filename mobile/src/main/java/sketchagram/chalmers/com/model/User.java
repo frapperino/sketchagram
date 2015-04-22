@@ -115,7 +115,7 @@ public class User extends ADigitalPerson  {
             if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername())){
                 Connection.getInstance().sendMessage(clientMessage);
             }
-            addMessage(clientMessage);
+            getConversation(conversationId).addMessage(clientMessage);
             updateObservers(clientMessage);
         }
     }
