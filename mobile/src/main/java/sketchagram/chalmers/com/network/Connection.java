@@ -182,6 +182,11 @@ public class Connection implements IConnection{
         connection = null;
         myInstance = null;
         MyApplication.getInstance().stopNetworkService();
+        try {
+            Thread.sleep((long)5);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         MyApplication.getInstance().startNetworkService();
     }
 
