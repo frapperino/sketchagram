@@ -46,6 +46,7 @@
         android:text="Draw"
         android:textColor="@color/sg_light"
         android:clickable="true"
+        android:onClick="sendDrawing"
         android:id="@+id/textDraw"
         android:layout_gravity="center_horizontal|top"
         android:paddingTop="15dp"
@@ -59,6 +60,7 @@
         android:textColor="@color/sg_light"
         android:id="@+id/textEmoji"
         android:clickable="true"
+        android:onClick="sendMessage"
         android:layout_gravity="center"
         android:paddingLeft="4dp" />
 
@@ -68,6 +70,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Convo"
         android:clickable="true"
+        android:onClick="showConversations"
         android:id="@+id/textConvo"
         android:textColor="@color/sg_light"
         android:layout_gravity="center_horizontal|bottom"
