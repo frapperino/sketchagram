@@ -382,7 +382,7 @@ public class MainActivity extends ActionBarActivity
                 ls.add(c);
                 ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                         ls, "Massmessage from wear", MessageType.TEXTMESSAGE);
-                MyApplication.getInstance().getUser().sendMessage(clientMessage);
+                MyApplication.getInstance().getUser().addMessage(clientMessage, true);
             }
         } else if(messageEvent.getPath().contains("conversations")) {
 
@@ -396,7 +396,7 @@ public class MainActivity extends ActionBarActivity
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
             ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
-            MyApplication.getInstance().getUser().sendMessage(cm);
+            MyApplication.getInstance().getUser().addMessage(cm, true);
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }

@@ -150,15 +150,16 @@ public class Connection implements IConnection{
                             connection.disconnect();
 
                         }
-                        reset();
+                        resetService();
                     }else {
                         while(connection.isConnected()) {
                             getChatManager().removeChatListener(chatManagerListener);
                             getRoster().removeRosterListener(rosterListener);
                             connection.removePacketListener(requestListener);
                             connection.disconnect();
+
                         }
-                        reset();
+                        resetService();
                     }
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
@@ -171,8 +172,17 @@ public class Connection implements IConnection{
     }
 
     private void reset(){
+        getChatManager().removeChatListener(chatManagerListener);
+        getRoster().removeRosterListener(rosterListener);
+        connection.removePacketListener(requestListener);
+        resetService();
+    }
+
+    private void resetService(){
         connection = null;
         myInstance = null;
+        MyApplication.getInstance().stopNetworkService();
+        MyApplication.getInstance().startNetworkService();
     }
 
     private ChatManager getChatManager(){
@@ -193,9 +203,11 @@ public class Connection implements IConnection{
     public void logout(){
         Presence presence = new Presence(Presence.Type.unavailable);
         presence.setMode(Presence.Mode.away);
-        if(connection.isConnected()){
-            disconnect(presence);
-            loggedIn = false;
+        if(loggedIn && connection != null) {
+            if (connection.isConnected()) {
+                disconnect(presence);
+                loggedIn = false;
+            }
         }
 
     }
@@ -242,6 +254,9 @@ public class Connection implements IConnection{
             @Override
             protected Object doInBackground(Object[] params){
                 try {
+                    if(connection == null){
+                        return false;
+                    }
                     if(connection.isConnected()){
                         connection.login(userName, password);
                         getChatManager().addChatListener(chatManagerListener);
@@ -495,7 +510,7 @@ public class Connection implements IConnection{
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
             ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
-            Conversation conversation = MyApplication.getInstance().getUser().addMessage(clientMessage);
+            Conversation conversation = MyApplication.getInstance().getUser().addMessage(clientMessage, false);
             NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
             notificationHandler.pushNewMessageNotification(conversation, clientMessage);
         }
