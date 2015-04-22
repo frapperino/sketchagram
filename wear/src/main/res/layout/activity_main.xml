@@ -13,7 +13,6 @@
         android:background="@null"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:text="New Drawing"
         android:id="@+id/drawingButton"
         android:layout_gravity="left|top"
         android:onClick="sendDrawing"
@@ -34,7 +33,6 @@
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:scaleType="fitCenter"
-        android:text="Conversations"
         android:background="@null"
         android:id="@+id/conversationButton"
         android:layout_gravity="left|bottom"
@@ -46,7 +44,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Draw"
-        android:id="@+id/textView"
+        android:clickable="true"
+        android:id="@+id/textDraw"
         android:layout_gravity="center_horizontal|top"
         android:paddingTop="15dp"
         android:paddingLeft="4dp" />
@@ -56,7 +55,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Emoji"
-        android:id="@+id/textView2"
+        android:id="@+id/textEmoji"
+        android:clickable="true"
         android:layout_gravity="center"
         android:paddingLeft="4dp" />
 
@@ -65,7 +65,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Convo"
-        android:id="@+id/textView3"
+        android:clickable="true"
+        android:id="@+id/textConvo"
         android:layout_gravity="center_horizontal|bottom"
         android:paddingBottom="12dp"
         android:paddingLeft="4dp" />
