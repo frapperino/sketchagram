@@ -29,7 +29,7 @@ import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
 
 /**
- * Created by Alex on 2015-03-06.
+ * Created by Alex and Olliver on 2015-03-06.
  */
 public class SketchagramDb {
 

@@ -3,7 +3,7 @@ package sketchagram.chalmers.com.database;
 import android.provider.BaseColumns;
 
 /**
- * Created by Alex on 2015-03-06.
+ * Created by Alex and Olliver on 2015-03-06.
  */
 public final class DataContract {
 

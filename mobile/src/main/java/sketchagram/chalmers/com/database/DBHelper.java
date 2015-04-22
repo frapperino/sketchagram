@@ -3,7 +3,7 @@
 package sketchagram.chalmers.com.database;
 
 /**
- * Created by alex on 2015-02-27.
+ * Created by alex and Olliver on 2015-02-27.
  */
 import java.util.ArrayList;
 import java.util.HashMap;
