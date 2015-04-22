@@ -26,6 +26,7 @@ public class MyApplication extends Application {
     private static Context context;
     private static String FIRST_STARTUP = "FIRST_STARTUP";
     private User user;
+    private boolean firstStart = true;
 
     public static MyApplication getInstance(){
         return ourInstance;
@@ -36,8 +37,16 @@ public class MyApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         ourInstance = this;
-
-        startService(new Intent(context, NetworkService.class));
+        startNetworkService();
+        if(Connection.isLoggedIn() && firstStart){
+            Connection.getInstance().logout();
+        }
+        firstStart = false;
+        String userName = ourInstance.getSharedPreferences().getString("username", null);
+        String password = ourInstance.getSharedPreferences().getString("password", null);
+        if(userName != null && password != null) {
+            ourInstance.login(userName, password);
+        }
         // Initialize the singletons so their instances
         // are bound to the application process.
         initSingletons();
@@ -50,6 +59,14 @@ public class MyApplication extends Application {
     {
         // Initialize the instance of MySingleton
         db = new SketchagramDb(getApplicationContext());
+    }
+
+    public void stopNetworkService(){
+        stopService(new Intent(context, NetworkService.class));
+    }
+
+    public void startNetworkService() {
+        startService(new Intent(context, NetworkService.class));
     }
 
     public SharedPreferences getSharedPreferences(){return getSharedPreferences("user", 0);}

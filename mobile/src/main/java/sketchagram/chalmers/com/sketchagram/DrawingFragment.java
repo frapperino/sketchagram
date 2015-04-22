@@ -96,7 +96,7 @@ public class DrawingFragment extends Fragment implements Observer {
         Drawing mDrawing = (Drawing)data;
         mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
         ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), MyApplication.getInstance().getUser(), receivers, mDrawing, MessageType.DRAWING);
-        MyApplication.getInstance().getUser().sendMessage(message);
+        MyApplication.getInstance().getUser().addMessage(message, true);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();

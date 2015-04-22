@@ -42,7 +42,7 @@ public abstract class ADigitalPerson extends Observable{
         } else if(this.getUsername() == null || ((ADigitalPerson)obj).getUsername() == null) {
             return false;
         }*/
-        return this.username.equals(((ADigitalPerson)obj).getUsername());
+        return this.username.toLowerCase().equals(((ADigitalPerson)obj).getUsername().toLowerCase());
     }
 
     @Override
