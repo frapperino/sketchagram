@@ -101,11 +101,14 @@ public class NavigationDrawerFragment extends Fragment {
         String [] navDrawTitles = getResources().getStringArray(R.array.nav_drawer_items);
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
+                R.layout.nav_drawer_text,
                 android.R.id.text1,
                 new String[]{
                         navDrawTitles[0],
-                        navDrawTitles[1]
+                        navDrawTitles[1],
+                        navDrawTitles[2],
+                        navDrawTitles[3],
+                        navDrawTitles[4]
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;

@@ -1,18 +1,25 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -91,7 +98,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
         //gridView.setOnItemClickListener(this);
-
+        showGlobalContextActionBar();
         return view;
     }
 
@@ -235,6 +242,22 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 this.drawing = drawing;
             }
         }
+    }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void showGlobalContextActionBar() {
+        android.support.v7.app.ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setTitle("Conversations");
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources()
+                .getColor(R.color.sPurple)));
+        Window window = getActivity().getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(getActivity().getResources().getColor(R.color.sPurple2));
+    }
+    private android.support.v7.app.ActionBar getActionBar() {
+        return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 
 }
