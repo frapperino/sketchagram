@@ -20,14 +20,42 @@ public class ClientMessage<T> {
     private final T content;
     private final MessageType type;
     private boolean read;
-    public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
-        this.timestamp = timestamp;
-        this.sender = sender;
-        this.receivers.addAll(receiver);
-        this.content = content;
-        this.type = type;
-        this.read = sender.equals(MyApplication.getInstance().getUser());//TODO: Find why sender is null.
+
+    /**
+     * Automatically sets the timestamp to current time.
+     *
+     * @param sender
+     * @param receiver
+     * @param content
+     * @param type
+     */
+    public ClientMessage(ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
+        this(System.currentTimeMillis(), sender, receiver, content, type);
     }
+
+    /**
+     * Automatically sets the message as read if it's a message that been sent to oneself.
+     *
+     * @param timestamp
+     * @param sender
+     * @param receiver
+     * @param content
+     * @param type
+     */
+    public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
+        this(timestamp, sender, receiver, content, type, sender.equals(MyApplication.getInstance().getUser())); //TODO: Find why sender is null.
+    }
+
+    /**
+     * Initializes ClientMessages' stored in database.
+     *
+     * @param timestamp
+     * @param sender
+     * @param receiver
+     * @param content
+     * @param type
+     * @param read
+     */
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
         this.timestamp = timestamp;
         this.sender = sender;
@@ -36,6 +64,7 @@ public class ClientMessage<T> {
         this.type = type;
         this.read = read;
     }
+
     public T getContent(){
         return content;
     }
