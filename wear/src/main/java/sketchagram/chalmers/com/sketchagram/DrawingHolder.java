@@ -36,7 +36,6 @@ public class DrawingHolder {
     }
 
     public void setDrawings(List<Drawing> drawings) {
-        Log.e("DRAWINGHOLDER", "new drawings");
         this.drawings = drawings;
     }
 

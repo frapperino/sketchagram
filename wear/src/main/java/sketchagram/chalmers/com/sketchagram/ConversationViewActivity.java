@@ -205,7 +205,7 @@ public class ConversationViewActivity extends Activity  implements
                 drawings.add(drawing);
 
             }
-            Log.e("drawings", "new drawings");
+            Log.e("drawings", drawings.size()+"");
             DrawingHolder.getInstance().setDrawings(drawings);
         }
     }

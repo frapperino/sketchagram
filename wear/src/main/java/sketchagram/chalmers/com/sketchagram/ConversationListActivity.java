@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.WatchViewStub;
@@ -47,6 +49,16 @@ public class ConversationListActivity extends Activity implements WearableListVi
     private MyListAdapter mAdapter;
     private List<String> conversations;
     private SharedPreferences sp;
+    private final Handler handler;
+
+    public ConversationListActivity() {
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                if(msg.arg1 == 1)
+                    Toast.makeText(getApplicationContext(),"No messages found", Toast.LENGTH_SHORT).show();
+            }
+        };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,8 +238,15 @@ public class ConversationListActivity extends Activity implements WearableListVi
             Log.e("drawings", "new drawings");
             DrawingHolder.getInstance().setDrawings(drawings);
 
-            Intent intent = new Intent(this, ConversationViewActivity.class);
-            startActivity(intent);
+            if(drawingsAmount < 1){
+                Message msg = handler.obtainMessage();
+                msg.arg1 = 1;
+                handler.sendMessage(msg);
+            }
+            else {
+                Intent intent = new Intent(this, ConversationViewActivity.class);
+                startActivity(intent);
+            }
         }
     }
 

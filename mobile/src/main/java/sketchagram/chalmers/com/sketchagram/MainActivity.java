@@ -417,19 +417,24 @@ public class MainActivity extends ActionBarActivity
 
             dataMap.clear();
             int i = 0;
-            for(ClientMessage message : conversation.getHistory()) {
-                if(message.getType().equals(MessageType.DRAWING)) {
-                    Drawing drawing = (Drawing) message.getContent();
-                    dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
-                    dataMap.putFloatArray("y-coordinates " + i, drawing.getY());
-                    dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
-                    dataMap.putStringArray("actions " + i, drawing.getActions());
-                    dataMap.putByteArray("staticDrawing " + i, drawing.getStaticDrawingByteArray());
-                    i++;
-                }
 
+            if(conversation != null) {
+                for (ClientMessage message : conversation.getHistory()) {
+                    if (message.getType().equals(MessageType.DRAWING)) {
+                        Drawing drawing = (Drawing) message.getContent();
+                        dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
+                        dataMap.putFloatArray("y-coordinates " + i, drawing.getY());
+                        dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
+                        dataMap.putStringArray("actions " + i, drawing.getActions());
+                        dataMap.putByteArray("staticDrawing " + i, drawing.getStaticDrawingByteArray());
+                        i++;
+                    }
+
+                }
+                dataMap.putInt("amountOfDrawings", i);
+            } else {
+                dataMap.putInt("amountOfDrawings", 0);
             }
-            dataMap.putInt("amountOfDrawings", i-1);
 
             sendToWatch("drawings", dataMap.toByteArray());
         } else {

@@ -303,7 +303,6 @@ public class DrawingView extends View {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(findViewById(R.id.drawing).getContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
                                         setChanged();
 
                                         notifyObservers(drawing);

@@ -2,6 +2,8 @@ package sketchagram.chalmers.com.sketchagram;
 
 /**
  * Created by Bosch on 27/02/15.
+ * This is the view where you choose contacts, if ever needed then just use this
+ * activity for selecting contacts.
  */
 import android.app.Activity;
 import android.content.BroadcastReceiver;
