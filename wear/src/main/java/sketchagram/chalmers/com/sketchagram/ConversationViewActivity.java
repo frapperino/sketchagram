@@ -5,12 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.view.DotsPageIndicator;
+import android.support.wearable.view.GridViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowInsets;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,33 +30,48 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 
-public class DrawingActivity extends Activity implements Observer,
+public class ConversationViewActivity extends Activity  implements
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
 
-
     private DrawingView drawView;
-
+    private List<Drawing> drawings;
 
     private GoogleApiClient mGoogleApiClient;
 
+    private GridViewPager pager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drawing);
+        setContentView(R.layout.activity_conversation_view);
+        final Resources res = getResources();
+        pager = (GridViewPager) findViewById(R.id.pager);
+        pager.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                // Adjust page margins:
+                //   A little extra horizontal spacing between pages looks a bit
+                //   less crowded on a round display.
+                final boolean round = insets.isRound();
+                int rowMargin = res.getDimensionPixelOffset(R.dimen.page_row_margin);
+                int colMargin = res.getDimensionPixelOffset(round ?
+                        R.dimen.page_column_margin_round : R.dimen.page_column_margin);
+                pager.setPageMargins(rowMargin, colMargin);
 
-        //Get view that is displayed in the Activity on which we can call
-        //the methods in the DrawingView class.
-        drawView = (DrawingView) findViewById(R.id.drawing);
-        drawView.addHelperObserver(this);
-
-
+                // GridViewPager relies on insets to properly handle
+                // layout for round displays. They must be explicitly
+                // applied since this listener has taken them over.
+                pager.onApplyWindowInsets(insets);
+                return insets;
+            }
+        });
+        pager.setAdapter(new ConversationViewPagerAdapter(this, getFragmentManager()));
+        DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
+        dotsPageIndicator.setPager(pager);
 
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -66,46 +86,17 @@ public class DrawingActivity extends Activity implements Observer,
                 .build();
         mGoogleApiClient.connect();
 
-
+/*        Bundle bundle = this.getIntent().getExtras();
+        DataMap dataMap = new DataMap();
+        Log.e("contact", bundle.getString("convid"));
+        dataMap.putString("convid", bundle.getString("convid"));
+        messagePhone("inConversation", dataMap.toByteArray()); */
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_drawing, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void update(Observable observable, Object data) {
-        Drawing mDrawing = (Drawing)data;
-        mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
-        drawView.clearCanvas();
-        DrawingHolder.getInstance().resetDrawing();
-        DrawingHolder.getInstance().setDrawing(mDrawing);
-        Intent intent = new Intent(this, ContactListActivity.class);
-        startActivity(intent);
-    }
 
 
     /**
@@ -150,6 +141,10 @@ public class DrawingActivity extends Activity implements Observer,
 
     }
 
+    /**
+     * Gets the nodes to which the wear device is connected to.
+     * @return
+     */
     private List<Node> getNodes() {
         List<Node> nodes = new ArrayList<Node>();
         NodeApi.GetConnectedNodesResult rawNodes =
@@ -158,6 +153,31 @@ public class DrawingActivity extends Activity implements Observer,
             nodes.add(node);
         }
         return nodes;
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_conversation_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -172,11 +192,24 @@ public class DrawingActivity extends Activity implements Observer,
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().contains("sendTo")) {
-            Intent intent = new Intent(this, ContactListActivity.class);
-            startActivity(intent);
+        if(messageEvent.getPath().contains("drawings")) {
+            List<Drawing> drawings = new ArrayList<>();
+            DataMap data = DataMap.fromByteArray(messageEvent.getData());
+            int drawingsAmount = data.getInt("amountOfDrawings");
+            for (int i = 0; i < drawingsAmount; i++) {
+                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
+                        , data.getFloatArray("x-coordinates " + i)
+                        , data.getLongArray("drawing-times " + i)
+                        , data.getStringArray("actions " + i)
+                        , data.getByteArray("staticDrawing " + i));
+                drawings.add(drawing);
+
+            }
+            Log.e("drawings", drawings.size()+"");
+            DrawingHolder.getInstance().setDrawings(drawings);
         }
     }
+
 
 
     public class MessageReceiver extends BroadcastReceiver {
@@ -185,5 +218,4 @@ public class DrawingActivity extends Activity implements Observer,
             //What to do if a message is received
         }
     }
-
 }

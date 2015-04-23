@@ -12,10 +12,10 @@ import java.util.ArrayList;
 public class ConversationSync {
     private ArrayList<String> conversations;
 
-
     public ConversationSync(DataMap data) {
         try {
             conversations = data.getStringArrayList("CONVERSATIONS");
+            Log.e("CONVERSATIONSSYNC", conversations.toString());
         } catch (NullPointerException e) {
             Log.e("CONVERSATIONSLIST", "No conversations found");
             conversations = new ArrayList<>();
@@ -27,6 +27,7 @@ public class ConversationSync {
     }
 
     public DataMap putToDataMap(DataMap data) {
+        Log.e("CONVERSATIONSSYNC", conversations.toString());
         data.putStringArrayList("CONVERSATIONS", conversations);
         return data;
     }

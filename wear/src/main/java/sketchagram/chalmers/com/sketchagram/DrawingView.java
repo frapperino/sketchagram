@@ -14,9 +14,12 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
-
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Defines a view which the user can draw upon using touch gestures.
@@ -37,18 +40,23 @@ public class DrawingView extends View {
     private static int BRUSH_COLOR = 0xff00304e;    //http://colrd.com/color/
     //canvas
     private Canvas drawCanvas;
+
     //canvas bitmap
     private Bitmap canvasBitmap;
 
-    private boolean drawingFinished;
+    private boolean isTouchable = true;
 
     //Tracking last time a drawing action was made.
     DrawingHelper helper;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        drawingFinished = false;
         setupDrawing();
+        helper = new DrawingHelper();
+    }
+
+    public void setTouchable(boolean isTouchable) {
+        this.isTouchable = isTouchable;
     }
 
     /**
@@ -108,30 +116,33 @@ public class DrawingView extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        helper.startMeasuring();
-        helper.setAccessed();
-        DrawingEvent drawingEvent = null;
-        WindowManager wm = (WindowManager) findViewById(R.id.drawing).getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_DOWN);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_MOVE);
-                break;
-            case MotionEvent.ACTION_UP:
-                drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_UP);
-                break;
+        if(isTouchable) {
+            helper.startMeasuring();
+            helper.setAccessed();
+            DrawingEvent drawingEvent = null;
+            WindowManager wm = (WindowManager) findViewById(R.id.drawing).getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_DOWN);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_MOVE);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    drawingEvent = new DrawingEvent(System.nanoTime(), event.getX()/size.x, event.getY()/size.y, DrawMotionEvents.ACTION_UP);
+                    break;
+            }
+            if(drawingEvent != null) {
+                helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
+                return handleMotionEvent(drawingEvent);
+            }
+            return false;
+        } else {
+            return super.onTouchEvent(event);   //does nothing.
         }
-        if(drawingEvent != null) {
-            helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
-
-            return handleMotionEvent(drawingEvent);
-        }
-        return false;
     }
 
     /**
@@ -173,32 +184,31 @@ public class DrawingView extends View {
     /**
      * Start a new drawing.
      */
-    public void startNew(){
+    public void clearCanvas(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
         //TODO: Animations that will make graphics fade.
     }
 
     /**
-     * Set the Drawing helper in the fragment that uses the view.
-     */
-    public void setHelper(DrawingHelper helper) {
-        this.helper = helper;
-    }
-
-    /**
-     * Displays the provided drawing.
+     * Displays the provided drawing
+     * drawn with the original time-delay between strokes.
      * @param drawing
      */
     public void displayDrawing(Drawing drawing) {
-        //TODO: Draw at certain time intervals
-        //http://stackoverflow.com/questions/4544197/how-do-i-schedule-a-task-to-run-at-periodic-intervals
-        //Create new thread which sleeps if necessary and sends calls to main GUI thread.
-        //http://java.dzone.com/articles/how-schedule-task-run-interval
         CountdownTask task = new CountdownTask(drawing);
         task.execute();
-        drawingFinished = true;
-        //TODO: Animations that make the drawing seem alive.
+    }
+
+    /**
+     * Instantly displays the drawing on canvas.
+     * @param drawing
+     */
+    public void displayStaticDrawing(Drawing drawing) {
+        List<DrawingEvent> motions = drawing.getMotions();
+        for(DrawingEvent e: motions) {
+            handleMotionEvent(e);
+        }
     }
 
     /**
@@ -236,6 +246,7 @@ public class DrawingView extends View {
             long timeDeltaInMilli;
             List<DrawingEvent> events = drawing.getMotions();
             DrawingEvent first = events.get(0);
+
             handler.post(new EventRunnable(first));
             for (int i = 1; i < events.size(); i++) {
                 curr = events.get(i);
@@ -246,7 +257,78 @@ public class DrawingView extends View {
         }
     }
 
-    public boolean isDrawingFinished() {
-        return drawingFinished;
+    /**
+     * Return a copy of the image in form a bitmap.
+     * @return the bitmap in question.
+     */
+    public byte[] getCanvasBitmapAsByte() {
+        Bitmap bmp = canvasBitmap;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
+
+    public void addHelperObserver(Observer observer) {
+        helper.addObserver(observer);
+    }
+
+    /**
+     * Helpclass for drawing. Tracking time passed since last action on drawing.
+     * If the maximum awaiting time has passed, an action is made.
+     * Created by Alexander on 2015-03-27.
+     */
+    private class DrawingHelper extends Observable {
+        private long lastActionTime;
+        private Handler handler;
+        private boolean isRunning;
+        private Drawing drawing;
+
+        //Max nano-time allowed while awaiting input.
+        private static final long MAX_AWAIT_TIME = 2000000000;
+
+        public DrawingHelper() {
+            handler = new Handler();
+            isRunning = false;
+            drawing = new Drawing();
+        }
+
+        public void startMeasuring() {
+            if(!isRunning) {
+                isRunning = true;
+                AsyncTask asyncTask = new AsyncTask() {
+                    @Override
+                    protected Object doInBackground(Object[] params) {
+                        while(true) {
+                            if((System.nanoTime() - lastActionTime) >= MAX_AWAIT_TIME ) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setChanged();
+
+                                        notifyObservers(drawing);
+                                    }
+                                });
+                                isRunning = false;
+                                return null;
+                            }
+                        }
+                    }
+                };
+                asyncTask.execute();
+            }
+        }
+
+        public void setAccessed() {
+            lastActionTime = System.nanoTime();
+        }
+
+        public void addMotion(DrawingEvent event) {
+            drawing.addMotion(event);
+        }
+
+        public Drawing getDrawing() {
+            return drawing;
+        }
     }
 }
+

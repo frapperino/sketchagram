@@ -33,10 +33,8 @@ public class ContactSync {
      *
      * @return the contacts plus a "send" alternative.
      */
-    public ArrayList<String> getContactChoices() {
-        ArrayList<String> choices = contacts;
-        choices.add("  Send  ");
-        return choices;
+    public ArrayList<String> getContacts() {
+        return contacts;
     }
 
     public void addContact(String name) {

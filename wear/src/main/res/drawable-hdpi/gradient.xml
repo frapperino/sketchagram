@@ -14,10 +14,14 @@
      limitations under the License.
 -->
 
-<resources>
-    <color name="wl_blue">#2878ff</color>
-    <color name="wl_gray">#c1c1c1</color>
-    <color name="text_color">#434343</color>
-    <color name="sg_dark">#9933CC</color>
-    <color name="sg_light">#AA66CC</color>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+
+    <gradient
+        android:angle="45"
+        android:endColor="#87CEEB"
+        android:centerColor="#768087"
+        android:startColor="#000"
+        android:type="linear" />
+
+</shape>

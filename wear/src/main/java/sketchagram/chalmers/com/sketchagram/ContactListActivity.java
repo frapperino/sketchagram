@@ -2,13 +2,14 @@ package sketchagram.chalmers.com.sketchagram;
 
 /**
  * Created by Bosch on 27/02/15.
+ * This is the view where you choose contacts, if ever needed then just use this
+ * activity for selecting contacts.
  */
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -98,7 +98,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      * the adapter should be updated.
      */
     private void loadAdapter(){
-        choices = contacts.getContactChoices();
+        choices = contacts.getContacts();
         mAdapter = new MyListAdapter(this, choices);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(ContactListActivity.this);
@@ -172,7 +172,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      */
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == choices.size()-1){
+            receivers.addContact(choices.get(viewHolder.getPosition()));
             receivers.putToDataMap(dataMap);
             Drawing drawing = DrawingHolder.getInstance().getDrawing();
             if(drawing != null) {
@@ -183,10 +183,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             }
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-        } else {
-            receivers.addContact(choices.get(viewHolder.getPosition()));
-        }
-        Log.e("contacts", viewHolder.getPosition() + " : " + choices.size());
+
     }
 
     @Override
@@ -263,10 +260,6 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i >= items.size()-1) {
-                txt.setBackgroundColor(Color.GREEN);
-                txt.setTextColor(Color.BLACK);
-            }
 
 
         }
@@ -284,7 +277,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.wearable_listview_item, this);
+            View.inflate(context, R.layout.activity_contact_view, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }

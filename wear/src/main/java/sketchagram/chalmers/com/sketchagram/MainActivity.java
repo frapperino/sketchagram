@@ -53,7 +53,6 @@ public class MainActivity extends Activity implements
 
         btn = findViewById(R.id.messageButton);
 
-
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -157,7 +156,6 @@ public class MainActivity extends Activity implements
         dataMap = DataMap.fromByteArray(messageEvent.getData());
         Log.e("WATCH","username = " + dataMap.getString("username"));
         getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
-
     }
 
     @Override

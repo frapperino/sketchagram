@@ -25,10 +25,11 @@ public class ConversationsSync {
 
     public DataMap putToDataMap(DataMap dataMap) {
         ArrayList<String> ls = new ArrayList<>();
-        List<ADigitalPerson> conversationList = new ArrayList<>();
-        for(Conversation c : conversations)
+        List<ADigitalPerson> conversationList;
+        for (Conversation c : conversations) {
             conversationList = new ArrayList<>(c.getParticipants());
             ls.add(conversationList.get(0).getUsername());
+        }
         dataMap.remove("CONVERSATIONS");
         dataMap.putStringArrayList("CONVERSATIONS", ls);
         return dataMap;

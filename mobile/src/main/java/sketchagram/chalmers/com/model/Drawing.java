@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import com.google.android.gms.wearable.DataMap;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class Drawing {
         float[] xf = data.getFloatArray("x-coordinates");
         long[] times = data.getLongArray("drawing-times");
         String[] actions = data.getStringArray("actions");
+        staticDrawing = data.getByteArray("staticDrawing");
 
         for(int i = 0; i < times.length; i++)
             events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions[i])));
@@ -58,6 +60,55 @@ public class Drawing {
     @Override
     public String toString(){
         return "Drawing";
+    }
+
+    public float[] getX() {
+        List<Float> fs = new ArrayList<>();
+        float[] xf;
+        for(DrawingEvent event : events) {
+            fs.add(event.getX());
+        }
+
+        xf = new float[fs.size()];
+        int i = 0;
+        for(float f : fs) {
+            xf[i] = f;
+        }
+        return xf;
+    }
+
+    public float[] getY() {
+        List<Float> fs = new ArrayList<>();
+        float[] yf;
+        for(DrawingEvent event : events) {
+            fs.add(event.getY());
+        }
+
+        yf = new float[fs.size()];
+        int i = 0;
+        for(float f : fs) {
+            yf[i] = f;
+        }
+        return yf;
+    }
+
+    public long[] getTimes() {
+        long[] times = new long[events.size()];
+        int i = 0;
+        for(DrawingEvent event : events) {
+            times[i] = event.getTime();
+            i++;
+        }
+        return times;
+    }
+
+    public String[] getActions() {
+        String[] actions = new String[events.size()];
+        int i = 0;
+        for(DrawingEvent event : events) {
+            actions[i] = event.getAction().name();
+        }
+        return actions;
     }
 
     public void setStaticDrawing(byte[] staticDrawing) {
@@ -115,5 +166,9 @@ public class Drawing {
         }
 
         return inSampleSize;
+    }
+
+    public byte[] getStaticDrawingByteArray() {
+        return staticDrawing;
     }
 }

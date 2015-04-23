@@ -13,11 +13,16 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
 
-<resources>
-    <color name="wl_blue">#2878ff</color>
-    <color name="wl_gray">#c1c1c1</color>
-    <color name="text_color">#434343</color>
-    <color name="sg_dark">#9933CC</color>
-    <color name="sg_light">#AA66CC</color>
-</resources>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageview"
+        android:layout_gravity="center"
+        android:background="@color/white" />
+</FrameLayout>
