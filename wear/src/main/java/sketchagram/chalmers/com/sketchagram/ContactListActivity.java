@@ -1,10 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-/**
- * Created by Bosch on 27/02/15.
- * This is the view where you choose contacts, if ever needed then just use this
- * activity for selecting contacts.
- */
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,6 +32,12 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Created by Bosch on 27/02/15.
+ * This is the view where you choose contacts, if ever needed then just use this
+ * activity for selecting contacts.
+ */
 public class ContactListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
@@ -67,7 +68,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
                 receivers = new ContactSync();
-                messagePhone("contacts", null);
+                messagePhone("contacts", null);     //sends a message to phone asking for contacts
                 loadAdapter();
 
             }

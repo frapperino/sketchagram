@@ -1,8 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-/**
- * Created by Bosch on 27/02/15.
- */
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,6 +37,12 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Bosch on 27/02/15.
+ * This activity shows contacts which can be selected.
+ * When a contact is selected you will be forwarded to a list with all the messages
+ * that you have sent between you and that contact.
+ */
 public class ConversationListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
@@ -204,6 +207,11 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
     }
 
+    /**
+     * This function is called when the phone wants to send info,
+     * only contacts and drawings are received in this onMessageReceived.
+     * @param messageEvent
+     */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.e("WATCH", "Conversation here");

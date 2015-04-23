@@ -29,6 +29,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 
+/**
+ * Created by Bosch on 27/03/15.
+ * The view for drawing a message.
+ */
 public class DrawingActivity extends Activity implements Observer,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {

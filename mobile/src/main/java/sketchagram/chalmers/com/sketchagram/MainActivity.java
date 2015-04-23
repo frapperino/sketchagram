@@ -375,10 +375,10 @@ public class MainActivity extends ActionBarActivity
     public void onMessageReceived(MessageEvent messageEvent) {
         dataMap = new DataMap();
         if(messageEvent.getPath().contains("contacts")) { //From contact-activity
-            ContactsSync cs = new ContactsSync(MyApplication.getInstance().getUser().getContactList());
+            ContactSync cs = new ContactSync(MyApplication.getInstance().getUser().getContactList());
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("messageTo")) { //From clock emoji-message
-            ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
+            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
             for(Contact c : cs.getContacts()) {
                 List<ADigitalPerson> ls = new ArrayList<>();
                 ls.add(c);
@@ -394,7 +394,7 @@ public class MainActivity extends ActionBarActivity
             sendToWatch("username", dataMap.toByteArray());
         } else if(messageEvent.getPath().contains("drawing")) { //From DrawingActivity in clock
             Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
-            ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
+            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
             ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
             MyApplication.getInstance().getUser().addMessage(cm, true);

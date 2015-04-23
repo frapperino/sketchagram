@@ -9,6 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+
+/**
+ * Created by Bosch on 15/04/15.
+ * A container for one message in a conversation.
+ */
+
 public class ConversationViewFragment extends Fragment {
 
     private int id;
@@ -21,7 +27,6 @@ public class ConversationViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         id = bundle.getInt("id");
-        Log.e("FRAGMENTID", "" + id);
     }
 
     @Override
