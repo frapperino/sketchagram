@@ -1,5 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.util.Log;
+
 import java.util.List;
 
 /**
@@ -34,7 +36,7 @@ public class DrawingHolder {
     }
 
     public void setDrawings(List<Drawing> drawings) {
-        drawings.clear();
+        Log.e("DRAWINGHOLDER", "new drawings");
         this.drawings = drawings;
     }
 

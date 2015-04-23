@@ -155,6 +155,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
         DataMap dataMap = new DataMap();
         dataMap.putString("convid", conversations.get(viewHolder.getPosition()));
         messagePhone("inConversation", dataMap.toByteArray());
+
     }
 
     @Override
@@ -225,7 +226,6 @@ public class ConversationListActivity extends Activity implements WearableListVi
             Log.e("drawings", "new drawings");
             DrawingHolder.getInstance().setDrawings(drawings);
 
-
             Intent intent = new Intent(this, ConversationViewActivity.class);
             startActivity(intent);
         }
@@ -269,7 +269,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.wearable_listview_item, this);
+            View.inflate(context, R.layout.activity_contact_view, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }

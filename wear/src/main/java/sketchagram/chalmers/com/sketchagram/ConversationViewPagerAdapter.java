@@ -67,7 +67,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     LruCache<Integer, Drawable> mRowBackgrounds = new LruCache<Integer, Drawable>(3) {
         @Override
         protected Drawable create(final Integer row) {
-            int resid = BG_IMAGES[row % BG_IMAGES.length];
             new DrawableLoadingTask(mContext) {
                 @Override
                 protected void onPostExecute(Drawable result) {
@@ -79,7 +78,7 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
                     notifyRowBackgroundChanged(row);
                     background.startTransition(TRANSITION_DURATION_MILLIS);
                 }
-            }.execute(resid);
+            };
             return mDefaultBg;
         }
     };
@@ -116,10 +115,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
                 res.getDimensionPixelSize(R.dimen.card_margin_bottom));
         return fragment;
     }
-
-    static final int[] BG_IMAGES = new int[] {
-            R.drawable.madface
-    };
 
     /** A convenient container for a row of fragments. */
     private class Row {
@@ -173,7 +168,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     public void loadFragments(){
         int messageAmount = DrawingHolder.getInstance().getDrawingsAmount();
         //mRows.add(new Row(cardFragment(R.string.welcometitle, R.string.welcometext)));
-        Log.e("LOADFRAGMENTS", ""+messageAmount);
         for(int i = 0; i < messageAmount; i++) {
             ConversationViewFragment fragment = new ConversationViewFragment();
             Bundle bundle = new Bundle();

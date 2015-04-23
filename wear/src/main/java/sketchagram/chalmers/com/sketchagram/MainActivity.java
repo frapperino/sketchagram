@@ -156,27 +156,6 @@ public class MainActivity extends Activity implements
         dataMap = DataMap.fromByteArray(messageEvent.getData());
         Log.e("WATCH","username = " + dataMap.getString("username"));
         getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
-
-        if(messageEvent.getPath().contains("drawings")) {
-            List<Drawing> drawings = new ArrayList<>();
-            DataMap data = DataMap.fromByteArray(messageEvent.getData());
-            int drawingsAmount = data.getInt("amountOfDrawings");
-            for (int i = 0; i < drawingsAmount; i++) {
-                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
-                        , data.getFloatArray("x-coordinates " + i)
-                        , data.getLongArray("drawing-times " + i)
-                        , data.getStringArray("actions " + i)
-                        , data.getByteArray("staticDrawing " + i));
-                drawings.add(drawing);
-
-            }
-            Log.e("drawings", "new drawings");
-            DrawingHolder.getInstance().setDrawings(drawings);
-
-
-            Intent intent = new Intent(this, ConversationViewActivity.class);
-            startActivity(intent);
-        }
     }
 
     @Override

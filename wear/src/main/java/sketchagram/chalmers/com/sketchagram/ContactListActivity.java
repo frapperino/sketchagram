@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -277,7 +275,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.wearable_listview_item, this);
+            View.inflate(context, R.layout.activity_contact_view, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }

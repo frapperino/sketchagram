@@ -86,6 +86,12 @@ public class ConversationViewActivity extends Activity  implements
                 .build();
         mGoogleApiClient.connect();
 
+/*        Bundle bundle = this.getIntent().getExtras();
+        DataMap dataMap = new DataMap();
+        Log.e("contact", bundle.getString("convid"));
+        dataMap.putString("convid", bundle.getString("convid"));
+        messagePhone("inConversation", dataMap.toByteArray()); */
+
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
@@ -186,6 +192,22 @@ public class ConversationViewActivity extends Activity  implements
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
+        if(messageEvent.getPath().contains("drawings")) {
+            List<Drawing> drawings = new ArrayList<>();
+            DataMap data = DataMap.fromByteArray(messageEvent.getData());
+            int drawingsAmount = data.getInt("amountOfDrawings");
+            for (int i = 0; i < drawingsAmount; i++) {
+                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
+                        , data.getFloatArray("x-coordinates " + i)
+                        , data.getLongArray("drawing-times " + i)
+                        , data.getStringArray("actions " + i)
+                        , data.getByteArray("staticDrawing " + i));
+                drawings.add(drawing);
+
+            }
+            Log.e("drawings", "new drawings");
+            DrawingHolder.getInstance().setDrawings(drawings);
+        }
     }
 
 
