@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * Created by Bosch on 24/02/15.
@@ -60,7 +58,7 @@ public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
         holder.titleText.setText(item.toString());
-        if (item.getSender().getUsername().equals(SystemUser.getInstance().getUser().getUsername())) {
+        if (item.getSender().getUsername().equals(MyApplication.getInstance().getUser().getUsername())) {
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
             Date resultDate = new Date(item.getTimestamp());
             holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());

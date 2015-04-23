@@ -10,7 +10,11 @@ import android.preference.PreferenceManager;
 
 import com.google.android.gms.internal.ge;
 
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.network.Connection;
+import sketchagram.chalmers.com.network.NetworkException;
 import sketchagram.chalmers.com.network.NetworkService;
 
 /**
@@ -21,6 +25,8 @@ public class MyApplication extends Application {
     private static SketchagramDb db = null;
     private static Context context;
     private static String FIRST_STARTUP = "FIRST_STARTUP";
+    private User user;
+    private boolean firstStart = true;
 
     public static MyApplication getInstance(){
         return ourInstance;
@@ -31,8 +37,16 @@ public class MyApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         ourInstance = this;
-
-        startService(new Intent(context, NetworkService.class));
+        startNetworkService();
+        if(Connection.isLoggedIn() && firstStart){
+            Connection.getInstance().logout();
+        }
+        firstStart = false;
+        String userName = ourInstance.getSharedPreferences().getString("username", null);
+        String password = ourInstance.getSharedPreferences().getString("password", null);
+        if(userName != null && password != null) {
+            ourInstance.login(userName, password);
+        }
         // Initialize the singletons so their instances
         // are bound to the application process.
         initSingletons();
@@ -44,8 +58,15 @@ public class MyApplication extends Application {
     protected void initSingletons()
     {
         // Initialize the instance of MySingleton
-        SystemUser.initInstance();
         db = new SketchagramDb(getApplicationContext());
+    }
+
+    public void stopNetworkService(){
+        stopService(new Intent(context, NetworkService.class));
+    }
+
+    public void startNetworkService() {
+        startService(new Intent(context, NetworkService.class));
     }
 
     public SharedPreferences getSharedPreferences(){return getSharedPreferences("user", 0);}
@@ -64,5 +85,38 @@ public class MyApplication extends Application {
 
     public static Context getContext(){
         return context;
+    }
+
+    public boolean login(String userName, String password) {
+        if(Connection.getInstance().login(userName,password)){
+            for ( Contact user : Connection.getInstance().getContacts()){
+                boolean exists = false;
+                for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
+                    if(contact.getUsername().equals(user.getUsername())){
+                        exists = true;
+                        break;
+                    }
+                }
+                if(!exists) {
+                    MyApplication.getInstance().getDatabase().insertContact(user);
+                }
+            }
+            user = new User(userName, new Profile());
+
+            return true;
+        }
+        return false;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException {
+        Connection.getInstance().createAccount(userName, password);
+    }
+
+    public void logout(){
+        Connection.getInstance().logout();
     }
 }

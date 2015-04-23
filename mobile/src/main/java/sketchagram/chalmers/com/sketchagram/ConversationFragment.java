@@ -33,7 +33,6 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A fragment representing a list of Items.
@@ -51,8 +50,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     /**
      * The fragment's ListView/GridView.
      */
-    private AbsListView mListView;
     private GridView gridView;
+
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
@@ -71,8 +70,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        conversationList = SystemUser.getInstance().getUser().getConversationList();
-        mAdapter = new ConversationListAdapter(getActivity(), conversationList);
+        conversationList = MyApplication.getInstance().getUser().getConversationList();
+        mAdapter = new MyAdapter(getActivity(), conversationList);
     }
 
     @Override
@@ -80,18 +79,11 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
 
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(R.id.conversation_list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-
-        //Frappe
         gridView = (GridView) view.findViewById(R.id.conversation_list);
-        gridView.setAdapter(new MyAdapter(getActivity(), SystemUser.getInstance().getUser().getConversationList()));
-
+        gridView.setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
-        //gridView.setOnItemClickListener(this);
+        gridView.setOnItemClickListener(this);
 
         return view;
     }
@@ -148,33 +140,28 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         public void onFragmentInteraction(int conversationId);
     }
 
-
-    //Frappe
     private class MyAdapter extends BaseAdapter {
         private List<Item> items = new ArrayList<Item>();
         private LayoutInflater inflater;
 
-        public MyAdapter(Context context, List<Conversation> conversations)
-        {
-            inflater = LayoutInflater.from(context);
+        private final int IMAGE_SIZE = 400;
 
-            if(conversations!=null){
+        public MyAdapter(Context context, List<Conversation> conversations) {
+            inflater = LayoutInflater.from(context);
+            if(conversations != null){
                 for (Conversation c: conversations){
                     List<ClientMessage> history = c.getHistory();
                     ClientMessage lastMessage = c.getHistory().get(history.size()-1);
                     if(lastMessage.getType() == MessageType.DRAWING) {
-                        items.add(new Item(
-                                c.getParticipants().get(0).getUsername().toString(),
+                        items.add(new Item(c.getParticipants().get(0).getUsername().toString(),
                                lastMessage.dateToShow(),
-                                ((Drawing)lastMessage.getContent()).getStaticDrawing()));
+                                ((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE)));
                     } else {
-                        items.add(new Item(
-                                c.getParticipants().get(0).getUsername().toString(),
+                        items.add(new Item(c.getParticipants().get(0).getUsername().toString(),
                                 history.get(history.size()-1).dateToShow(), null));
                     }
                 }
             }
-
         }
 
         @Override
@@ -194,15 +181,13 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup)
-        {
+        public View getView(int i, View view, ViewGroup viewGroup) {
             View v = view;
             ImageView picture;
             TextView name;
             TextView time;
 
-            if(v == null)
-            {
+            if(v == null) {
                 v = inflater.inflate(R.layout.fragment_conversation_item, viewGroup, false);
                 v.setTag(R.id.text2, v.findViewById(R.id.text2));
                 v.setTag(R.id.picture, v.findViewById(R.id.picture));
@@ -224,8 +209,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             return v;
         }
 
-        private class Item
-        {
+        private class Item {
             final String time;
             final String name;
             final Bitmap drawing;
@@ -237,5 +221,4 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             }
         }
     }
-
 }

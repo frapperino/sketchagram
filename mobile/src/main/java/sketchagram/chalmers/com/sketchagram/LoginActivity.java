@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.network.NetworkException;
 
 
@@ -56,7 +55,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
         String userName = sharedPreferences.getString("username", null);
         if (userName != null) {
-            if (SystemUser.getInstance().login(userName, sharedPreferences.getString("password", null))) {
+            if (MyApplication.getInstance().login(userName, sharedPreferences.getString("password", null))) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -150,7 +149,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         } else if (usernameError == null && passwordError == null && reenterPasswordError == null) {
             try {
                 loginFragment.showProgressBar();
-                SystemUser.getInstance().createAccount(mUserName, mPassword);
+                MyApplication.getInstance().createAccount(mUserName, mPassword);
                 //TODO: Get entered email and check if correct.
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_frame, loginFragment);
@@ -251,7 +250,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
      */
     private boolean loginServer(String username, String password) {
         loginFragment.showProgressBar();
-        boolean success = SystemUser.getInstance().login(username, password);
+        boolean success = MyApplication.getInstance().login(username, password);
         if (success) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);

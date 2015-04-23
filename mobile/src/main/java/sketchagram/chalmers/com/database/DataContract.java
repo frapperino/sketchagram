@@ -3,7 +3,7 @@ package sketchagram.chalmers.com.database;
 import android.provider.BaseColumns;
 
 /**
- * Created by Alex on 2015-03-06.
+ * Created by Alex and Olliver on 2015-03-06.
  */
 public final class DataContract {
 
@@ -16,6 +16,7 @@ public final class DataContract {
         public static final String COLUMN_NAME_CONTACT_USERNAME = "contactusername";
         public static final String COLUMN_NAME_CONTACT_NAME = "contactname";
         public static final String COLUMN_NAME_CONTACT_EMAIL = "contactemail";
+        public static final String COLUMN_NAME_LAST_ACCESSED = "lastaccessed";
     }
 
     public static abstract class MessagesTable implements BaseColumns{

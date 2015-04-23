@@ -209,6 +209,7 @@ public class DrawingView extends View {
     /**
      * Instantly displays the drawing on canvas.
      * @param drawing
+     * @deprecated No longer in any use.
      */
     public void displayStaticDrawing(Drawing drawing) {
         List<DrawingEvent> motions = drawing.getMotions();
@@ -267,7 +268,7 @@ public class DrawingView extends View {
      * Return a copy of the image in form a bitmap.
      * @return the bitmap in question.
      */
-    public byte[] getCanvasBitmapAsByte() {
+    private byte[] getCanvasBitmapAsByte() {
         Bitmap bmp = canvasBitmap;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -311,7 +312,7 @@ public class DrawingView extends View {
                                     public void run() {
                                         Toast.makeText(MyApplication.getContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
                                         setChanged();
-
+                                        drawing.setStaticDrawing(getCanvasBitmapAsByte());
                                         notifyObservers(drawing);
                                     }
                                 });

@@ -7,6 +7,9 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import sketchagram.chalmers.com.sketchagram.MyApplication;
+
 /**
  * Created by Bosch on 10/02/15.
  */
@@ -23,7 +26,7 @@ public class ClientMessage<T> {
         this.receivers.addAll(receiver);
         this.content = content;
         this.type = type;
-        this.read = sender.equals(SystemUser.getInstance().getUser());//TODO: Find why sender is null.
+        this.read = sender.equals(MyApplication.getInstance().getUser());//TODO: Find why sender is null.
     }
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type, boolean read){
         this.timestamp = timestamp;

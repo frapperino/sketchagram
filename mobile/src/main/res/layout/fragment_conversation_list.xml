@@ -26,6 +26,5 @@
         android:src="@drawable/ic_mode_edit_white_36dp"
         android:onClick="newMessage"
         android:elevation="10dp"
-        android:clickable="true"
         android:layout_margin="16dp" />
 </FrameLayout>

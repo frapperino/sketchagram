@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import sketchagram.chalmers.com.sketchagram.MyApplication;
+
 /**
  * Created by Bosch on 10/02/15.
  */
@@ -55,8 +57,8 @@ public class Conversation implements Comparable{
         String participants = getParticipants().toString();
         participants = participants.substring(1, participants.length()-1); //Remove [].
         participants = participants.replace(",", " ");//To remove commas
-        participants = participants.replace(SystemUser.getInstance().getUser().getUsername().toLowerCase(), ""); //To remove username of current user when printing
-        participants = participants.replace(SystemUser.getInstance().getUser().getUsername(), ""); //To remove username of current user when printing
+        participants = participants.replace(MyApplication.getInstance().getUser().getUsername().toLowerCase(), ""); //To remove username of current user when printing
+        participants = participants.replace(MyApplication.getInstance().getUser().getUsername(), ""); //To remove username of current user when printing
 
         return participants;
     }

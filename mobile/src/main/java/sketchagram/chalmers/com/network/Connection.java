@@ -48,7 +48,6 @@ import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.Status;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 import sketchagram.chalmers.com.model.User;
 
@@ -145,15 +144,22 @@ public class Connection implements IConnection{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            getChatManager().removeChatListener(chatManagerListener);
+                            getRoster().removeRosterListener(rosterListener);
+                            connection.removePacketListener(requestListener);
                             connection.disconnect();
 
                         }
-                        reset();
+                        resetService();
                     }else {
                         while(connection.isConnected()) {
+                            getChatManager().removeChatListener(chatManagerListener);
+                            getRoster().removeRosterListener(rosterListener);
+                            connection.removePacketListener(requestListener);
                             connection.disconnect();
+
                         }
-                        reset();
+                        resetService();
                     }
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
@@ -169,8 +175,19 @@ public class Connection implements IConnection{
         getChatManager().removeChatListener(chatManagerListener);
         getRoster().removeRosterListener(rosterListener);
         connection.removePacketListener(requestListener);
+        resetService();
+    }
+
+    private void resetService(){
         connection = null;
         myInstance = null;
+        MyApplication.getInstance().stopNetworkService();
+        try {
+            Thread.sleep((long)5);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        MyApplication.getInstance().startNetworkService();
     }
 
     private ChatManager getChatManager(){
@@ -191,9 +208,11 @@ public class Connection implements IConnection{
     public void logout(){
         Presence presence = new Presence(Presence.Type.unavailable);
         presence.setMode(Presence.Mode.away);
-        if(connection.isConnected()){
-            disconnect(presence);
-            loggedIn = false;
+        if(loggedIn && connection != null) {
+            if (connection.isConnected()) {
+                disconnect(presence);
+                loggedIn = false;
+            }
         }
 
     }
@@ -240,6 +259,9 @@ public class Connection implements IConnection{
             @Override
             protected Object doInBackground(Object[] params){
                 try {
+                    if(connection == null){
+                        return false;
+                    }
                     if(connection.isConnected()){
                         connection.login(userName, password);
                         getChatManager().addChatListener(chatManagerListener);
@@ -493,7 +515,7 @@ public class Connection implements IConnection{
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
             ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
-            Conversation conversation = SystemUser.getInstance().getUser().addMessage(clientMessage);
+            Conversation conversation = MyApplication.getInstance().getUser().addMessage(clientMessage, false);
             NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
             notificationHandler.pushNewMessageNotification(conversation, clientMessage);
         }
@@ -563,7 +585,7 @@ public class Connection implements IConnection{
                 Presence presence = (Presence)packet;
                 if(presence.getType().equals(Presence.Type.subscribe)){
                     String userName = packet.getFrom().split("@")[0];
-                    User user = SystemUser.getInstance().getUser();
+                    User user = MyApplication.getInstance().getUser();
                     boolean exists = false;
                     for(Contact contact : user.getContactList()){
                         if(contact.getUsername().equals(userName)){
@@ -577,7 +599,7 @@ public class Connection implements IConnection{
                     }
                 } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
                     String userName = packet.getFrom().split("@")[0];
-                    User user = SystemUser.getInstance().getUser();
+                    User user = MyApplication.getInstance().getUser();
                     boolean exists = false;
                     for(Contact contact : user.getContactList()){
                         if(contact.getUsername().equals(userName)){

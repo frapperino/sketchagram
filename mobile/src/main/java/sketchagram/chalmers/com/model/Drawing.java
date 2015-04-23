@@ -29,7 +29,6 @@ public class Drawing {
     }
 
     public Drawing(DataMap data) {
-
         events = new LinkedList<>();
 
         float[] yf = data.getFloatArray("y-coordinates");
@@ -40,8 +39,6 @@ public class Drawing {
 
         for(int i = 0; i < times.length; i++)
             events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions[i])));
-
-
     }
 
     public int getCOLOR() {
@@ -118,8 +115,57 @@ public class Drawing {
         this.staticDrawing = staticDrawing;
     }
 
-    public Bitmap getStaticDrawing() {
-        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
+    /**
+     * Get a static drawing, as small as possible, in the correct aspect ratio.
+     * @param reqWidth minimum width required.
+     * @param reqHeight minimum height required.
+     * @return Bitmap to use. Null if no drawing exists.
+     */
+    public Bitmap getStaticDrawing(int reqWidth, int reqHeight) {
+        if(staticDrawing == null) {
+            return null;
+        }
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length, options);
+
+        // Calculate inSampleSize, i.e. aspect ratio for smaller size but with correct ratio.
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length, options);
+    }
+
+    /**
+     * Calculate aspect ratio to allow shrinking of image size.
+     * @param options Original options of Bitmap
+     * @param reqWidth minimum width
+     * @param reqHeight minimum height
+     * @return inSampleSize
+     */
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
     }
 
     public byte[] getStaticDrawingByteArray() {

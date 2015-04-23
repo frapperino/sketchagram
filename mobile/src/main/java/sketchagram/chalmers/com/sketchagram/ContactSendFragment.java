@@ -10,19 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A fragment representing a list of Items.
@@ -59,12 +58,13 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         super.onCreate(savedInstanceState);
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactSendListAdapter(getActivity(), SystemUser.getInstance().getUser().getContactList());
+        mAdapter = new ContactSendListAdapter(getActivity(), MyApplication.getInstance().getUser().getContactList());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Collections.sort(MyApplication.getInstance().getUser().getContactList());
         View view = inflater.inflate(R.layout.fragment_contact_send_list, container, false);
 
         // Set the adapter
@@ -99,7 +99,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
             List<ADigitalPerson> receiverList = new ArrayList<>();
-            receiverList.add(SystemUser.getInstance().getUser().getContactList().get(position));
+            receiverList.add(MyApplication.getInstance().getUser().getContactList().get(position));
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
                     .addToBackStack(null).commit();
@@ -121,6 +121,14 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public void updateList(){
+        if(mAdapter != null) {
+            Collections.sort(MyApplication.getInstance().getUser().getContactList());
+            BaseAdapter adapter = (BaseAdapter) mAdapter;
+            adapter.notifyDataSetChanged();
+        }
     }
 
 }

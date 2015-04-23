@@ -24,6 +24,8 @@ public class User extends ADigitalPerson  {
         super(username, profile);
         conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username.toLowerCase());
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
+        sortConversations();
+        setStatuses();
     }
 
     /**
@@ -87,7 +89,7 @@ public class User extends ADigitalPerson  {
         if(success){
             List<ADigitalPerson> participants = new ArrayList<>();
             participants.add(contact);
-            participants.add(SystemUser.getInstance().getUser());
+            participants.add(MyApplication.getInstance().getUser());
             Conversation conversation = conversationExists(participants);
             if(conversation != null) {
                 MyApplication.getInstance().getDatabase().removeConversation(conversation);
@@ -101,38 +103,31 @@ public class User extends ADigitalPerson  {
     }
 
     /**
-     * Sends the specified message
-     * @param clientMessage The message to be sent contains receivers
-     */
-    public void sendMessage(ClientMessage clientMessage){
-        List<ADigitalPerson> participants = new ArrayList<>();
-        participants.addAll(clientMessage.getReceivers());
-        participants.add(clientMessage.getSender());
-
-        int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
-        if(conversationId >= 0) {
-            if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername())){
-                Connection.getInstance().sendMessage(clientMessage);
-            }
-            addMessage(clientMessage);
-            updateObservers(clientMessage);
-        }
-    }
-
-    /**
      * Adds a message that was received from the server to the proper conversation.
      * @param clientMessage The message received.
+     * @param send If the message is to be sent via the server
      * @return The conversation which the message was appended to.
      */
-    public Conversation addMessage(ClientMessage clientMessage){
-        Conversation conversation;
+    public Conversation addMessage(ClientMessage clientMessage, boolean send){
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
+        Conversation conversation = null;
 
-        conversation = conversationExists(participants);
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
+        Contact contact;
+        if(send){
+            contact = getContact(((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername());
+        }else {
+            contact = getContact(clientMessage.getSender().getUsername());
+        }
+        contact.setLastAccessed(clientMessage.getTimestamp());
+        MyApplication.getInstance().getDatabase().updateContact(contact);
         if(conversationId >= 0) {
+            if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername()) && send){
+                Connection.getInstance().sendMessage(clientMessage);
+            }
+            conversation = getConversation(conversationId);
             if(conversation == null) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
@@ -150,7 +145,7 @@ public class User extends ADigitalPerson  {
      * @return
      */
     private Conversation conversationExists(List<ADigitalPerson> participants){
-        List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
+        List<Conversation> convList = MyApplication.getInstance().getUser().getConversationList();
         for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {
@@ -212,5 +207,14 @@ public class User extends ADigitalPerson  {
      */
     private void sortConversations() {
        Collections.sort(conversationList);
+    }
+
+    public Contact getContact(String username) {
+        for(Contact contact : contactList) {
+            if(contact.getUsername().toLowerCase().equals(username.toLowerCase())){
+                return contact;
+            }
+        }
+        return null;
     }
 }

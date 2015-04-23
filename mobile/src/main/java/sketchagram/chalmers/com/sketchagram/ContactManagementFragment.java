@@ -21,12 +21,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.SystemUser;
 
 /**
  * A fragment representing a list of Items.
@@ -88,15 +89,24 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        contactList = SystemUser.getInstance().getUser().getContactList();
+        contactList = MyApplication.getInstance().getUser().getContactList();
         // Sets the adapter to customized one which enables our layout of items.
         mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
-        SystemUser.getInstance().getUser().addObserver(this);
+        MyApplication.getInstance().getUser().addObserver(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
+            //Sort alphabetically
+
+            @Override
+            public int compare(Contact lhs, Contact rhs) {
+                int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
+                return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
+            }
+        });
         View view = inflater.inflate(R.layout.fragment_contact_management_list, container, false);
 
         // Set the adapter
@@ -128,7 +138,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         Contact removedContact = contactList.get(info.position);
         String contactName = removedContact.getUsername();
-        boolean success = SystemUser.getInstance().getUser().removeContact(removedContact);
+        boolean success = MyApplication.getInstance().getUser().removeContact(removedContact);
         if(success) {
             Toast.makeText(MyApplication.getContext(), contactName + " was removed from contacts.", Toast.LENGTH_SHORT).show();
 
@@ -163,7 +173,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
+            mListener.onFragmentInteraction(MyApplication.getInstance().getUser().getContactList().get(position).toString());
         }
     }
 
@@ -199,5 +209,21 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public void updateList(){
+        if(mAdapter != null) {
+            Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
+                //Sort alphabetically
+
+                @Override
+                public int compare(Contact lhs, Contact rhs) {
+                    int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
+                    return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
+                }
+            });
+            BaseAdapter adapter = (BaseAdapter) mAdapter;
+            adapter.notifyDataSetChanged();
+        }
     }
 }
