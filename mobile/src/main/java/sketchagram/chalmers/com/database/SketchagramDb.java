@@ -65,6 +65,7 @@ public class SketchagramDb {
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_USERNAME, contact.getUsername().toLowerCase());
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_NAME, contact.getProfile().getName());
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_EMAIL, contact.getProfile().getEmail());
+        contentValues.put(ContactTable.COLUMN_NAME_LAST_ACCESSED, contact.getLastAccessed());
         db.insert(ContactTable.TABLE_NAME, null, contentValues);
         return true;
     }
@@ -92,10 +93,11 @@ public class SketchagramDb {
             String name = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_NAME));
             String email = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_EMAIL));
             String id = res.getString(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_CONTACT_USERNAME));
+            int lastAccessed = res.getInt(res.getColumnIndexOrThrow(ContactTable.COLUMN_NAME_LAST_ACCESSED));
             Profile profile = new Profile();
             profile.setNickName(email);
             profile.setName(name);
-            Contact c = new Contact(id, profile);
+            Contact c = new Contact(id, profile, lastAccessed);
             contacts.add(c);
             res.moveToNext();
         }
