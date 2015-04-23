@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -96,6 +98,15 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
+            //Sort alphabetically
+
+            @Override
+            public int compare(Contact lhs, Contact rhs) {
+                int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
+                return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
+            }
+        });
         View view = inflater.inflate(R.layout.fragment_contact_management_list, container, false);
 
         // Set the adapter
@@ -198,5 +209,21 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public void updateList(){
+        if(mAdapter != null) {
+            Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
+                //Sort alphabetically
+
+                @Override
+                public int compare(Contact lhs, Contact rhs) {
+                    int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
+                    return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
+                }
+            });
+            BaseAdapter adapter = (BaseAdapter) mAdapter;
+            adapter.notifyDataSetChanged();
+        }
     }
 }

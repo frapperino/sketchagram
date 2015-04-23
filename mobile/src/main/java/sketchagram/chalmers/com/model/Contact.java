@@ -1,9 +1,11 @@
 package sketchagram.chalmers.com.model;
 
+import java.util.Comparator;
+
 /**
  * Created by Bosch on 10/02/15.
  */
-public class Contact extends ADigitalPerson {
+public class Contact extends ADigitalPerson implements Comparable{
     private boolean favorite;
     private long lastAccessed;
 
@@ -28,6 +30,7 @@ public class Contact extends ADigitalPerson {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+
     @Override
     public String toString(){
         Status status = super.getStatus();
@@ -38,6 +41,7 @@ public class Contact extends ADigitalPerson {
         }
     }
 
+    @Override
     public int compareTo(Object obj) {
         return (int)(this.lastAccessed - ((Contact)obj).getLastAccessed());
     }

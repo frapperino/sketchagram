@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +64,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Collections.sort(MyApplication.getInstance().getUser().getContactList());
         View view = inflater.inflate(R.layout.fragment_contact_send_list, container, false);
 
         // Set the adapter
@@ -118,6 +121,14 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public void updateList(){
+        if(mAdapter != null) {
+            Collections.sort(MyApplication.getInstance().getUser().getContactList());
+            BaseAdapter adapter = (BaseAdapter) mAdapter;
+            adapter.notifyDataSetChanged();
+        }
     }
 
 }

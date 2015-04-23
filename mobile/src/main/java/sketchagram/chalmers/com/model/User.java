@@ -24,6 +24,7 @@ public class User extends ADigitalPerson  {
         super(username, profile);
         conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username.toLowerCase());
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
+        sortConversations();
         setStatuses();
     }
 
@@ -114,6 +115,14 @@ public class User extends ADigitalPerson  {
         Conversation conversation = null;
 
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
+        Contact contact;
+        if(send){
+            contact = getContact(((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername());
+        }else {
+            contact = getContact(clientMessage.getSender().getUsername());
+        }
+        contact.setLastAccessed(clientMessage.getTimestamp());
+        MyApplication.getInstance().getDatabase().updateContact(contact);
         if(conversationId >= 0) {
             if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername()) && send){
                 Connection.getInstance().sendMessage(clientMessage);
@@ -198,5 +207,14 @@ public class User extends ADigitalPerson  {
      */
     private void sortConversations() {
        Collections.sort(conversationList);
+    }
+
+    public Contact getContact(String username) {
+        for(Contact contact : contactList) {
+            if(contact.getUsername().toLowerCase().equals(username.toLowerCase())){
+                return contact;
+            }
+        }
+        return null;
     }
 }
