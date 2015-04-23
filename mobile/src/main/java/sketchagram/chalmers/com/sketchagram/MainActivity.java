@@ -374,6 +374,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
+        dataMap = new DataMap();
         if(messageEvent.getPath().contains("contacts")) { //From contact-activity
             ContactsSync cs = new ContactsSync(SystemUser.getInstance().getUser().getContactList());
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
@@ -399,11 +400,11 @@ public class MainActivity extends ActionBarActivity
                     cs.getContacts(), drawing, MessageType.DRAWING);
             SystemUser.getInstance().getUser().sendMessage(cm);
         } else if(messageEvent.getPath().contains("inConversation")) { // From ConversationViewActivity
-            String convid = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
+            String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
             Contact contact = null;
             Conversation conversation = null;
             for (Contact c : SystemUser.getInstance().getUser().getContactList()) {
-                if (c.getUsername().equals(convid))
+                if (c.getUsername().equals(username))
                     contact = c;
             }
 
@@ -414,6 +415,7 @@ public class MainActivity extends ActionBarActivity
                 }
 
             }
+
             dataMap.clear();
             int i = 0;
             for(ClientMessage message : conversation.getHistory()) {

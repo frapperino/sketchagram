@@ -25,6 +25,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
@@ -55,15 +56,13 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
         super(fm);
         mContext = ctx;
 
-        mRows = new ArrayList<Row>();
+        mRows = new ArrayList<>();
 
-        int messageAmount = DrawingHolder.getInstance().getDrawingsAmount();
-        //mRows.add(new Row(cardFragment(R.string.welcometitle, R.string.welcometext)));
-        for(int i = 0; i < messageAmount; i++)
-            mRows.add(new Row(new ConversationViewFragment()));
-        mDefaultBg = new ColorDrawable(R.color.light_grey);
+        loadFragments();
+        mDefaultBg = new ColorDrawable(R.color.white);
         mClearBg = new ColorDrawable(android.R.color.transparent);
     }
+
 
     LruCache<Integer, Drawable> mRowBackgrounds = new LruCache<Integer, Drawable>(3) {
         @Override
@@ -169,6 +168,19 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     @Override
     public int getColumnCount(int rowNum) {
         return mRows.get(rowNum).getColumnCount();
+    }
+
+    public void loadFragments(){
+        int messageAmount = DrawingHolder.getInstance().getDrawingsAmount();
+        //mRows.add(new Row(cardFragment(R.string.welcometitle, R.string.welcometext)));
+        Log.e("LOADFRAGMENTS", ""+messageAmount);
+        for(int i = 0; i < messageAmount; i++) {
+            ConversationViewFragment fragment = new ConversationViewFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", i);
+            fragment.setArguments(bundle);
+            mRows.add(new Row(fragment));
+        }
     }
 
     class DrawableLoadingTask extends AsyncTask<Integer, Void, Drawable> {

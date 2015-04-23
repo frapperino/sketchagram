@@ -29,17 +29,12 @@ public class DrawingHolder {
         this.drawing = drawing;
     }
 
-    public List<Drawing> getDrawings() {
-        return drawings;
-    }
-
-    public Drawing getFirstDrawing() {
-        Drawing temp = drawings.get(0);
-        drawings.remove(0);
-        return temp;
+    public Drawing getDrawing(int i) {
+        return drawings.get(i);
     }
 
     public void setDrawings(List<Drawing> drawings) {
+        drawings.clear();
         this.drawings = drawings;
     }
 
@@ -48,9 +43,7 @@ public class DrawingHolder {
     }
 
     public int getDrawingsAmount(){
-        if(drawings != null)
-            return drawings.size();
-        return 0;
+        return drawings != null ? drawings.size() : 0;
     }
 
 }

@@ -152,10 +152,9 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        DataMap dm = new DataMap();
-        dm.putString("convid", conversations.get(viewHolder.getPosition()));
-        messagePhone("inConversation", dm.toByteArray());
-
+        DataMap dataMap = new DataMap();
+        dataMap.putString("convid", conversations.get(viewHolder.getPosition()));
+        messagePhone("inConversation", dataMap.toByteArray());
     }
 
     @Override
@@ -201,10 +200,6 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
             conversations = contactsSync.getContacts();
 
-            String username = getSharedPreferences("user", 0).getString("username", null);
-            Log.e("WATCH", "username=" + username);
-            Log.e("WATCH", "conversations" + conversations.toString());
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -218,7 +213,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             List<Drawing> drawings = new ArrayList<>();
             DataMap data = DataMap.fromByteArray(messageEvent.getData());
             int drawingsAmount = data.getInt("amountOfDrawings");
-            for(int i = 0; i < drawingsAmount; i++) {
+            for (int i = 0; i < drawingsAmount; i++) {
                 Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
                         , data.getFloatArray("x-coordinates " + i)
                         , data.getLongArray("drawing-times " + i)

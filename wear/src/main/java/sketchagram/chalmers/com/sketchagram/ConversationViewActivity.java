@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.DotsPageIndicator;
@@ -18,10 +19,16 @@ import android.view.WindowInsets;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -66,7 +73,6 @@ public class ConversationViewActivity extends Activity  implements
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
 
-
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -80,11 +86,70 @@ public class ConversationViewActivity extends Activity  implements
                 .build();
         mGoogleApiClient.connect();
 
-
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
+
+
+
+    /**
+     * This method will generate all the nodes that are attached to a Google Api Client.
+     * Now, theoretically, only one should be: the phone. However, they return us more
+     * a list. In the case where the phone happens to not be the first/only, I decided to
+     * make a List of all the nodes and we'll loop through them and send each of them
+     * a message. After getting the list of nodes, it sends a message to each of them telling
+     * it to start. One the last successful node, it saves it as our one peerNode.
+     */
+    private void messagePhone(final String message, final byte[] byteMap){
+
+        new AsyncTask<Void, Void, List<Node>>(){
+
+            @Override
+            protected List<Node> doInBackground(Void... params) {
+                return getNodes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Node> nodeList) {
+                for(Node node : nodeList) {
+                    Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
+                    Log.e("WATCH", "Sending to: " + message.toString());
+                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
+                            mGoogleApiClient,
+                            node.getId(),
+                            message.toString(),
+                            byteMap
+                    );
+
+                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                        @Override
+                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                            Log.e("DEVELOPER", "......Phone: " + sendMessageResult.getStatus().getStatusMessage());
+
+                        }
+                    });
+                }
+            }
+        }.execute();
+
+    }
+
+    /**
+     * Gets the nodes to which the wear device is connected to.
+     * @return
+     */
+    private List<Node> getNodes() {
+        List<Node> nodes = new ArrayList<Node>();
+        NodeApi.GetConnectedNodesResult rawNodes =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+        for (Node node : rawNodes.getNodes()) {
+            nodes.add(node);
+        }
+        return nodes;
+    }
+
+
 
 
     @Override
@@ -122,6 +187,8 @@ public class ConversationViewActivity extends Activity  implements
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
     }
+
+
 
     public class MessageReceiver extends BroadcastReceiver {
         @Override
