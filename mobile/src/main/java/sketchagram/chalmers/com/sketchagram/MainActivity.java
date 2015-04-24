@@ -5,8 +5,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
 import android.support.v4.widget.DrawerLayout;
@@ -42,10 +40,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.BTCommType;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.network.Connection;
 
@@ -415,8 +415,15 @@ public class MainActivity extends ActionBarActivity
             dataMap.clear();
             int i = 0;
 
+            ArrayList<String> emojis = new ArrayList<String>();
+            ArrayList<Integer> emojiPositions = new ArrayList<Integer>();
+
             if(conversation != null) {
                 for (ClientMessage message : conversation.getHistory()) {
+                    if (message.getType().equals(MessageType.EMOTICON)) {
+                        emojis.add(message.getContent().toString());
+                        emojiPositions.add(i);
+                    }
                     if (message.getType().equals(MessageType.DRAWING)) {
                         Drawing drawing = (Drawing) message.getContent();
                         dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
@@ -424,23 +431,36 @@ public class MainActivity extends ActionBarActivity
                         dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
                         dataMap.putStringArray("actions " + i, drawing.getActions());
                         dataMap.putByteArray("staticDrawing " + i, drawing.getStaticDrawingByteArray());
-                        i++;
                     }
 
+                    i++;
                 }
-                dataMap.putInt("amountOfDrawings", i);
+                dataMap.putInt("amountOfMessages", i);
+                dataMap.putStringArrayList("emojis", emojis);
+                dataMap.putIntegerArrayList("emojisPositions", emojiPositions);
+
             } else {
-                dataMap.putInt("amountOfDrawings", 0);
+                dataMap.putInt("amountOfMessages", 0);
             }
 
             sendToWatch(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_DRAWING.toString())) { //From DrawingActivity in clock
+
+            //From DrawingActivity in clock
+        } else if(messageEvent.getPath().equals(BTCommType.SEND_DRAWING.toString())) {
+
             Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
             ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
             ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
             MyApplication.getInstance().getUser().addMessage(cm, true);
-        } else if(messageEvent.getPath().equals(BTCommType.GET_EMOJIS.toString())) {
+
+        } else if(messageEvent.getPath().equals(BTCommType.SEND_EMOJI.toString())) {
+            Log.e("EMOJI" , "trying to send");
+            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
+            String emoji = DataMap.fromByteArray(messageEvent.getData()).getString(BTCommType.SEND_EMOJI.toString());
+            ClientMessage<String> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
+                    cs.getContacts(), EmoticonType.valueOf(emoji), MessageType.EMOTICON);
+            MyApplication.getInstance().getUser().addMessage(cm, true);
 
         } else {
             onFragmentInteraction(messageEvent.getPath());

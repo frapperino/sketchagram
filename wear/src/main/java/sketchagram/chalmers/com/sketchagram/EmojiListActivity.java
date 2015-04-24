@@ -49,7 +49,8 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
 
     private MyListAdapter mAdapter;
     private WearableListView mListView;
-    private Bitmap[] emojis;
+
+    private String receiver;
 
 
     @Override
@@ -83,6 +84,7 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
                 .build();
         mGoogleApiClient.connect();
 
+        receiver = getIntent().getStringExtra(BTCommType.SEND_TO_CONTACT.toString());
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
@@ -173,8 +175,20 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
         DataMap dataMap = new DataMap();
-        messagePhone(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
 
+        //Add the receiver to a dataMap
+        ContactSync cs = new ContactSync();
+        cs.addContact(receiver);
+        cs.putToDataMap(dataMap);
+
+        //Add the emoji to a dataMap
+        dataMap.putString(BTCommType.SEND_EMOJI.toString(), mAdapter.getEmojis().get(viewHolder.getPosition()));
+
+        //Send to phone
+        messagePhone(BTCommType.SEND_EMOJI.toString(), dataMap.toByteArray());
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -224,10 +238,12 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
 
         private final Context context;
         private final Bitmap[] items;
+        private final List<String> emojis;
 
         public MyListAdapter(Context context) {
             this.context = context;
             items = new Bitmap[4];
+            emojis = new ArrayList<String>();
             loadBitmaps();
         }
         @Override
@@ -236,11 +252,19 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         }
 
         private void loadBitmaps() {
-            items[0] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_sad);
-            items[1] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_happy);
-            items[2] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_flirt);
-            items[3] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_heart);
+            items[0] = BitmapFactory.decodeResource(getResources(), EmoticonType.SAD.getRes());
+            emojis.add(EmoticonType.SAD.toString());
+            items[1] = BitmapFactory.decodeResource(getResources(), EmoticonType.HAPPY.getRes());
+            emojis.add(EmoticonType.HAPPY.toString());
+            items[2] = BitmapFactory.decodeResource(getResources(), EmoticonType.FLIRT.getRes());
+            emojis.add(EmoticonType.FLIRT.toString());
+            items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getRes());
+            emojis.add(EmoticonType.HEART.toString());
 
+        }
+
+        public List<String> getEmojis() {
+            return emojis;
         }
 
         @Override

@@ -1,12 +1,13 @@
-package sketchagram.chalmers.com.sketchagram;
+package sketchagram.chalmers.com.model;
 
 /**
  * Created by Bosch on 23/04/15.
  * Contains all strings used as paths when communicating with phone.
  */
 public enum BTCommType {
-    GET_CONTACTS("contacts"), GET_DRAWINGS("drawings"), GET_USERNAME("username"),
-    SEND_DRAWING("drawing"), SEND_TO_CONTACT("messageTo"), GET_EMOJIS("emoticons");
+    GET_CONTACTS("GET_CONTACTS"), GET_DRAWINGS("GET_DRAWINGS"), GET_USERNAME("GET_USERNAME"),
+    SEND_DRAWING("SEND_DRAWINGS"), SEND_TO_CONTACT("SEND_TO"), GET_EMOJIS("GET_EMOJIS"),
+    SEND_EMOJI("SEND_EMOJI");
 
     private final String type;
 

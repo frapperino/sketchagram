@@ -166,7 +166,7 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     }
 
     public void loadFragments(){
-        int messageAmount = DrawingHolder.getInstance().getDrawingsAmount();
+        int messageAmount = MessageHolder.getInstance().getDrawingsAmount();
         for(int i = 0; i < messageAmount; i++) {
             ConversationViewFragment fragment = new ConversationViewFragment();
             Bundle bundle = new Bundle();

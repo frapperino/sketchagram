@@ -23,7 +23,7 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
     private int id;
     private ImageView mImageView;
     private DrawingView mDrawingView;
-    private Drawing mDrawing;
+    private AMessage mMessage;
 
     public ConversationViewFragment() { id = 0; }
 
@@ -49,8 +49,8 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mDrawing = DrawingHolder.getInstance().getDrawing(id);
-        mImageView.setImageBitmap(mDrawing.getStaticDrawing());
+        mMessage = MessageHolder.getInstance().getMessage(id);
+        mImageView.setImageBitmap(mMessage.getStaticDrawing());
     }
 
     @Override
@@ -58,9 +58,9 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
         if(mImageView.getVisibility() == View.INVISIBLE) {
             mImageView.setVisibility(View.VISIBLE);
             mDrawingView.clearCanvas();
-        } else {
+        } else if(mMessage instanceof Drawing){
             mImageView.setVisibility(View.INVISIBLE);
-            mDrawingView.displayDrawing(mDrawing);
+            mDrawingView.displayDrawing((Drawing) mMessage);
         }
     }
 

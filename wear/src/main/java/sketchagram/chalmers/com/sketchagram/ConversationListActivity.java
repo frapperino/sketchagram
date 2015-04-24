@@ -215,7 +215,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.e("WATCH", "Conversation here");
-        if(messageEvent.getPath().contains("contacts")) {
+        if(messageEvent.getPath().contains(BTCommType.GET_CONTACTS.toString())) {
 
             ContactSync contactsSync = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
 
@@ -230,23 +230,32 @@ public class ConversationListActivity extends Activity implements WearableListVi
             });
         }
 
-        if(messageEvent.getPath().contains("drawings")) {
-            List<Drawing> drawings = new ArrayList<Drawing>();
+        if(messageEvent.getPath().contains(BTCommType.GET_DRAWINGS.toString())) {
+            List<AMessage> messages = new ArrayList<AMessage>();
             DataMap data = DataMap.fromByteArray(messageEvent.getData());
-            int drawingsAmount = data.getInt("amountOfDrawings");
-            for (int i = 0; i < drawingsAmount; i++) {
-                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
-                        , data.getFloatArray("x-coordinates " + i)
-                        , data.getLongArray("drawing-times " + i)
-                        , data.getStringArray("actions " + i)
-                        , data.getByteArray("staticDrawing " + i));
-                drawings.add(drawing);
+
+            List<String> emojis = data.getStringArrayList("emojis");
+            List<Integer> pos = data.getIntegerArrayList("emojisPositions");
+
+            int messageAmount = data.getInt("amountOfMessages");
+            for (int i = 0; i < messageAmount; i++) {
+                if(pos.contains(i)){
+                    Emoticon emoji = new Emoticon(EmoticonType.valueOf(emojis.get(0)).getRes());
+                    emojis.remove(0);
+                    messages.add(emoji);
+                } else {
+                    Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
+                            , data.getFloatArray("x-coordinates " + i)
+                            , data.getLongArray("drawing-times " + i)
+                            , data.getStringArray("actions " + i)
+                            , data.getByteArray("staticDrawing " + i));
+                    messages.add(drawing);
+                }
 
             }
             Log.e("drawings", "new drawings");
-            DrawingHolder.getInstance().setDrawings(drawings);
-
-            if(drawingsAmount < 1){
+            MessageHolder.getInstance().setDrawings(messages);
+            if(messageAmount < 1){
                 Message msg = handler.obtainMessage();
                 msg.arg1 = 1;
                 handler.sendMessage(msg);
