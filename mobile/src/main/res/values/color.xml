@@ -6,6 +6,8 @@
     <color name="list_divider">#272727</color>
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
-    <color name="sPurple">#aa66cc</color>
-    <color name="sPurple2">#9933cc</color>
+    <color name="sketchagramPurple">#aa66cc</color>
+    <color name="sketchagramPurpleDark">#9933cc</color>
+    <color name="sketchagramBlue">#876cef</color>
+    <color name="sketchagramBlueDark">#4e32a2</color>
 </resources>
