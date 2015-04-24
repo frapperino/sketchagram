@@ -250,11 +250,11 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setTitle("Conversations");
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources()
-                .getColor(R.color.sPurple)));
+                .getColor(R.color.sketchagramPurple)));
         Window window = getActivity().getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.setStatusBarColor(getActivity().getResources().getColor(R.color.sPurple2));
+        window.setStatusBarColor(getActivity().getResources().getColor(R.color.sketchagramPurpleDark));
     }
     private android.support.v7.app.ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
