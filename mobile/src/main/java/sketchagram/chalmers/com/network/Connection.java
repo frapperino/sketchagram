@@ -45,9 +45,11 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.Status;
+import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 import sketchagram.chalmers.com.model.User;
 
@@ -515,7 +517,7 @@ public class Connection implements IConnection{
         @Override
         public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
             ClientMessage clientMessage = getMessage(message.getBody(), message.getLanguage());
-            Conversation conversation = MyApplication.getInstance().getUser().addMessage(clientMessage, false);
+            Conversation conversation = UserManager.getInstance().addReceivedMessage(clientMessage);
             NotificationHandler notificationHandler = new NotificationHandler(MyApplication.getContext());
             notificationHandler.pushNewMessageNotification(conversation, clientMessage);
         }
@@ -583,25 +585,24 @@ public class Connection implements IConnection{
         public void processPacket(Packet packet) throws SmackException.NotConnectedException {
             if(packet instanceof Presence){
                 Presence presence = (Presence)packet;
+                IUserManager userManager = UserManager.getInstance();
                 if(presence.getType().equals(Presence.Type.subscribe)){
                     String userName = packet.getFrom().split("@")[0];
-                    User user = MyApplication.getInstance().getUser();
                     boolean exists = false;
-                    for(Contact contact : user.getContactList()){
-                        if(contact.getUsername().equals(userName)){
+                    for(Contact contact : userManager.getAllContacts()){
+                        if(contact.getUsername().toLowerCase().equals(userName.toLowerCase())){
                             exists = true;
                             break;
                         }
                     }
 
                     if(!exists) {
-                        user.addContact(packet.getFrom().split("@")[0]);
+                        userManager.addContact(packet.getFrom().split("@")[0]);
                     }
                 } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
                     String userName = packet.getFrom().split("@")[0];
-                    User user = MyApplication.getInstance().getUser();
                     boolean exists = false;
-                    for(Contact contact : user.getContactList()){
+                    for(Contact contact : userManager.getAllContacts()){
                         if(contact.getUsername().equals(userName)){
                             exists = true;
                             break;
@@ -609,7 +610,7 @@ public class Connection implements IConnection{
                     }
 
                     if(exists) {
-                        user.removeContact(new Contact(packet.getFrom().split("@")[0], new Profile()));
+                        userManager.removeContact(new Contact(packet.getFrom().split("@")[0], new Profile()));
                     }
                 }
             }

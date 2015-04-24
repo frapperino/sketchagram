@@ -14,11 +14,8 @@ import sketchagram.chalmers.com.sketchagram.MyApplication;
  * Created by Bosch on 10/02/15.
  */
 public class User extends ADigitalPerson  {
-    //private String password = "password";   //TODO: replace with real password.
-    //private boolean requireLogin = true;
     private List<Conversation> conversationList;
     private List<Contact> contactList;
-
 
     public User(String username, Profile profile) {
         super(username, profile);
@@ -88,7 +85,7 @@ public class User extends ADigitalPerson  {
         if(success){
             List<ADigitalPerson> participants = new ArrayList<>();
             participants.add(contact);
-            participants.add(MyApplication.getInstance().getUser());
+            participants.add(this);
             Conversation conversation = conversationExists(participants);
             if(conversation != null) {
                 MyApplication.getInstance().getDatabase().removeConversation(conversation);
@@ -136,7 +133,7 @@ public class User extends ADigitalPerson  {
      * @return
      */
     private Conversation conversationExists(List<ADigitalPerson> participants){
-        List<Conversation> convList = MyApplication.getInstance().getUser().getConversationList();
+        List<Conversation> convList = this.getConversationList();
         for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {

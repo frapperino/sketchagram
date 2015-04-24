@@ -43,7 +43,9 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.network.Connection;
 
 
@@ -69,6 +71,7 @@ public class MainActivity extends ActionBarActivity
     private FragmentManager fragmentManager;
     private Handler mHandler;
     private DataMap dataMap;
+    private IUserManager userManager;
 
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -79,6 +82,8 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userManager = UserManager.getInstance();
 
         // Check if logged in, else start LoginActivity
         sendFragment = new SendFragment();
@@ -134,7 +139,7 @@ public class MainActivity extends ActionBarActivity
         dataMap = new DataMap();
 
         //Set observer
-        MyApplication.getInstance().getUser().addObserver(this);
+        userManager.addUserObserver(this);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -186,7 +191,7 @@ public class MainActivity extends ActionBarActivity
             SharedPreferences.Editor prefs = pref.edit();
             prefs.clear();
             prefs.apply();
-            MyApplication.getInstance().logout();
+            userManager.logout();
             MyApplication.getInstance().getDatabase().update();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -292,7 +297,7 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v) {
                 dialog.dismiss();
                 String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
-                if (MyApplication.getInstance().getUser().addContact(user)) {
+                if (userManager.addContact(user)) {
                     Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
@@ -373,30 +378,26 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().contains("contacts")) {
-            ContactsSync cs = new ContactsSync(MyApplication.getInstance().getUser().getContactList());
+            ContactsSync cs = new ContactsSync(userManager.getAllContacts());
             sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("messageTo")) {
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
             for(Contact c : cs.getContacts()) {
-                List<ADigitalPerson> ls = new ArrayList<>();
+                List<Contact> ls = new ArrayList<>();
                 ls.add(c);
-                ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
-                        ls, "Massmessage from wear", MessageType.TEXTMESSAGE);
-                MyApplication.getInstance().getUser().addMessage(clientMessage, true);
+                userManager.sendMessage(ls, "Massmessage from wear");
             }
         } else if(messageEvent.getPath().contains("conversations")) {
 
             ConversationsSync cs = new ConversationsSync();
             sendToWatch("conversations", cs.putToDataMap(dataMap).toByteArray());
         } else if(messageEvent.getPath().contains("username")) {
-            dataMap.putString("username", MyApplication.getInstance().getUser().getUsername());
+            dataMap.putString("username", userManager.getUsername());
             sendToWatch("username", dataMap.toByteArray());
         } else if(messageEvent.getPath().contains("drawing")) {
             Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
             ContactsSync cs = new ContactsSync(DataMap.fromByteArray(messageEvent.getData()));
-            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
-                    cs.getContacts(), drawing, MessageType.DRAWING);
-            MyApplication.getInstance().getUser().addMessage(cm, true);
+            userManager.sendMessage(cs.getContacts(), drawing);
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }

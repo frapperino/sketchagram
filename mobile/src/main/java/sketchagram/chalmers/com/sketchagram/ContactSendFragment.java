@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * A fragment representing a list of Items.
@@ -56,7 +57,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         super.onCreate(savedInstanceState);
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactSendListAdapter(getActivity(), MyApplication.getInstance().getUser().getContactList());
+        mAdapter = new ContactSendListAdapter(getActivity(), UserManager.getInstance().getAllContacts());
     }
 
     @Override
@@ -96,7 +97,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
             List<ADigitalPerson> receiverList = new ArrayList<>();
-            receiverList.add(MyApplication.getInstance().getUser().getContactList().get(position));
+            receiverList.add(UserManager.getInstance().getAllContacts().get(position));
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
                     .addToBackStack(null).commit();

@@ -43,7 +43,7 @@ public class ClientMessage<T> {
      * @param type
      */
     public ClientMessage(long timestamp, ADigitalPerson sender, List<ADigitalPerson> receiver, T content, MessageType type) {
-        this(timestamp, sender, receiver, content, type, sender.equals(MyApplication.getInstance().getUser())); //TODO: Find why sender is null.
+        this(timestamp, sender, receiver, content, type, UserManager.getInstance().isUser(sender)); //TODO: Find why sender is null.
     }
 
     /**

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
+import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.network.NetworkException;
 
 
@@ -55,7 +56,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
         String userName = sharedPreferences.getString("username", null);
         if (userName != null) {
-            if (MyApplication.getInstance().login(userName, sharedPreferences.getString("password", null))) {
+            if (UserManager.getInstance().login(userName, sharedPreferences.getString("password", null))) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -149,7 +150,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         } else if (usernameError == null && passwordError == null && reenterPasswordError == null) {
             try {
                 loginFragment.showProgressBar();
-                MyApplication.getInstance().createAccount(mUserName, mPassword);
+                UserManager.getInstance().createAccount(mUserName, mPassword);
                 //TODO: Get entered email and check if correct.
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_frame, loginFragment);
@@ -165,8 +166,10 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
                 reenterPasswordView.setText("");
                 loginFragment.hideProgressBar();
             } catch (NetworkException.UsernameAlreadyTakenException e) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(getApplicationContext(), "Username already taken.", Toast.LENGTH_SHORT).show();
+            } catch(Exception e) {
+                //TODO: Find out where this exception is cast from.
+                Toast.makeText(getApplicationContext(), "Unknown error.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -250,7 +253,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
      */
     private boolean loginServer(String username, String password) {
         loginFragment.showProgressBar();
-        boolean success = MyApplication.getInstance().login(username, password);
+        boolean success = UserManager.getInstance().login(username, password);
         if (success) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
