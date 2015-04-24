@@ -17,16 +17,20 @@
         android:layout_weight="1"
         android:background="#FFFFFFFF" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+
+    <ImageButton
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="&lt;"
         android:id="@+id/backButton"
-        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_back"
         android:clickable="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
-        android:onClick="backPressed" />
+        android:onClick="backPressed"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="155dp"
+        android:layout_marginBottom="156dp" />
 
 </RelativeLayout>
