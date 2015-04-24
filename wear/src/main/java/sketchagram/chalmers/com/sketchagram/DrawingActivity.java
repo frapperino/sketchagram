@@ -46,6 +46,7 @@ public class DrawingActivity extends Activity implements Observer,
 
     private String receiver;
 
+    private boolean abort;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -61,7 +62,8 @@ public class DrawingActivity extends Activity implements Observer,
         drawView = (DrawingView) findViewById(R.id.drawing);
         drawView.addHelperObserver(this);
 
-        receiver = getIntent().getStringExtra(BTCommType.SEND_CONTACT.toString());
+        abort = false;
+        receiver = getIntent().getStringExtra(BTCommType.SEND_TO_CONTACT.toString());
 
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -106,18 +108,20 @@ public class DrawingActivity extends Activity implements Observer,
 
     @Override
     public void update(Observable observable, Object data) {
-        Drawing mDrawing = (Drawing)data;
-        drawView.clearCanvas();
+        if(!abort) {
+            Drawing mDrawing = (Drawing) data;
+            drawView.clearCanvas();
 
-        DataMap dataMap = new DataMap();
-        mDrawing.putToDataMap(dataMap);
-        ContactSync cs = new ContactSync();
-        cs.addContact(receiver);
-        cs.putToDataMap(dataMap);
-        messagePhone(BTCommType.SEND_DRAWING.toString(), dataMap.toByteArray());
+            DataMap dataMap = new DataMap();
+            mDrawing.putToDataMap(dataMap);
+            ContactSync cs = new ContactSync();
+            cs.addContact(receiver);
+            cs.putToDataMap(dataMap);
+            messagePhone(BTCommType.SEND_DRAWING.toString(), dataMap.toByteArray());
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 
@@ -196,6 +200,7 @@ public class DrawingActivity extends Activity implements Observer,
     }
 
     public void backPressed(View view) {
+        abort = true;
         this.onBackPressed();
     }
 

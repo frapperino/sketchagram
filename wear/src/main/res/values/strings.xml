@@ -44,5 +44,6 @@
     <string name="welcometitle">Welcome</string>
     <string name="welcometext">Text text</string>
     <string name="custom_fragment_text">Custom fragment text</string>
+    <string name="title_activity_emoji_list">EmojiListActivity</string>
 
 </resources>

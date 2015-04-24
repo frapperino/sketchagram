@@ -5,20 +5,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,37 +40,22 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Bosch on 27/02/15.
- * This activity shows contacts which can be selected.
- * When a contact is selected you will be forwarded to a list with all the messages
- * that you have sent between you and that contact.
- */
-public class ConversationListActivity extends Activity implements WearableListView.ClickListener,
+
+public class EmojiListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks  {
+        GoogleApiClient.ConnectionCallbacks {
 
     private GoogleApiClient mGoogleApiClient;
-    private WearableListView mListView;
-    private MyListAdapter mAdapter;
-    private List<String> conversations;
-    private SharedPreferences sp;
-    private final Handler handler;
 
-    public ConversationListActivity() {
-        handler = new Handler() {
-            public void handleMessage(Message msg) {
-                if(msg.arg1 == 1)
-                    Toast.makeText(getApplicationContext(),"No messages found", Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
+    private MyListAdapter mAdapter;
+    private WearableListView mListView;
+    private Bitmap[] emojis;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listview_stub);
+        setContentView(R.layout.activity_emoji_list);
 
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -75,8 +63,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                conversations = new ArrayList<String>();
-                messagePhone(BTCommType.GET_CONTACTS.toString(), null);
+                messagePhone(BTCommType.GET_EMOJIS.toString(), null);
                 loadAdapter();
 
             }
@@ -100,17 +87,36 @@ public class ConversationListActivity extends Activity implements WearableListVi
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_emoji_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadAdapter(){
-        Log.e("ADAPTER", conversations.toString());
-        mAdapter = new MyListAdapter(this, conversations);
+        mAdapter = new MyListAdapter(this);
         mListView.setAdapter(mAdapter);
-        mListView.setClickListener(ConversationListActivity.this);
+        mListView.setClickListener(EmojiListActivity.this);
     }
-
-
 
     /**
      * This method will generate all the nodes that are attached to a Google Api Client.
@@ -164,11 +170,9 @@ public class ConversationListActivity extends Activity implements WearableListVi
         return nodes;
     }
 
-
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
         DataMap dataMap = new DataMap();
-        dataMap.putString("convid", conversations.get(viewHolder.getPosition()));
         messagePhone(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
 
     }
@@ -214,97 +218,61 @@ public class ConversationListActivity extends Activity implements WearableListVi
      */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.e("WATCH", "Conversation here");
-        if(messageEvent.getPath().contains("contacts")) {
-
-            ContactSync contactsSync = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-
-            conversations = contactsSync.getContacts();
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                    loadAdapter();
-                }
-            });
-        }
-
-        if(messageEvent.getPath().contains("drawings")) {
-            List<Drawing> drawings = new ArrayList<Drawing>();
-            DataMap data = DataMap.fromByteArray(messageEvent.getData());
-            int drawingsAmount = data.getInt("amountOfDrawings");
-            for (int i = 0; i < drawingsAmount; i++) {
-                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
-                        , data.getFloatArray("x-coordinates " + i)
-                        , data.getLongArray("drawing-times " + i)
-                        , data.getStringArray("actions " + i)
-                        , data.getByteArray("staticDrawing " + i));
-                drawings.add(drawing);
-
-            }
-            Log.e("drawings", "new drawings");
-            DrawingHolder.getInstance().setDrawings(drawings);
-
-            if(drawingsAmount < 1){
-                Message msg = handler.obtainMessage();
-                msg.arg1 = 1;
-                handler.sendMessage(msg);
-            }
-            else {
-                Intent intent = new Intent(this, ConversationViewActivity.class);
-                startActivity(intent);
-            }
-        }
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
 
         private final Context context;
-        private final List<String> items;
+        private final Bitmap[] items;
 
-        public MyListAdapter(Context context, List<String> items) {
+        public MyListAdapter(Context context) {
             this.context = context;
-            this.items = items;
+            items = new Bitmap[4];
+            loadBitmaps();
         }
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            return new WearableListView.ViewHolder(new MyItemView(ConversationListActivity.this));
+            return new WearableListView.ViewHolder(new MyItemView(EmojiListActivity.this));
+        }
+
+        private void loadBitmaps() {
+            items[0] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_sad);
+            items[1] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_happy);
+            items[2] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_flirt);
+            items[3] = BitmapFactory.decodeResource(getResources(), R.drawable.emoji_heart);
+
         }
 
         @Override
         public void onBindViewHolder(WearableListView.ViewHolder viewHolder, int i) {
             MyItemView mItemView = (MyItemView) viewHolder.itemView;
-            final String item = items.get(i);
+            final Bitmap item = items[i];
 
-            TextView txt = (TextView) mItemView.findViewById(R.id.text);
-            txt.setText(item.toString());
+            ImageView img = (ImageView) mItemView.findViewById(R.id.image);
+            img.setImageBitmap(item);
 
 
         }
 
         @Override
         public int getItemCount() {
-            return items.size();
+            return items.length;
         }
     }
 
     private final class MyItemView extends FrameLayout implements WearableListView.OnCenterProximityListener{
 
         final ImageView image;
-        final TextView txtView;
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.activity_contact_view, this);
+            View.inflate(context, R.layout.activity_emoji_view, this);
             image = (ImageView) findViewById(R.id.image);
-            txtView = (TextView) findViewById(R.id.text);
         }
 
         @Override
         public void onCenterPosition(boolean b) {
             image.animate().scaleX(1f).scaleY(1f).alpha(1);
-            txtView.animate().scaleX(1f).scaleY(1f).alpha(1);
 
         }
 
@@ -312,7 +280,6 @@ public class ConversationListActivity extends Activity implements WearableListVi
         public void onNonCenterPosition(boolean b) {
 
             image.animate().scaleX(0.8f).scaleY(0.8f).alpha(0.6f);
-            txtView.animate().scaleX(0.8f).scaleY(0.8f).alpha(0.6f);
         }
     }
 
@@ -323,4 +290,5 @@ public class ConversationListActivity extends Activity implements WearableListVi
             //What to do if a message is received
         }
     }
+
 }

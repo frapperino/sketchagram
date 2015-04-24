@@ -176,16 +176,16 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      */
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-            Intent intent = null;
+            Intent intent;
             switch(messageType) {
                 case 0: intent = new Intent(this, DrawingActivity.class);
-                    intent.putExtra(BTCommType.SEND_CONTACT.toString(), choices.get(viewHolder.getPosition()));
+                    intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
                     startActivity(intent);
                     break;
-/*                case 1: intent = new Intent(this, "some emoji".class);
-                    intent.putExtra(BTCommType.SEND_CONTACT.toString(), choices.get(viewHolder.getPosition()));
+                case 1: intent = new Intent(this, EmojiListActivity.class);
+                    intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
                     startActivity(intent);
-                    break;*/
+                    break;
             }
 
     }

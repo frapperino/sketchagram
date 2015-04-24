@@ -5,6 +5,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
 import android.support.v4.widget.DrawerLayout;
@@ -371,13 +373,17 @@ public class MainActivity extends ActionBarActivity
         }
     };
 
+    /**
+     * Receives all messages from the wear device.
+     * @param messageEvent
+     */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         dataMap = new DataMap();
-        if(messageEvent.getPath().contains("contacts")) { //From contact-activity
+        if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) { //From contact-activity
             ContactSync cs = new ContactSync(MyApplication.getInstance().getUser().getContactList());
-            sendToWatch("contacts", cs.putToDataMap(dataMap).toByteArray());
-        } else if(messageEvent.getPath().contains("messageTo")) { //From clock emoji-message
+            sendToWatch(BTCommType.GET_CONTACTS.toString(), cs.putToDataMap(dataMap).toByteArray());
+        } else if(messageEvent.getPath().equals(BTCommType.SEND_TO_CONTACT.toString())) { //From clock emoji-message
             ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
             for(Contact c : cs.getContacts()) {
                 List<ADigitalPerson> ls = new ArrayList<>();
@@ -386,13 +392,10 @@ public class MainActivity extends ActionBarActivity
                         ls, "Emoticon from wear", MessageType.TEXTMESSAGE);
                 MyApplication.getInstance().getUser().addMessage(clientMessage, true);
             }
-        } else if(messageEvent.getPath().contains("conversations")) { //From clock conversationListView
-            ConversationsSync cs = new ConversationsSync();
-            sendToWatch("conversationList", cs.putToDataMap(dataMap).toByteArray());
-        } else if(messageEvent.getPath().contains("username")) { //From MainActivity in clock
+        } else if(messageEvent.getPath().equals(BTCommType.GET_USERNAME.toString())) { //From MainActivity in clock
             dataMap.putString("username", MyApplication.getInstance().getUser().getUsername());
-            sendToWatch("username", dataMap.toByteArray());
-        } else if(messageEvent.getPath().contains("drawings")) { // From ConversationViewActivity
+            sendToWatch(BTCommType.GET_USERNAME.toString(), dataMap.toByteArray());
+        } else if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) { // From ConversationViewActivity
             String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
             Contact contact = null;
             Conversation conversation = null;
@@ -430,13 +433,15 @@ public class MainActivity extends ActionBarActivity
                 dataMap.putInt("amountOfDrawings", 0);
             }
 
-            sendToWatch("drawings", dataMap.toByteArray());
-        } else if(messageEvent.getPath().contains("drawing")) { //From DrawingActivity in clock
+            sendToWatch(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
+        } else if(messageEvent.getPath().equals(BTCommType.SEND_DRAWING.toString())) { //From DrawingActivity in clock
             Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
             ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
             ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
                     cs.getContacts(), drawing, MessageType.DRAWING);
             MyApplication.getInstance().getUser().addMessage(cm, true);
+        } else if(messageEvent.getPath().equals(BTCommType.GET_EMOJIS.toString())) {
+
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }
