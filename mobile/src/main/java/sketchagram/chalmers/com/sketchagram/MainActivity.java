@@ -392,13 +392,7 @@ public class MainActivity extends ActionBarActivity
         } else if(messageEvent.getPath().contains("username")) { //From MainActivity in clock
             dataMap.putString("username", MyApplication.getInstance().getUser().getUsername());
             sendToWatch("username", dataMap.toByteArray());
-        } else if(messageEvent.getPath().contains("drawing")) { //From DrawingActivity in clock
-            Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
-                    cs.getContacts(), drawing, MessageType.DRAWING);
-            MyApplication.getInstance().getUser().addMessage(cm, true);
-        } else if(messageEvent.getPath().contains("inConversation")) { // From ConversationViewActivity
+        } else if(messageEvent.getPath().contains("drawings")) { // From ConversationViewActivity
             String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
             Contact contact = null;
             Conversation conversation = null;
@@ -437,6 +431,12 @@ public class MainActivity extends ActionBarActivity
             }
 
             sendToWatch("drawings", dataMap.toByteArray());
+        } else if(messageEvent.getPath().contains("drawing")) { //From DrawingActivity in clock
+            Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
+            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
+            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
+                    cs.getContacts(), drawing, MessageType.DRAWING);
+            MyApplication.getInstance().getUser().addMessage(cm, true);
         } else {
             onFragmentInteraction(messageEvent.getPath());
         }

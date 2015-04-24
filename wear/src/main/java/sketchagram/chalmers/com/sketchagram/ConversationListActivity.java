@@ -76,7 +76,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
                 conversations = new ArrayList<>();
-                messagePhone("contacts", null);
+                messagePhone(BTCommType.GET_CONTACTS.toString(), null);
                 loadAdapter();
 
             }
@@ -169,7 +169,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
     public void onClick(WearableListView.ViewHolder viewHolder) {
         DataMap dataMap = new DataMap();
         dataMap.putString("convid", conversations.get(viewHolder.getPosition()));
-        messagePhone("inConversation", dataMap.toByteArray());
+        messagePhone(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
 
     }
 

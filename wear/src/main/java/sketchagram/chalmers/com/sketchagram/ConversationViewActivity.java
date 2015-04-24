@@ -191,22 +191,6 @@ public class ConversationViewActivity extends Activity  implements
      */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().contains("drawings")) {
-            List<Drawing> drawings = new ArrayList<>();
-            DataMap data = DataMap.fromByteArray(messageEvent.getData());
-            int drawingsAmount = data.getInt("amountOfDrawings");
-            for (int i = 0; i < drawingsAmount; i++) {
-                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
-                        , data.getFloatArray("x-coordinates " + i)
-                        , data.getLongArray("drawing-times " + i)
-                        , data.getStringArray("actions " + i)
-                        , data.getByteArray("staticDrawing " + i));
-                drawings.add(drawing);
-
-            }
-            Log.e("drawings", drawings.size()+"");
-            DrawingHolder.getInstance().setDrawings(drawings);
-        }
     }
 
     public class MessageReceiver extends BroadcastReceiver {

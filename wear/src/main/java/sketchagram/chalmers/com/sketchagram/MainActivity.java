@@ -66,7 +66,7 @@ public class MainActivity extends Activity implements
 
         dataMap = new DataMap();
 
-        messagePhone("username", null);
+        messagePhone(BTCommType.GET_USERNAME.toString(), null);
 
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -155,6 +155,7 @@ public class MainActivity extends Activity implements
     public void onMessageReceived(MessageEvent messageEvent) {
         dataMap = DataMap.fromByteArray(messageEvent.getData());
         getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
+
     }
 
     @Override
