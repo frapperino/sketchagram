@@ -36,11 +36,9 @@ public class MainActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, WearableListView.ClickListener {
 
 
-    private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "SKETCHAGRAM";
     public View btn;
-    private Node peerNode;
     public static final String KEY_REPLY = "reply";
     private static final int SAMPLE_NOTIFICATION_ID = 0;
     private DataMap dataMap;
@@ -68,7 +66,7 @@ public class MainActivity extends Activity implements
 
         dataMap = new DataMap();
 
-        messagePhone("username", null);
+        messagePhone(BTCommType.GET_USERNAME.toString(), null);
 
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -121,13 +119,15 @@ public class MainActivity extends Activity implements
 
     public void sendDrawing(View view) {
         Log.e("WATCH", "Trying to send a message");
-        Intent intent = new Intent(this, DrawingActivity.class);
+        Intent intent = new Intent(this, ContactListActivity.class);
+        intent.putExtra("messagetype", 0);
         startActivity(intent);
     }
 
     public void sendMessage(View view) {
         Log.e("WATCH", "Trying to send a message");
         Intent intent = new Intent(this, ContactListActivity.class);
+        intent.putExtra("messagetype", 1);
         startActivity(intent);
     }
 
@@ -154,13 +154,12 @@ public class MainActivity extends Activity implements
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         dataMap = DataMap.fromByteArray(messageEvent.getData());
-        Log.e("WATCH","username = " + dataMap.getString("username"));
         getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
+
     }
 
     @Override
     public void onClick(View v) {
-        Log.e("WATCH", "trying to send a message");
     }
 
 

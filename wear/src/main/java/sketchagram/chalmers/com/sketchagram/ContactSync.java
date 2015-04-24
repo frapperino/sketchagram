@@ -29,10 +29,6 @@ public class ContactSync {
         }
     }
 
-    /**
-     *
-     * @return the contacts plus a "send" alternative.
-     */
     public ArrayList<String> getContacts() {
         return contacts;
     }

@@ -10,14 +10,19 @@ import sketchagram.chalmers.com.model.Contact;
 /**
  * Created by Bosch on 12/03/15.
  */
-public class ContactsSync {
+public class ContactSync {
     private List<Contact> contacts;
 
-    public ContactsSync(List<Contact> contactList) {
+    public ContactSync(List<Contact> contactList) {
         this.contacts = contactList;
     }
 
-    public ContactsSync(DataMap data) {
+
+    /**
+     * Decode contacts from a datamap.
+     * @param data
+     */
+    public ContactSync(DataMap data) {
         contacts = new ArrayList<>();
         for(String name : data.getStringArrayList("RECEIVERS")){
             for(Contact c : MyApplication.getInstance().getUser().getContactList())
@@ -30,6 +35,12 @@ public class ContactsSync {
         return contacts;
     }
 
+
+    /**
+     * Puts all the contacts into the following datamap.
+     * @param dataMap
+     * @return
+     */
     public DataMap putToDataMap(DataMap dataMap) {
         ArrayList<String> ls = new ArrayList<>();
         for(Contact c : contacts)

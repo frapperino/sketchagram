@@ -8,14 +8,27 @@
     android:background="@color/white">
     <sketchagram.chalmers.com.sketchagram.DrawingView
         android:id="@+id/drawing"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
         android:layout_weight="1"
-        android:background="#FFFFFFFF" >
-        </sketchagram.chalmers.com.sketchagram.DrawingView>
+        android:background="#FFFFFFFF" />
+
+
+    <ImageButton
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/backButton"
+        android:src="@drawable/ic_back"
+        android:clickable="true"
+        android:onClick="backPressed"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

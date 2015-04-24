@@ -1,10 +1,15 @@
 package sketchagram.chalmers.com.model;
 
+import sketchagram.chalmers.com.sketchagram.R;
+
 /**
  * Created by Olliver on 2015-04-14.
  */
 public enum EmoticonType {
-    SMILE("SMILE"), THUMBSUP("THUMBSUP"), THUMBSDOWN("THUMBSDOWN"); //TODO: add more emoticons.
+    SAD("SAD"), HAPPY("HAPPY"),
+    FLIRT("FLIRT"), HEART("HEART"),
+    THUMBSUP("THUMBSUP"), THUMBSDOWN("THUMBSDOWN");
+
 
     private final String type;
 
@@ -15,4 +20,5 @@ public enum EmoticonType {
     public String toString(){
         return type;
     }
+
 }

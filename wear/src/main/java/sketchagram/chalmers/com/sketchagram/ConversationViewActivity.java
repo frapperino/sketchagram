@@ -32,12 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Created by Bosch on 27/02/15.
+ * The activity for showing a conversation on Wear.
+ */
 public class ConversationViewActivity extends Activity  implements
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
-
-    private DrawingView drawView;
-    private List<Drawing> drawings;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -85,12 +86,6 @@ public class ConversationViewActivity extends Activity  implements
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
-
-/*        Bundle bundle = this.getIntent().getExtras();
-        DataMap dataMap = new DataMap();
-        Log.e("contact", bundle.getString("convid"));
-        dataMap.putString("convid", bundle.getString("convid"));
-        messagePhone("inConversation", dataMap.toByteArray()); */
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
@@ -142,7 +137,7 @@ public class ConversationViewActivity extends Activity  implements
     }
 
     /**
-     * Gets the nodes to which the wear device is connected to.
+     * Finds all nodes connected to the wear.
      * @return
      */
     private List<Node> getNodes() {
@@ -190,27 +185,13 @@ public class ConversationViewActivity extends Activity  implements
 
     }
 
+    /**
+     * Receives new drawings and puts them into the static holder for drawings.
+     * @param messageEvent
+     */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().contains("drawings")) {
-            List<Drawing> drawings = new ArrayList<>();
-            DataMap data = DataMap.fromByteArray(messageEvent.getData());
-            int drawingsAmount = data.getInt("amountOfDrawings");
-            for (int i = 0; i < drawingsAmount; i++) {
-                Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
-                        , data.getFloatArray("x-coordinates " + i)
-                        , data.getLongArray("drawing-times " + i)
-                        , data.getStringArray("actions " + i)
-                        , data.getByteArray("staticDrawing " + i));
-                drawings.add(drawing);
-
-            }
-            Log.e("drawings", drawings.size()+"");
-            DrawingHolder.getInstance().setDrawings(drawings);
-        }
     }
-
-
 
     public class MessageReceiver extends BroadcastReceiver {
         @Override

@@ -35,6 +35,10 @@
             android:name=".ConversationViewActivity"
             android:label="@string/title_activity_conversation_view" >
         </activity>
+        <activity
+            android:name=".EmojiListActivity"
+            android:label="@string/title_activity_emoji_list" >
+        </activity>
     </application>
 
 </manifest>

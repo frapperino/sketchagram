@@ -18,11 +18,22 @@
     android:layout_height="match_parent"
     android:background="@color/white" >
 
+    <sketchagram.chalmers.com.sketchagram.DrawingView
+        android:id="@+id/drawing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:background="#FFFFFFFF"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/imageview"
         android:layout_gravity="center"
-        android:background="@color/white" />
+        android:background="@color/white"
+        android:clickable="true"/>
+
 </FrameLayout>

@@ -17,7 +17,7 @@ import java.util.List;
  * Holds the properties of a graphical drawing in order to allow it to be redrawn, at will.
  * Created by Alexander on 2015-03-26.
  */
-public class Drawing {
+public class Drawing extends AMessage{
     List<DrawingEvent> events;
     private final int COLOR = Color.MAGENTA;
 
@@ -40,7 +40,7 @@ public class Drawing {
 
         int i = 0;
         for(float f : yf) {
-            events.add(new DrawingEvent(times[i], xf[i], yf[i], DrawMotionEvents.valueOf(actions[i])));
+            events.add(new DrawingEvent(times[i], xf[i], f, DrawMotionEvents.valueOf(actions[i])));
         }
 
     }
