@@ -71,7 +71,7 @@ public class NetworkMessage<T> {
         allUsers.add(MyApplication.getInstance().getUser());
         ADigitalPerson sender = null;
         for(ADigitalPerson person : allUsers){
-            if(person.getUsername().equals(getSender())){
+            if(person.getUsername().toLowerCase().equals(getSender().toLowerCase())){
                 sender = person;
             }
         }
