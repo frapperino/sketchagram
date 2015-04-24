@@ -10,7 +10,6 @@ import java.util.List;
 public class DrawingHolder {
 
     private static DrawingHolder instance = null;
-    private static Drawing drawing;
     private static List<Drawing> drawings;
 
     protected DrawingHolder() {}
@@ -23,13 +22,6 @@ public class DrawingHolder {
 
     }
 
-    public Drawing getDrawing(){
-        return drawing;
-    }
-
-    public void setDrawing(Drawing drawing) {
-        this.drawing = drawing;
-    }
 
     public Drawing getDrawing(int i) {
         return drawings.get(i);
@@ -37,10 +29,6 @@ public class DrawingHolder {
 
     public void setDrawings(List<Drawing> drawings) {
         this.drawings = drawings;
-    }
-
-    public void resetDrawing() {
-        drawing = null;
     }
 
     public int getDrawingsAmount(){

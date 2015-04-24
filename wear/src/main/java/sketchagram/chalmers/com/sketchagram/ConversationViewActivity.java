@@ -209,8 +209,6 @@ public class ConversationViewActivity extends Activity  implements
         }
     }
 
-
-
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

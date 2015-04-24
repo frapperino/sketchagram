@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -203,6 +204,7 @@ public class DrawingView extends View {
     /**
      * Instantly displays the drawing on canvas.
      * @param drawing
+     * @deprecated No longer in any use.
      */
     public void displayStaticDrawing(Drawing drawing) {
         List<DrawingEvent> motions = drawing.getMotions();
@@ -252,7 +254,10 @@ public class DrawingView extends View {
                 curr = events.get(i);
                 timeDeltaInMilli = ((curr.getTime() - first.getTime()) / 1000000);
                 handler.postDelayed(new EventRunnable(curr), timeDeltaInMilli);
+                publishProgress();
             }
+            Log.e("paintjob", "done");
+            helper.notifyObservers();
             return null;
         }
     }
@@ -261,7 +266,7 @@ public class DrawingView extends View {
      * Return a copy of the image in form a bitmap.
      * @return the bitmap in question.
      */
-    public byte[] getCanvasBitmapAsByte() {
+    private byte[] getCanvasBitmapAsByte() {
         Bitmap bmp = canvasBitmap;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -304,7 +309,7 @@ public class DrawingView extends View {
                                     @Override
                                     public void run() {
                                         setChanged();
-
+                                        drawing.setStaticDrawing(getCanvasBitmapAsByte());
                                         notifyObservers(drawing);
                                     }
                                 });

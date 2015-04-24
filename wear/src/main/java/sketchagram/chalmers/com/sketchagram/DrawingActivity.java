@@ -8,9 +8,13 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.view.DismissOverlayView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,6 +44,8 @@ public class DrawingActivity extends Activity implements Observer,
 
     private DrawingView drawView;
 
+    private String receiver;
+
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -55,7 +61,7 @@ public class DrawingActivity extends Activity implements Observer,
         drawView = (DrawingView) findViewById(R.id.drawing);
         drawView.addHelperObserver(this);
 
-
+        receiver = getIntent().getStringExtra(BTCommType.SEND_CONTACT.toString());
 
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -69,8 +75,6 @@ public class DrawingActivity extends Activity implements Observer,
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
-
-
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
@@ -103,11 +107,16 @@ public class DrawingActivity extends Activity implements Observer,
     @Override
     public void update(Observable observable, Object data) {
         Drawing mDrawing = (Drawing)data;
-        mDrawing.setStaticDrawing(drawView.getCanvasBitmapAsByte());
         drawView.clearCanvas();
-        DrawingHolder.getInstance().resetDrawing();
-        DrawingHolder.getInstance().setDrawing(mDrawing);
-        Intent intent = new Intent(this, ContactListActivity.class);
+
+        DataMap dataMap = new DataMap();
+        mDrawing.putToDataMap(dataMap);
+        ContactSync cs = new ContactSync();
+        cs.addContact(receiver);
+        cs.putToDataMap(dataMap);
+        messagePhone(BTCommType.SEND_DRAWING.toString(), dataMap.toByteArray());
+
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -176,10 +185,6 @@ public class DrawingActivity extends Activity implements Observer,
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().contains("sendTo")) {
-            Intent intent = new Intent(this, ContactListActivity.class);
-            startActivity(intent);
-        }
     }
 
 
@@ -188,6 +193,10 @@ public class DrawingActivity extends Activity implements Observer,
         public void onReceive(Context context, Intent intent) {
             //What to do if a message is received
         }
+    }
+
+    public void backPressed(View view) {
+        this.onBackPressed();
     }
 
 }
