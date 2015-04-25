@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -202,10 +203,14 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         public void onFragmentInteraction(String id);
     }
     private void showGlobalContextActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setBackgroundResource(R.drawable.ic_action_previous_item);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("Contacts");
+        actionBarTitle.setPadding(25,0,0,0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setBackgroundResource(0);
     }
 
     private ActionBar getActionBar() {

@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -245,16 +246,14 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void showGlobalContextActionBar() {
-        android.support.v7.app.ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle("Conversations");
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources()
-                .getColor(R.color.sketchagramPurple)));
-        Window window = getActivity().getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.setStatusBarColor(getActivity().getResources().getColor(R.color.sketchagramPurpleDark));
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setBackgroundResource(0);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("Conversations");
+        actionBarTitle.setPadding(0,0,0,0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setBackgroundResource(R.drawable.ic_action_cc_bcc);
     }
     private android.support.v7.app.ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
