@@ -205,7 +205,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setBackgroundResource(R.drawable.ic_action_previous_item);
+        actionBarIcon1.setBackgroundResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Contacts");
         actionBarTitle.setPadding(25,0,0,0);
