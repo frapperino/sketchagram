@@ -6,10 +6,12 @@
     <color name="list_divider">#272727</color>
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
-
-    <color name="sketchagramPrimary">#aa66cc</color>
-    <color name="sketchagramPrimary2">#9933cc</color>
+    <color name="grey">#e0e0e0</color>
+    <color name="light_blue">#e3f2fd</color>
+    <color name="sketchagramPrimary">#43a047</color>
+    <color name="sketchagramPrimary2">#2e7d32</color>
     <color name="white">#ffffff</color>
-    <color name="sketchagramSecondary">#2196F3</color>
-    <color name="sketchagramSecondary2">#1976D2</color>
+    <color name="black">#000000</color>
+    <color name="sketchagramSecondary">#34787b</color>
+    <color name="sketchagramSecondary2">#1d6265</color>
 </resources>
