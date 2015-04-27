@@ -23,10 +23,13 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.*;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.pubsub.PubSubManager;
+import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.xdata.Form;
@@ -267,7 +270,7 @@ public class Connection implements IConnection{
                         getChatManager().addChatListener(chatManagerListener);
 
                         getRoster().addRosterListener(rosterListener);
-                       }
+                    }
                 } catch (XMPPException e) {
                     e.printStackTrace();
                     disconnect(null);
@@ -296,6 +299,36 @@ public class Connection implements IConnection{
             loggedIn = true;
         }
         return success;
+    }
+
+    public void updateUsers(){
+        Collection<RosterEntry> entries = getRoster().getEntries();
+        Iterator<RosterEntry> it = entries.iterator();
+        while(it.hasNext()){
+            RosterEntry current = it.next();
+            String name = current.getUser().split("@")[0];
+            switch (current.getType()){
+                case none:
+                    MyApplication.getInstance().getUser().removeContact(new Contact(name, new Profile()));
+                    break;
+                case from:
+                    List<Contact> contacts = MyApplication.getInstance().getDatabase().getAllContacts();
+                    boolean exists = false;
+                    for(Contact contact : contacts){
+                        if(contact.getUsername().toLowerCase().equals(name.toLowerCase())){
+                            exists = true;
+                        }
+                    }
+                    if(!exists) {
+                        MyApplication.getInstance().getUser().addContact(name);
+                    } else {
+                        addContact(name);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public static boolean isLoggedIn(){

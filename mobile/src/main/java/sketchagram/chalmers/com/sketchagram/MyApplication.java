@@ -102,6 +102,7 @@ public class MyApplication extends Application {
                 }
             }
             user = new User(userName, new Profile());
+            Connection.getInstance().updateUsers();
 
             return true;
         }
