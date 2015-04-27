@@ -184,6 +184,9 @@ public class SketchagramDb {
         List<Conversation> convList = getAllConversations();
         for(Conversation c : convList){
             boolean same = true;
+            if(c.getParticipants().size() != participants.size()){
+                break;
+            }
             for(ADigitalPerson participant : c.getParticipants()) {
                 boolean participantexists = false;
                 for(ADigitalPerson receiver : participants){
