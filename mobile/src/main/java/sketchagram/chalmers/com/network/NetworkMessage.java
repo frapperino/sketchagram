@@ -65,7 +65,7 @@ public class NetworkMessage<T> {
                     personReceivers.add(contact);
                     break;
                 } else if (user.equals(userManager.getUsername())){
-                    personReceivers.add(new User(userManager.getUsername(), new Profile()));
+                    personReceivers.add(new Contact(userManager.getUsername(), new Profile()));
                     break;
                 }
             }
@@ -73,7 +73,7 @@ public class NetworkMessage<T> {
         }
         Set<ADigitalPerson> allUsers = new HashSet<>();
         allUsers.addAll(UserManager.getInstance().getAllContacts());
-        allUsers.add(new User(UserManager.getInstance().getUsername(), new Profile()));
+        allUsers.add(new Contact(UserManager.getInstance().getUsername(), new Profile()));
         ADigitalPerson sender = null;
         for(ADigitalPerson person : allUsers){
             if(person.getUsername().equals(getSender())){

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.UserManager;
 
 /**
@@ -96,7 +97,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
-            List<ADigitalPerson> receiverList = new ArrayList<>();
+            List<Contact> receiverList = new ArrayList<>();
             receiverList.add(UserManager.getInstance().getAllContacts().get(position));
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))

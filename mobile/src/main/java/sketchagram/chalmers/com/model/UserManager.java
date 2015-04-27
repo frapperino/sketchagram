@@ -8,7 +8,7 @@ import sketchagram.chalmers.com.network.NetworkException;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
- * Handles different requests regarding the user.
+ * Handles requests regarding the user.
  * Singleton class to make sure there can't be simultaneous instances handling requests.
  * Created by Alexander on 2015-04-23.
  */
@@ -35,9 +35,14 @@ public class UserManager implements IUserManager {
         } else {
             throw new UnsupportedOperationException("Sending a message of type " + content.getClass() + " not supported!");
         }
-        ClientMessage clientMessage = new ClientMessage(user, receiver, type, MessageType.DRAWING);
-        //TODO: check whether to send message or not, alternatively do this in User. Depending on if message should be kept internal or not.
-        user.addMessage(clientMessage, true);
+        ClientMessage clientMessage = new ClientMessage(user, receiver, content, type);
+        //Check whether to send message or not.
+        //Depending on if message should be kept internal, i.e. user sent to self.
+        if(receiver.size() == 1 && isUser(receiver.get(0))) {
+            user.addMessage(clientMessage, false);
+        } else {
+            user.addMessage(clientMessage, true);
+        }
     }
 
     @Override

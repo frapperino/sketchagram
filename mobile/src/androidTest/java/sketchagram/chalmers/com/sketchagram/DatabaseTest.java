@@ -12,6 +12,7 @@ import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * Created by Olliver on 15-04-21.
@@ -28,7 +29,7 @@ public class DatabaseTest extends BasicSetupTest {
     public void testInsertMessage(){
         List<Contact> contactList = new ArrayList<>();
         User user1 = new User("user1", new Profile());
-        MyApplication.getInstance().login(TEST_USERNAME, TEST_PASSWORD);
+        UserManager.getInstance().login(TEST_USERNAME, TEST_PASSWORD);
         Contact user2 = new Contact("user2", new Profile());
         contactList.add(user2);
         ClientMessage message = new ClientMessage(System.currentTimeMillis(), user1, contactList, "hej", MessageType.TEXTMESSAGE);

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * Created by Bosch on 12/03/15.
@@ -20,7 +21,7 @@ public class ContactsSync {
     public ContactsSync(DataMap data) {
         contacts = new ArrayList<>();
         for(String name : data.getStringArrayList("RECEIVERS")){
-            for(Contact c : MyApplication.getInstance().getUser().getContactList())
+            for(Contact c : UserManager.getInstance().getAllContacts())
                 if(name.equals(c.getUsername()))
                     contacts.add(c);
         }

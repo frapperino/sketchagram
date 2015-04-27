@@ -123,7 +123,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      */
     public void updateList() {
         BaseAdapter adapter = (BaseAdapter)mAdapter;
-        adapter.notifyDataSetChanged();
+        if(adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -154,11 +156,11 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                     List<ClientMessage> history = c.getHistory();
                     ClientMessage lastMessage = c.getHistory().get(history.size()-1);
                     if(lastMessage.getType() == MessageType.DRAWING) {
-                        items.add(new Item(c.getParticipants().get(0).getUsername().toString(),
+                        items.add(new Item(c.toString(),
                                lastMessage.dateToShow(),
                                 ((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE)));
                     } else {
-                        items.add(new Item(c.getParticipants().get(0).getUsername().toString(),
+                        items.add(new Item(c.toString(),
                                 history.get(history.size()-1).dateToShow(), null));
                     }
                 }

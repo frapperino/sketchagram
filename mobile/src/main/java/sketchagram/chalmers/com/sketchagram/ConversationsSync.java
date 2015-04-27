@@ -7,6 +7,7 @@ import java.util.List;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * Created by Bosch on 31/03/15.
@@ -15,7 +16,7 @@ public class ConversationsSync {
     private List<Conversation> conversations;
 
     public ConversationsSync() {
-        conversations = MyApplication.getInstance().getUser().getConversationList();
+        conversations = UserManager.getInstance().getAllConversations();
 
     }
 
