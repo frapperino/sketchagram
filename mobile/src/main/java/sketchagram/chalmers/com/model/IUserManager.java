@@ -87,4 +87,6 @@ public interface IUserManager {
      * @return true if successful. false otherwise.
      */
     public boolean removeContact(Contact contact);
+
+    public boolean isLoggedIn();
 }

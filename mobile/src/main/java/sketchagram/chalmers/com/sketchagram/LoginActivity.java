@@ -40,7 +40,6 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
 
     private int currentApiVersion;
     private LoginFragment loginFragment;
-    private SharedPreferences sharedPreferences;
     private int attemptsMade = 0;
     private boolean lockoutActive = false;
     private long lockoutTimestamp;
@@ -48,19 +47,13 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sharedPreferences = getSharedPreferences(FILENAME, 0);
-
-        String userName = sharedPreferences.getString("username", null);
-        if (userName != null) {
-            if (UserManager.getInstance().login(userName, sharedPreferences.getString("password", null))) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        if (UserManager.getInstance().isLoggedIn()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
         loginFragment = new LoginFragment();
 
@@ -205,7 +198,7 @@ public class LoginActivity extends Activity implements RegistrationFragment.OnFr
         }
         if (usernameError == null && passwordError == null) {
             if (loginServer(username, password)) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+                SharedPreferences.Editor editor = getSharedPreferences(FILENAME, 0).edit();
                 editor.putString("username", username);
                 editor.putString("password", password);
                 editor.commit();

@@ -129,4 +129,9 @@ public class UserManager implements IUserManager {
         if(user == null)
             throw new IllegalStateException("A user must be logged in to be able to perform this operation");
     }
+
+    @Override
+    public boolean isLoggedIn() {
+        return user != null ? true : false;
+    }
 }
