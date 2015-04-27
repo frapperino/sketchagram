@@ -28,6 +28,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * A fragment representing a list of Items.
@@ -89,10 +90,10 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        contactList = MyApplication.getInstance().getUser().getContactList();
+        contactList = UserManager.getInstance().getAllContacts();
         // Sets the adapter to customized one which enables our layout of items.
         mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
-        MyApplication.getInstance().getUser().addObserver(this);
+        UserManager.getInstance().addUserObserver(this);
     }
 
     @Override
@@ -138,7 +139,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         Contact removedContact = contactList.get(info.position);
         String contactName = removedContact.getUsername();
-        boolean success = MyApplication.getInstance().getUser().removeContact(removedContact);
+        boolean success = UserManager.getInstance().removeContact(removedContact);
         if(success) {
             Toast.makeText(MyApplication.getContext(), contactName + " was removed from contacts.", Toast.LENGTH_SHORT).show();
 
@@ -173,7 +174,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(MyApplication.getInstance().getUser().getContactList().get(position).toString());
+            mListener.onFragmentInteraction(UserManager.getInstance().getAllContacts().get(position).toString());
         }
     }
 

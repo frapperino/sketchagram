@@ -9,7 +9,11 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
@@ -52,23 +56,24 @@ public class NetworkMessage<T> {
     }
 
     public ClientMessage convertFromNetworkMessage(MessageType type){
+        IUserManager userManager = UserManager.getInstance();
         List<String> receivers = getReceivers();
         List<ADigitalPerson> personReceivers = new ArrayList<>();
         for(String user : receivers){
-            for(Contact contact : MyApplication.getInstance().getUser().getContactList()){
+            for(Contact contact : userManager.getAllContacts()){
                 if(user.equals(contact.getUsername())){
                     personReceivers.add(contact);
                     break;
-                } else if (user.equals(MyApplication.getInstance().getUser().getUsername())){
-                    personReceivers.add(MyApplication.getInstance().getUser());
+                } else if (user.equals(userManager.getUsername())){
+                    personReceivers.add(new Contact(userManager.getUsername(), new Profile()));
                     break;
                 }
             }
 
         }
         Set<ADigitalPerson> allUsers = new HashSet<>();
-        allUsers.addAll(MyApplication.getInstance().getUser().getContactList());
-        allUsers.add(MyApplication.getInstance().getUser());
+        allUsers.addAll(UserManager.getInstance().getAllContacts());
+        allUsers.add(new Contact(UserManager.getInstance().getUsername(), new Profile()));
         ADigitalPerson sender = null;
         for(ADigitalPerson person : allUsers){
             if(person.getUsername().toLowerCase().equals(getSender().toLowerCase())){

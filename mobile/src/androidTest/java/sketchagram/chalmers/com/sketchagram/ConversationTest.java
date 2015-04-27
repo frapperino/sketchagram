@@ -17,7 +17,6 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 
 /**
