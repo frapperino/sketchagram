@@ -25,6 +25,7 @@ import java.util.Arrays;
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
+ * @deprecated Couldn't find any usage of this class. Redundant.
  */
 public class AddContactFragment extends ListFragment implements AbsListView.OnItemClickListener {
 

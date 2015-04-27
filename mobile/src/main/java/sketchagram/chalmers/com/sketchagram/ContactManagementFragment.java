@@ -2,10 +2,17 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ListFragment;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
-import android.support.v7.internal.widget.AdapterViewCompat;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,16 +23,21 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import sketchagram.chalmers.com.model.Contact;
 
@@ -91,7 +103,8 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         }
         contactList = MyApplication.getInstance().getUser().getContactList();
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
+        mAdapter = new AlphabeticalAdapter(getActivity(), R.layout.fragment_contact_management, contactList);
+        //new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
         MyApplication.getInstance().getUser().addObserver(this);
     }
 
@@ -107,7 +120,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
                 return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
             }
         });
-        View view = inflater.inflate(R.layout.fragment_contact_management_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_contact_management, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(R.id.contact_management_list);
@@ -224,6 +237,105 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             });
             BaseAdapter adapter = (BaseAdapter) mAdapter;
             adapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * Adapter used for sorting in alphabetical order.
+     */
+    private class AlphabeticalAdapter extends ArrayAdapter<Contact> implements SectionIndexer {
+        private HashMap<String, Integer> alphaIndexer;
+        private String[] sections;
+        private LayoutInflater inflater;
+        private List<Contact> contactList;
+
+        public AlphabeticalAdapter(Context context, int resource, List<Contact> data) {
+            super(context, resource, data);
+            contactList = data;
+            inflater = LayoutInflater.from(context);
+            alphaIndexer = new HashMap<String, Integer>();
+            for (int i = 0; i < data.size(); i++) {
+                String s = data.get(i).getUsername().substring(0, 1).toUpperCase();
+                if (!alphaIndexer.containsKey(s))
+                    alphaIndexer.put(s, i);
+            }
+
+            Set<String> sectionLetters = alphaIndexer.keySet();
+            ArrayList<String> sectionList = new ArrayList<>(sectionLetters);
+            Collections.sort(sectionList);
+            sections = new String[sectionList.size()];
+            for (int i = 0; i < sectionList.size(); i++)
+                sections[i] = sectionList.get(i);
+        }
+
+        public int getPositionForSection(int section) {
+            return alphaIndexer.get(sections[section]);
+        }
+
+        public int getSectionForPosition(int position) {
+            return 1;
+        }
+
+        public Object[] getSections() {
+            return sections;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Contact contact = contactList.get(position);
+            if(convertView == null) {
+                convertView = inflater.inflate(R.layout.fragment_contact_management_list_item, parent, false);
+                convertView.setTag(R.id.rounded_contact_image, convertView.findViewById(R.id.rounded_contact_image));
+                convertView.setTag(R.id.contact_name, convertView.findViewById(R.id.contact_name));
+                convertView.setTag(R.id.status_image, convertView.findViewById(R.id.status_image));
+            }
+            ImageView roundedImage = (ImageView)convertView.getTag(R.id.rounded_contact_image);
+            TextView contactName = (TextView)convertView.getTag(R.id.contact_name);
+            Button statusImage = (Button)convertView.getTag(R.id.status_image);
+
+            contactName.setText(contact.getUsername());
+
+            Bitmap bitmap = contact.getProfile().getImage();
+            if(bitmap == null) {    // Use default image from resources
+                bitmap = getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.profile));
+            }
+            roundedImage.setImageBitmap(bitmap);
+
+            switch(contact.getStatus()) {
+                case ONLINE:
+                    statusImage.setBackgroundColor(Color.GREEN);
+                case OFFLINE:
+                    statusImage.setBackgroundColor(Color.RED);
+                case AWAY:
+                    statusImage.setBackgroundColor(Color.YELLOW);
+                default:
+                    statusImage.setBackgroundColor(Color.WHITE);
+            }
+
+            return convertView;
+        }
+
+        private Bitmap getCircleBitmap(Bitmap bitmap) {
+            final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                    bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(output);
+
+            final int color = Color.RED;
+            final Paint paint = new Paint();
+            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            final RectF rectF = new RectF(rect);
+
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawOval(rectF, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+
+            bitmap.recycle();
+
+            return output;
         }
     }
 }
