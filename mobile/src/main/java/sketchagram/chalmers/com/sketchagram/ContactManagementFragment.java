@@ -99,7 +99,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
+        Collections.sort(UserManager.getInstance().getAllContacts(),new Comparator<Contact>() {
             //Sort alphabetically
 
             @Override
@@ -214,7 +214,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
     public void updateList(){
         if(mAdapter != null) {
-            Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
+            Collections.sort(UserManager.getInstance().getAllContacts(),new Comparator<Contact>() {
                 //Sort alphabetically
 
                 @Override

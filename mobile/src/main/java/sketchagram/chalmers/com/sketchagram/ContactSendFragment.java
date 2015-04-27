@@ -66,7 +66,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Collections.sort(MyApplication.getInstance().getUser().getContactList());
+        Collections.sort(UserManager.getInstance().getAllContacts());
         View view = inflater.inflate(R.layout.fragment_contact_send_list, container, false);
 
         // Set the adapter
@@ -127,7 +127,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
 
     public void updateList(){
         if(mAdapter != null) {
-            Collections.sort(MyApplication.getInstance().getUser().getContactList());
+            Collections.sort(UserManager.getInstance().getAllContacts());
             BaseAdapter adapter = (BaseAdapter) mAdapter;
             adapter.notifyDataSetChanged();
         }

@@ -300,7 +300,7 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v) {
                 dialog.dismiss();
                 String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
-                if (MyApplication.getInstance().getUser().addContact(user)) {
+                if (userManager.addContact(user)) {
                     Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
