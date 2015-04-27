@@ -434,6 +434,7 @@ public class Connection implements IConnection{
         UserSearchManager search = new UserSearchManager(connection);
 
         Form searchForm = null;
+        List<String> matchingUsers = new ArrayList<>();
         try {
             searchForm = search.getSearchForm("search." + connection.getServiceName());
             Form answerForm = searchForm.createAnswerForm();
@@ -447,7 +448,7 @@ public class Connection implements IConnection{
                 Iterator<ReportedData.Row> it = data.getRows().iterator();
                 while (it.hasNext()) {
                     ReportedData.Row row = it.next();
-                    return row.getValues("Username");
+                    matchingUsers.add(row.getValues("Username").get(0));
                 }
             }
         } catch (SmackException.NoResponseException e) {
@@ -459,7 +460,7 @@ public class Connection implements IConnection{
         }
 
 
-        return new LinkedList<>();
+        return matchingUsers;
     }
 
     public List<Contact> getContacts(){
@@ -595,7 +596,8 @@ public class Connection implements IConnection{
                     }
 
                     if(!exists) {
-                        user.addContact(packet.getFrom().split("@")[0]);
+                        user.addContact(packet.getFrom().split("@")[0].toLowerCase());
+
                     }
                 } else if (presence.getType().equals(Presence.Type.unsubscribe) || presence.getType().equals(Presence.Type.unsubscribed)) {
                     String userName = packet.getFrom().split("@")[0];
