@@ -88,5 +88,10 @@ public interface IUserManager {
      */
     public boolean removeContact(Contact contact);
 
+    /**
+     * Updates the statuses of all contacts
+     */
+    public void updateStatuses();
+
     public boolean isLoggedIn();
 }

@@ -22,7 +22,7 @@ public class User extends ADigitalPerson  {
         conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username.toLowerCase());
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
         sortConversations();
-        setStatuses();
+        updateStatuses();
     }
 
     /**
@@ -42,7 +42,7 @@ public class User extends ADigitalPerson  {
         updateObservers(null);
     }
 
-    private void setStatuses(){
+    public void updateStatuses(){
         for(Contact contact : Connection.getInstance().getContacts()){
             Contact con = contactList.get(contactList.indexOf(contact));
             con.setStatus(contact.getStatus());

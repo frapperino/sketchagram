@@ -56,8 +56,7 @@ import sketchagram.chalmers.com.network.Connection;
 public class MainActivity extends ActionBarActivity
         implements SendFragment.OnFragmentInteractionListener,
         ConversationFragment.OnFragmentInteractionListener,
-        InConversationFragment.OnFragmentInteractionListener, MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        InConversationFragment.OnFragmentInteractionListener,
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
         ContactManagementFragment.OnFragmentInteractionListener,
         AddContactFragment.OnFragmentInteractionListener,
@@ -80,7 +79,6 @@ public class MainActivity extends ActionBarActivity
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,33 +94,7 @@ public class MainActivity extends ActionBarActivity
         contactManagementFragment = new ContactManagementFragment();
         drawingFragment = new DrawingFragment();
 
-        //  Needed for communication between watch and device.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle connectionHint) {
-                        Log.d(TAG, "onConnected: " + connectionHint);
-                        tellWatchConnectedState("connected");
-                        //  "onConnected: null" is normal.
-                        //  There's nothing in our bundle.
-                    }
 
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-                        Log.d(TAG, "onConnectionSuspended: " + cause);
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult result) {
-                        Log.d(TAG, "onConnectionFailed: " + result);
-                    }
-                })
-                .addApi(Wearable.API)
-                .build();
-
-        mGoogleApiClient.connect();
-        Wearable.MessageApi.addListener(mGoogleApiClient, this).setResultCallback(resultCallback);
         mHandler = new Handler(this);
 
         fragmentManager = getFragmentManager();
@@ -293,212 +265,12 @@ public class MainActivity extends ActionBarActivity
         dialog.show();
     }
 
-    //Below code is for connecting and communicating with Wear
-    private void tellWatchConnectedState(final String state) {
-
-        new AsyncTask<Void, Void, List<Node>>() {
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for (Node node : nodeList) {
-                    Log.v(TAG, "telling " + node.getId() + " i am " + state);
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            " " + state,
-                            null
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.v(TAG, "Phone: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    private List<Node> getNodes() {
-        List<Node> nodes = new ArrayList<Node>();
-        NodeApi.GetConnectedNodesResult rawNodes =
-                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-        for (Node node : rawNodes.getNodes()) {
-            nodes.add(node);
-        }
-        return nodes;
-    }
-
-    /**
-     * Not needed, but here to show capabilities. This callback occurs after the MessageApi
-     * listener is added to the Google API Client.
-     */
-    private ResultCallback<Status> resultCallback = new ResultCallback<Status>() {
-        @Override
-        public void onResult(Status status) {
-            Log.v(TAG, "Status: " + status.getStatus().isSuccess());
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    //TODO put code here to do something when listener is added.
-                    return null;
-                }
-            }.execute();
-        }
-    };
-
-    /**
-     * Receives all messages from the wear device.
-     * @param messageEvent
-     */
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        dataMap = new DataMap();
-        if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) { //From contact-activity
-            ContactSync cs = new ContactSync(userManager.getAllContacts());
-            sendToWatch(BTCommType.GET_CONTACTS.toString(), cs.putToDataMap(dataMap).toByteArray());
-
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_TO_CONTACT.toString())) { //From clock emoji-message
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            userManager.sendMessage(cs.getContacts(), "Emoticon from wear");
-
-        } else if(messageEvent.getPath().equals(BTCommType.GET_USERNAME.toString())) { //From MainActivity in clock
-            dataMap.putString("username", userManager.getUsername());
-            sendToWatch(BTCommType.GET_USERNAME.toString(), dataMap.toByteArray());
-
-        } else if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) { // From ConversationViewActivity
-            String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
-            Contact contact = null;
-            Conversation conversation = null;
-            for (Contact c : userManager.getAllContacts()) {
-                if (c.getUsername().equals(username))
-                    contact = c;
-            }
-
-            for (Conversation c : userManager.getAllConversations()) {
-                for(ADigitalPerson p : c.getParticipants()){
-                    if(contact.getUsername().equals(p.getUsername()))
-                        conversation = c;
-                }
-
-            }
-
-            dataMap.clear();
-            int i = 0;
-
-            ArrayList<String> emojis = new ArrayList<String>();
-            ArrayList<Integer> emojiPositions = new ArrayList<Integer>();
-
-            if(conversation != null) {
-                for (ClientMessage message : conversation.getHistory()) {
-                    if (message.getType().equals(MessageType.EMOTICON)) {
-                        emojis.add(message.getContent().toString());
-                        emojiPositions.add(i);
-                    }
-                    if (message.getType().equals(MessageType.DRAWING)) {
-                        Drawing drawing = (Drawing) message.getContent();
-                        dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
-                        dataMap.putFloatArray("y-coordinates " + i, drawing.getY());
-                        dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
-                        dataMap.putStringArray("actions " + i, drawing.getActions());
-                        dataMap.putByteArray("staticDrawing " + i, drawing.getStaticDrawingByteArray());
-                    }
-
-                    i++;
-                }
-                dataMap.putInt("amountOfMessages", i);
-                dataMap.putStringArrayList("emojis", emojis);
-                dataMap.putIntegerArrayList("emojisPositions", emojiPositions);
-
-            } else {
-                dataMap.putInt("amountOfMessages", 0);
-            }
-
-            sendToWatch(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
-
-            //From DrawingActivity in clock
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_DRAWING.toString())) {
-
-            Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            userManager.sendMessage(cs.getContacts(), drawing);
-
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_EMOJI.toString())) {
-            Log.e("EMOJI" , "trying to send");
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            String emoji = DataMap.fromByteArray(messageEvent.getData()).getString(BTCommType.SEND_EMOJI.toString());
-            userManager.sendMessage(cs.getContacts(), EmoticonType.valueOf(emoji));
-
-        } else {
-            onFragmentInteraction(messageEvent.getPath());
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        //Must be implemented?
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        //Must be implemented?
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        //Must be implemented?
-    }
-
     @Override
     public boolean handleMessage(Message msg) {
         return false;
     }
 
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * There should only be one node however, which should be the watch.
-     */
-    private void sendToWatch(String msg, final byte[] data){
-        getSharedPreferences("WATCHMSG", 0).edit().putString("WATCHMSG", msg).commit();
 
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.v(TAG, "......Phone: Sending Msg:  to node:  " + node.getId());
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            getSharedPreferences("WATCHMSG",0).getString("WATCHMSG", ""),
-                            data
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.v("DEVELOPER", "......Clock: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
 
     @Override
     public void onBackPressed() {
