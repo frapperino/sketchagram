@@ -145,9 +145,9 @@ public class NavigationDrawerFragment extends Fragment {
         actionBar.setCustomView(R.layout.custom_actionbar);
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.sketchagramPrimary)));
         Window window = getActivity().getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(getActivity().getResources().getColor(R.color.sketchagramPrimary2));
         }
         // ActionBarDrawerToggle ties together the the proper interactions
