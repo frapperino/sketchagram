@@ -117,6 +117,9 @@ public class Connection implements IConnection{
                 return false;
             }
         });
+        getChatManager().addChatListener(chatManagerListener);
+
+        getRoster().addRosterListener(rosterListener);
         connect();
         Roster roster = connection.getRoster();
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
@@ -267,9 +270,6 @@ public class Connection implements IConnection{
                     }
                     if(connection.isConnected()){
                         connection.login(userName, password);
-                        getChatManager().addChatListener(chatManagerListener);
-
-                        getRoster().addRosterListener(rosterListener);
                     }
                 } catch (XMPPException e) {
                     e.printStackTrace();
@@ -573,7 +573,7 @@ public class Connection implements IConnection{
         @Override
         public void presenceChanged(Presence presence) {
             Presence prec = presence;
-            Log.d("Prescense changed" + presence.getFrom()+ " "+presence, "");
+            Log.d("Presence changed" + presence.getFrom()+ " "+presence, "");
         }
     };
 
