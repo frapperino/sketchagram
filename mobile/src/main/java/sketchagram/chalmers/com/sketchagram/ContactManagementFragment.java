@@ -102,8 +102,12 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         contactList = MyApplication.getInstance().getUser().getContactList();
+        List<String> nameList = new ArrayList<>();
+        for(Contact c: contactList) {
+            nameList.add(c.getUsername());
+        }
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new AlphabeticalAdapter(getActivity(), R.layout.fragment_contact_management, contactList);
+        mAdapter = new AlphabeticalAdapter(getActivity(), R.layout.fragment_contact_management, nameList);
         //new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
         MyApplication.getInstance().getUser().addObserver(this);
     }
@@ -124,7 +128,8 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(R.id.contact_management_list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
+        mListView.setFastScrollEnabled(true);
         registerForContextMenu(mListView);
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -190,19 +195,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         }
     }
 
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
-    }
-
     @Override
     public void update(Observable observable, Object data) {
         BaseAdapter adapter = (BaseAdapter)mAdapter;
@@ -243,19 +235,17 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     /**
      * Adapter used for sorting in alphabetical order.
      */
-    private class AlphabeticalAdapter extends ArrayAdapter<Contact> implements SectionIndexer {
+    private class AlphabeticalAdapter extends ArrayAdapter implements SectionIndexer {
         private HashMap<String, Integer> alphaIndexer;
         private String[] sections;
         private LayoutInflater inflater;
-        private List<Contact> contactList;
 
-        public AlphabeticalAdapter(Context context, int resource, List<Contact> data) {
+        public AlphabeticalAdapter(Context context, int resource, List<String> data) {
             super(context, resource, data);
-            contactList = data;
             inflater = LayoutInflater.from(context);
             alphaIndexer = new HashMap<String, Integer>();
             for (int i = 0; i < data.size(); i++) {
-                String s = data.get(i).getUsername().substring(0, 1).toUpperCase();
+                String s = data.get(i).substring(0, 1).toUpperCase();
                 if (!alphaIndexer.containsKey(s))
                     alphaIndexer.put(s, i);
             }
@@ -280,7 +270,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             return sections;
         }
 
-        @Override
+        /*@Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Contact contact = contactList.get(position);
             if(convertView == null) {
@@ -336,6 +326,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             bitmap.recycle();
 
             return output;
-        }
+        }*/
     }
 }
