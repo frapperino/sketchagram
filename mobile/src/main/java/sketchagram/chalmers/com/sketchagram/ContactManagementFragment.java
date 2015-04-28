@@ -107,9 +107,17 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         mListView.setFastScrollEnabled(true);
         registerForContextMenu(mListView);
 
+        //TODO: Setup proper colors to match the rest of application.
+        final int PURPLE = Color.parseColor("#9C27B0");
+        final int PURPLE_DARK = Color.parseColor("#673AB7");
+        final int PURPLE_HANDLE = Color.parseColor("#8E24AA");
+
         //Initialize quickscroll
         final QuickScroll quickscroll = (QuickScroll) view.findViewById(R.id.quickscroll);
-        quickscroll.init(QuickScroll.TYPE_INDICATOR, (ListView)mListView, (AlphabeticalAdapter)mAdapter, QuickScroll.STYLE_HOLO);
+        quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, (ListView)mListView, (AlphabeticalAdapter)mAdapter, QuickScroll.STYLE_HOLO);
+        quickscroll.setIndicatorColor(PURPLE, PURPLE_DARK, Color.WHITE);
+        quickscroll.setHandlebarColor(PURPLE, PURPLE, PURPLE_HANDLE);
+        quickscroll.setFixedSize(2);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);

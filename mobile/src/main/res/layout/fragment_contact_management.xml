@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="sketchagram.chalmers.com.sketchagram.ContactManagementFragment">
 
-    <ListView
+    <ExpandableListView
         android:id="@+id/contact_management_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -29,6 +29,7 @@
         android:onClick="addContact"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 </RelativeLayout>
