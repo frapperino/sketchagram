@@ -101,6 +101,10 @@ public class Connection implements IConnection{
             StrictMode.setThreadPolicy(policy);
         }
         SASLAuthentication.supportSASLMechanism("PLAIN", 0);
+
+        connect();
+        Roster roster = connection.getRoster();
+        roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
         connection.addPacketListener(requestListener, new PacketFilter() {
             @Override
             public boolean accept(Packet packet) {
@@ -122,9 +126,6 @@ public class Connection implements IConnection{
         getChatManager().addChatListener(chatManagerListener);
 
         getRoster().addRosterListener(rosterListener);
-        connect();
-        Roster roster = connection.getRoster();
-        roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//TODO: change to manual accept
 
     }
 
@@ -311,7 +312,7 @@ public class Connection implements IConnection{
             String name = current.getUser().split("@")[0];
             switch (current.getType()){
                 case none:
-                    MyApplication.getInstance().getUser().removeContact(new Contact(name, new Profile()));
+                    UserManager.getInstance().removeContact(new Contact(name, new Profile()));
                     break;
                 case from:
                     List<Contact> contacts = MyApplication.getInstance().getDatabase().getAllContacts();
@@ -322,7 +323,7 @@ public class Connection implements IConnection{
                         }
                     }
                     if(!exists) {
-                        MyApplication.getInstance().getUser().addContact(name);
+                        UserManager.getInstance().addContact(name);
                     } else {
                         addContact(name);
                     }

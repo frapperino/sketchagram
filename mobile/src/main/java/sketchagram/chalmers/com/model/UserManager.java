@@ -61,7 +61,7 @@ public class UserManager implements IUserManager {
                 }
             }
             user = new User(username, new Profile());
-
+            Connection.getInstance().updateUsers();
             return true;
         }
         return false;
