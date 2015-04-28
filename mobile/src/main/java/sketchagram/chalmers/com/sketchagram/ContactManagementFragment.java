@@ -21,12 +21,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.SectionIndexer;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +37,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import quickscroll.QuickScroll;
+import quickscroll.Scrollable;
 import sketchagram.chalmers.com.model.Contact;
 
 /**
@@ -52,14 +52,7 @@ import sketchagram.chalmers.com.model.Contact;
  */
 public class ContactManagementFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private List<Contact> contactList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,18 +67,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
      */
     private ListAdapter mAdapter;
 
-    private List<Contact> contactList;
-
-    // TODO: Rename and change types of parameters
-    public static ContactManagementFragment newInstance(String param1, String param2) {
-        ContactManagementFragment fragment = new ContactManagementFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -97,18 +78,11 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        //TODO: Replace with UserManager after merge.
         contactList = MyApplication.getInstance().getUser().getContactList();
-        List<String> nameList = new ArrayList<>();
-        for(Contact c: contactList) {
-            nameList.add(c.getUsername());
-        }
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new AlphabeticalAdapter(getActivity(), R.layout.fragment_contact_management_list_item, nameList);
+        mAdapter = new AlphabeticalAdapter(getActivity(), contactList);
         //new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
         MyApplication.getInstance().getUser().addObserver(this);
     }
@@ -132,6 +106,10 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         mListView.setAdapter(mAdapter);
         mListView.setFastScrollEnabled(true);
         registerForContextMenu(mListView);
+
+        //Initialize quickscroll
+        final QuickScroll quickscroll = (QuickScroll) view.findViewById(R.id.quickscroll);
+        quickscroll.init(QuickScroll.TYPE_INDICATOR, (ListView)mListView, (AlphabeticalAdapter)mAdapter, QuickScroll.STYLE_HOLO);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -236,17 +214,18 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     /**
      * Adapter used for sorting in alphabetical order.
      */
-    private class AlphabeticalAdapter extends ArrayAdapter implements SectionIndexer {
+    private class AlphabeticalAdapter extends BaseAdapter implements Scrollable {
         private HashMap<String, Integer> alphaIndexer;
         private String[] sections;
         private LayoutInflater inflater;
+        private List<Contact> allContacts;
 
-        public AlphabeticalAdapter(Context context, int resource, List<String> data) {
-            super(context, resource, data);
+        public AlphabeticalAdapter(Context context, List<Contact> contactList) {
+            this.allContacts = contactList;
             inflater = LayoutInflater.from(context);
             alphaIndexer = new HashMap<String, Integer>();
-            for (int i = 0; i < data.size(); i++) {
-                String s = data.get(i).substring(0, 1).toUpperCase();
+            for (int i = 0; i < contactList.size(); i++) {
+                String s = contactList.get(i).getUsername().substring(0, 1).toUpperCase();
                 if (!alphaIndexer.containsKey(s))
                     alphaIndexer.put(s, i);
             }
@@ -259,18 +238,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
                 sections[i] = sectionList.get(i);
         }
 
-        public int getPositionForSection(int section) {
-            return alphaIndexer.get(sections[section]);
-        }
-
-        public int getSectionForPosition(int position) {
-            return 1;
-        }
-
-        public Object[] getSections() {
-            return sections;
-        }
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Contact contact = contactList.get(position);
@@ -280,6 +247,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
                 convertView.setTag(R.id.contact_name, convertView.findViewById(R.id.contact_name));
                 convertView.setTag(R.id.status_image, convertView.findViewById(R.id.status_image));
             }
+
             ImageView roundedImage = (ImageView)convertView.getTag(R.id.rounded_contact_image);
             TextView contactName = (TextView)convertView.getTag(R.id.contact_name);
             ImageView statusImage = (ImageView)convertView.getTag(R.id.status_image);
@@ -327,6 +295,31 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             bitmap.recycle();
 
             return output;
+        }
+
+        @Override
+        public int getCount() {
+            return allContacts.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return allContacts.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public String getIndicatorForPosition(int childposition, int groupposition) {
+            return Character.toString(contactList.get(childposition).getUsername().charAt(0)).toUpperCase();
+        }
+
+        @Override
+        public int getScrollPosition(int childposition, int groupposition) {
+            return childposition;
         }
     }
 }
