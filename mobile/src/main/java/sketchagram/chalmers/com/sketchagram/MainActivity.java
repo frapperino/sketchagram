@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -130,58 +131,6 @@ public class MainActivity extends ActionBarActivity
         displayFragment(drawingFragment);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
-            MainActivity.this.startActivity(myIntent);
-        } else if (id == R.id.action_about) {
-            final Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.about_dialog);
-            dialog.setTitle("About");
-            ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }else if (id == R.id.action_change_password) {
-            changePassword();
-        } else if (id == R.id.action_logout) {
-            //Delete saved user
-            SharedPreferences pref = getSharedPreferences(FILENAME, 0);
-            SharedPreferences.Editor prefs = pref.edit();
-            prefs.clear();
-            prefs.apply();
-            userManager.logout();
-            MyApplication.getInstance().getDatabase().update();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } else if (id == R.id.action_new_message) {
-            showContactSendFragment();
-        } else if (id == android.R.id.home) {
-            //Open or close navigation drawer on ActionBar click.
-            mDrawerLayout.closeDrawers();
-        } else {
-            throw new UnsupportedOperationException("Menu item selected not supported!");
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public void showContactSendFragment() {
         displayFragment(contactSendFragment);
     }
@@ -227,6 +176,34 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 1:
                 fragment = contactManagementFragment;
+                break;
+            case 2:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case 3:
+                final Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.about_dialog);
+                dialog.setTitle("About");
+                ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+                break;
+            case 4:
+                SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+                SharedPreferences.Editor prefs = pref.edit();
+                prefs.clear();
+                prefs.apply();
+                userManager.logout();
+                MyApplication.getInstance().getDatabase().update();
+                Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent2);
+                finish();
                 break;
             default:
                 throw new IllegalStateException("Illegal option chosen in NavigationDrawer!");
