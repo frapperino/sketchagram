@@ -388,17 +388,15 @@ public class MainActivity extends ActionBarActivity
         if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) { //From contact-activity
             ContactSync cs = new ContactSync(userManager.getAllContacts());
             sendToWatch(BTCommType.GET_CONTACTS.toString(), cs.putToDataMap(dataMap).toByteArray());
+
         } else if(messageEvent.getPath().equals(BTCommType.SEND_TO_CONTACT.toString())) { //From clock emoji-message
             ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            for(Contact c : cs.getContacts()) {
-                List<Contact> ls = new ArrayList<>();
-                ls.add(c);
+            userManager.sendMessage(cs.getContacts(), "Emoticon from wear");
 
-                userManager.sendMessage(ls, "Emoticon from wear");
-            }
         } else if(messageEvent.getPath().equals(BTCommType.GET_USERNAME.toString())) { //From MainActivity in clock
             dataMap.putString("username", userManager.getUsername());
             sendToWatch(BTCommType.GET_USERNAME.toString(), dataMap.toByteArray());
+
         } else if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) { // From ConversationViewActivity
             String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
             Contact contact = null;
