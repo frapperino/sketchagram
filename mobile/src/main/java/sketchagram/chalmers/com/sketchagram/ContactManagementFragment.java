@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -211,6 +212,24 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setBackgroundResource(0);
+
+        actionBarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
     }
 
     private ActionBar getActionBar() {

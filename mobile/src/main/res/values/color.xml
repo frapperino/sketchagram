@@ -8,10 +8,10 @@
     <color name="counter_text_color">#c5c4c4</color>
     <color name="grey">#e0e0e0</color>
     <color name="light_blue">#5589B8BA</color>
-    <color name="sketchagramPrimary">#43a047</color>
-    <color name="sketchagramPrimary2">#2e7d32</color>
+    <color name="sketchagramPrimary">#673AB7</color>
+    <color name="sketchagramPrimary2">#512DA8</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="sketchagramSecondary">#34787b</color>
-    <color name="sketchagramSecondary2">#1d6265</color>
+    <color name="sketchagramSecondary">#1E71A2</color>
+    <color name="sketchagramSecondary2">#095A8A</color>
 </resources>

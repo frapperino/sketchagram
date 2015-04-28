@@ -1,9 +1,11 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -79,6 +81,7 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
 
+
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
     }
@@ -89,11 +92,8 @@ public class NavigationDrawerFragment extends Fragment {
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
-    @Override
-    public void onPrepareOptionsMenu(Menu menu){
-        MenuItem settingsItem = menu.findItem(R.id.action_settings);
-        settingsItem.setVisible(false);
-    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -131,6 +131,7 @@ public class NavigationDrawerFragment extends Fragment {
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setUp(int fragmentId, DrawerLayout drawerLayout) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
@@ -159,16 +160,16 @@ public class NavigationDrawerFragment extends Fragment {
         ) {
             @Override
             public void onDrawerClosed(View drawerView) {
-                /*super.onDrawerClosed(drawerView);
+                super.onDrawerClosed(drawerView);
                 if (!isAdded()) {
                     return;
                 }
                 getActivity().invalidateOptionsMenu();
-            */}
+            }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                /*super.onDrawerOpened(drawerView);
+                super.onDrawerOpened(drawerView);
                 if (!isAdded()) {
                     return;
                 }
@@ -181,7 +182,7 @@ public class NavigationDrawerFragment extends Fragment {
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-            */}
+            }
         };
 
         // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
@@ -241,16 +242,6 @@ public class NavigationDrawerFragment extends Fragment {
         super.onConfigurationChanged(newConfig);
         // Forward the new configuration the drawer toggle component.
         mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen()) {
-            inflater.inflate(R.menu.global, menu);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
