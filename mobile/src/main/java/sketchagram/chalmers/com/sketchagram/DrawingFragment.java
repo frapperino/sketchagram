@@ -18,8 +18,10 @@ import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.UserManager;
 
 
 /**
@@ -34,14 +36,14 @@ public class DrawingFragment extends Fragment implements Observer {
 
     private DrawingView drawView;
 
-    private List<ADigitalPerson> receivers;
+    private List<Contact> receivers;
     private Drawing drawing = null;
 
     public DrawingFragment() {
         //android requires empty constructor
     }
 
-    public static DrawingFragment newInstance(List<ADigitalPerson> receivers){
+    public static DrawingFragment newInstance(List<Contact> receivers){
         DrawingFragment fragment = new DrawingFragment();
         fragment.receivers = receivers;
         return fragment;
@@ -93,8 +95,8 @@ public class DrawingFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), MyApplication.getInstance().getUser(), receivers, (Drawing)data, MessageType.DRAWING);
-        MyApplication.getInstance().getUser().addMessage(message, true);
+        Drawing drawing = (Drawing)data;
+        UserManager.getInstance().sendMessage(receivers, drawing);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();

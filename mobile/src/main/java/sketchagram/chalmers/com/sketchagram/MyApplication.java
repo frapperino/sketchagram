@@ -13,6 +13,7 @@ import com.google.android.gms.internal.ge;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.network.NetworkException;
 import sketchagram.chalmers.com.network.NetworkService;
@@ -38,14 +39,14 @@ public class MyApplication extends Application {
         context = getApplicationContext();
         ourInstance = this;
         startNetworkService();
-        if(Connection.isLoggedIn() && firstStart){
+        if(Connection.isLoggedIn() && firstStart){  //TODO: Move logic into model.
             Connection.getInstance().logout();
         }
         firstStart = false;
         String userName = ourInstance.getSharedPreferences().getString("username", null);
         String password = ourInstance.getSharedPreferences().getString("password", null);
         if(userName != null && password != null) {
-            ourInstance.login(userName, password);
+            UserManager.getInstance().login(userName, password);
         }
         // Initialize the singletons so their instances
         // are bound to the application process.
@@ -78,46 +79,7 @@ public class MyApplication extends Application {
         return db;
     }
 
-    public void customAppMethod()
-    {
-        // Custom application method
-    }
-
     public static Context getContext(){
         return context;
-    }
-
-    public boolean login(String userName, String password) {
-        if(Connection.getInstance().login(userName,password)){
-            for ( Contact user : Connection.getInstance().getContacts()){
-                boolean exists = false;
-                for(Contact contact : MyApplication.getInstance().getDatabase().getAllContacts()){
-                    if(contact.getUsername().equals(user.getUsername())){
-                        exists = true;
-                        break;
-                    }
-                }
-                if(!exists) {
-                    MyApplication.getInstance().getDatabase().insertContact(user);
-                }
-            }
-            user = new User(userName, new Profile());
-            Connection.getInstance().updateUsers();
-
-            return true;
-        }
-        return false;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void createAccount(String userName, String password) throws NetworkException.UsernameAlreadyTakenException {
-        Connection.getInstance().createAccount(userName, password);
-    }
-
-    public void logout(){
-        Connection.getInstance().logout();
     }
 }

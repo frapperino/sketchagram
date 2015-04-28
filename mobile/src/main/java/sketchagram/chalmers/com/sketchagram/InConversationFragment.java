@@ -16,6 +16,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.UserManager;
 
 
 /**
@@ -67,7 +68,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         Bundle bundle = getArguments();
         if(bundle != null) {
             conversationId = bundle.getInt(PARAM1);
-            conversation = MyApplication.getInstance().getUser().getConversation(conversationId);
+            conversation = UserManager.getInstance().getConversation(conversationId);
             mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
         }
     }

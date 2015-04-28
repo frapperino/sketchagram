@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * A fragment representing a list of Items.
@@ -58,13 +60,13 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         super.onCreate(savedInstanceState);
 
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactSendListAdapter(getActivity(), MyApplication.getInstance().getUser().getContactList());
+        mAdapter = new ContactSendListAdapter(getActivity(), UserManager.getInstance().getAllContacts());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Collections.sort(MyApplication.getInstance().getUser().getContactList());
+        Collections.sort(UserManager.getInstance().getAllContacts());
         View view = inflater.inflate(R.layout.fragment_contact_send_list, container, false);
 
         // Set the adapter
@@ -98,8 +100,8 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("ListButtonPress", "button pressed" + id);
         if (null != mListener) {
-            List<ADigitalPerson> receiverList = new ArrayList<>();
-            receiverList.add(MyApplication.getInstance().getUser().getContactList().get(position));
+            List<Contact> receiverList = new ArrayList<>();
+            receiverList.add(UserManager.getInstance().getAllContacts().get(position));
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
                     .addToBackStack(null).commit();
@@ -125,7 +127,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
 
     public void updateList(){
         if(mAdapter != null) {
-            Collections.sort(MyApplication.getInstance().getUser().getContactList());
+            Collections.sort(UserManager.getInstance().getAllContacts());
             BaseAdapter adapter = (BaseAdapter) mAdapter;
             adapter.notifyDataSetChanged();
         }

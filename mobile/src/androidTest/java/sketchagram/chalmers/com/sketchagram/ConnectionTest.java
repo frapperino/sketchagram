@@ -4,17 +4,17 @@ import android.test.AndroidTestCase;
 
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Profile;
-import sketchagram.chalmers.com.model.SystemUser;
 import sketchagram.chalmers.com.model.User;
 import sketchagram.chalmers.com.network.Connection;
 
 /**
  * Created by Olliver on 2015-03-11.
+ * @deprecated Connection is now a service, test needs to be redone.
  */
 public class ConnectionTest extends AndroidTestCase {
     protected void setUp() throws Exception {
         super.setUp();
-        SystemUser.initInstance();
+        //MyApplication
     }
 
     public void chatTest(){
