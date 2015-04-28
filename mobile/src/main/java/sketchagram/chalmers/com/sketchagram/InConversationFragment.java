@@ -2,6 +2,7 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -10,10 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
@@ -69,7 +76,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
-        if(bundle != null) {
+        if (bundle != null) {
             conversationId = bundle.getInt(PARAM1);
             conversation = UserManager.getInstance().getConversation(conversationId);
             mAdapter = new InConversationListAdapter(getActivity(), conversation.getHistory());
@@ -115,9 +122,9 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             ClientMessage message = conversation.getHistory().get(position);
-            if(message.getType() == MessageType.DRAWING){
+            if (message.getType() == MessageType.DRAWING) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance((Drawing)message.getContent()))
+                fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance((Drawing) message.getContent()))
                         .addToBackStack(null).commit();
             }
         }
@@ -127,8 +134,8 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
      * Update list graphically when model has changed.
      */
     public void updateList() {
-        if(mAdapter != null) {
-            ((BaseAdapter)mAdapter).notifyDataSetChanged();
+        if (mAdapter != null) {
+            ((BaseAdapter) mAdapter).notifyDataSetChanged();
         }
     }
 
@@ -146,13 +153,15 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         // TODO: Update argument type and name
         public void onFragmentInteraction(int conversationId);
     }
+
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
         actionBarIcon1.setBackgroundResource(R.drawable.ic_action_back);
+        actionBarIcon1.setBackgroundColor(R.drawable.gradient);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText(conversation.getParticipants().get(0).getUsername().toString());
-        actionBarTitle.setPadding(25,0,0,0);
+        actionBarTitle.setPadding(25, 0, 0, 0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setBackgroundResource(0);
 
@@ -175,7 +184,66 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         });
 
     }
+
     private android.support.v7.app.ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
+
+    //---------------------------ADAPTER---------------------------------
+
+    public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
+        private Context context;
+        private List<ClientMessage> messages;
+        private final int IMAGE_SIZE = 400;
+
+        public InConversationListAdapter(Context context, List<ClientMessage> items) {
+            super(context, android.R.layout.simple_list_item_1, items);
+            this.messages = items;
+            this.context = context;
+        }
+
+        /**
+         * Holder for the list items.
+         */
+        private class ViewHolder {
+            TextView titleText;
+            ImageView drawing;
+        }
+
+        /**
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return
+         */
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            ClientMessage item = (ClientMessage) getItem(position);
+            View viewToUse;
+            // This block exists to inflate the settings list item conditionally based on whether
+            // we want to support a grid or list view.
+            LayoutInflater mInflater = (LayoutInflater) context
+                    .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null) {
+                viewToUse = mInflater.inflate(R.layout.inconversation_list_item, null);
+                holder = new ViewHolder();
+                holder.titleText = (TextView) viewToUse.findViewById(R.id.titleTextView);
+                holder.drawing = (ImageView) viewToUse.findViewById(R.id.drawingToShow);
+                viewToUse.setTag(holder);
+            } else {
+                viewToUse = convertView;
+                holder = (ViewHolder) viewToUse.getTag();
+            }
+            holder.titleText.setText(item.toString());
+            if (item.getSender().getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+                Date resultDate = new Date(item.getTimestamp());
+                holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());
+                //TODO check if it is a drawer or a smiley
+                holder.drawing.setImageBitmap(((Drawing) item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            }
+            item.setRead(true); //Mark message as read.
+            return viewToUse;
+        }
     }
 }

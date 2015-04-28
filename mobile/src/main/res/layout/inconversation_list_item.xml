@@ -16,6 +16,12 @@
             android:text="Large Text"
             android:id="@+id/titleTextView"
             android:layout_gravity="center" />
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/drawingToShow"
+            android:background="@drawable/conversation_item_layout"
+            android:layout_marginTop="50dp" />
     </FrameLayout>
 
 </LinearLayout>
