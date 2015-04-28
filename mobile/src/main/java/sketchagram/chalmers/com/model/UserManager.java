@@ -12,7 +12,7 @@ import sketchagram.chalmers.com.sketchagram.MyApplication;
  * Singleton class to make sure there can't be simultaneous instances handling requests.
  * Created by Alexander on 2015-04-23.
  */
-public class UserManager implements IUserManager {
+public class UserManager implements IUserManager  {
     private User user;
     private static UserManager myInstance;
 
@@ -21,6 +21,11 @@ public class UserManager implements IUserManager {
             myInstance = new UserManager();
         }
         return myInstance;
+    }
+
+    private UserManager(){
+        super();
+
     }
 
     @Override
@@ -123,6 +128,13 @@ public class UserManager implements IUserManager {
     @Override
     public boolean removeContact(Contact contact) {
         return user.removeContact(contact);
+    }
+
+    @Override
+    public void updateStatuses() {
+        if(user != null) {
+            user.updateStatuses();
+        }
     }
 
     private void checkUserLoggedIn() {

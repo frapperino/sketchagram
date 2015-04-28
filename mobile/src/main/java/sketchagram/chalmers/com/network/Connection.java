@@ -575,7 +575,7 @@ public class Connection implements IConnection{
 
         @Override
         public void presenceChanged(Presence presence) {
-            Presence prec = presence;
+            UserManager.getInstance().updateStatuses();
             Log.d("Presence changed" + presence.getFrom()+ " "+presence, "");
         }
     };

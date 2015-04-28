@@ -70,6 +70,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
+                loadAdapter();
 
             }
         });
@@ -90,7 +91,6 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
         receivers = new ContactSync();
         messagePhone(BTCommType.GET_CONTACTS.toString(), null);     //sends a message to phone asking for contacts
-        loadAdapter();
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
