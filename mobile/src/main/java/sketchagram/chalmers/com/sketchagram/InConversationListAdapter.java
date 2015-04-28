@@ -59,7 +59,7 @@ public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
             holder = (ViewHolder) viewToUse.getTag();
         }
         holder.titleText.setText(item.toString());
-        if (item.getSender().getUsername().equals(UserManager.getInstance().getUsername())) {
+        if (item.getSender().getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
             Date resultDate = new Date(item.getTimestamp());
             holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());
