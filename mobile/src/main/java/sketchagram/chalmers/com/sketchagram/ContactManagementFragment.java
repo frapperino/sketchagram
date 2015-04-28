@@ -106,8 +106,9 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         for(Contact c: contactList) {
             nameList.add(c.getUsername());
         }
+
         // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new AlphabeticalAdapter(getActivity(), R.layout.fragment_contact_management, nameList);
+        mAdapter = new AlphabeticalAdapter(getActivity(), R.layout.fragment_contact_management_list_item, nameList);
         //new ArrayAdapter<Contact>(getActivity(), android.R.layout.simple_list_item_1, contactList);
         MyApplication.getInstance().getUser().addObserver(this);
     }
@@ -127,7 +128,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         View view = inflater.inflate(R.layout.fragment_contact_management, container, false);
 
         // Set the adapter
-        mListView = (AbsListView) view.findViewById(R.id.contact_management_list);
+        mListView = (AbsListView) view.findViewById(R.id.contact_management_list_view);
         mListView.setAdapter(mAdapter);
         mListView.setFastScrollEnabled(true);
         registerForContextMenu(mListView);
@@ -141,7 +142,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId()==R.id.contact_management_list) {
+        if (v.getId()==R.id.contact_management_list_view) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             menu.setHeaderTitle(contactList.get(info.position).getUsername());
             String[] menuItems = getResources().getStringArray(R.array.contact_menu_items);
@@ -270,7 +271,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             return sections;
         }
 
-        /*@Override
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Contact contact = contactList.get(position);
             if(convertView == null) {
@@ -281,7 +282,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             }
             ImageView roundedImage = (ImageView)convertView.getTag(R.id.rounded_contact_image);
             TextView contactName = (TextView)convertView.getTag(R.id.contact_name);
-            Button statusImage = (Button)convertView.getTag(R.id.status_image);
+            ImageView statusImage = (ImageView)convertView.getTag(R.id.status_image);
 
             contactName.setText(contact.getUsername());
 
@@ -326,6 +327,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             bitmap.recycle();
 
             return output;
-        }*/
+        }
     }
 }

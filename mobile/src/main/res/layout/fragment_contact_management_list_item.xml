@@ -18,14 +18,13 @@
             android:layout_marginRight="10dp"
             android:cropToPadding="false"/>
 
-        <Button
+        <ImageView
             android:id="@+id/status_image"
             android:layout_height="10dp"
             android:layout_width="10dp"
             android:background="@color/black"
             android:layout_gravity="bottom|end"
-            android:layout_margin="10dp"
-            android:elevation="4dp"/>
+            android:layout_margin="10dp"/>
     </FrameLayout>
 
     <TextView
