@@ -173,6 +173,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                         items.add(new Item(c.toString(),
                                 history.get(history.size()-1).dateToShow(), null));
                     }
+                    if(c.hasUnreadMessages()){
+                        //TODO 
+                    }
                 }
             }
         }

@@ -227,7 +227,7 @@ public class MainActivity extends ActionBarActivity
                 SharedPreferences.Editor prefs = pref.edit();
                 prefs.clear();
                 prefs.apply();
-                MyApplication.getInstance().logout();
+                userManager.logout();
                 MyApplication.getInstance().getDatabase().update();
                 Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent2);
