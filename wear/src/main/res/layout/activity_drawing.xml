@@ -28,7 +28,7 @@
         android:src="@drawable/ic_back"
         android:clickable="true"
         android:onClick="backPressed"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
