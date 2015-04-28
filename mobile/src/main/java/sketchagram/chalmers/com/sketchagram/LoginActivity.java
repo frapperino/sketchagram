@@ -33,7 +33,7 @@ import sketchagram.chalmers.com.network.NetworkException;
  * https://developers.google.com/+/mobile/android/getting-started#step_1_enable_the_google_api
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
-public class LoginActivity extends Activity implements RegistrationFragment.OnFragmentInteractionListener, LoginFragment.OnFragmentInteractionListener {
+public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener {
     private final String FILENAME = "user";
     private final long LOCKOUT_TIME_IN_MILI = 300000;    //5 minutes.
     private final int ATTEMPTS_ALLOWED = 5;

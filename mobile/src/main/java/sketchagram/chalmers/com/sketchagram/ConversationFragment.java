@@ -1,23 +1,32 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -85,6 +94,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         // Set OnItemClickListener so we can be notified on item clicks
         gridView.setOnItemClickListener(this);
+        showGlobalContextActionBar();
 
         return view;
     }
@@ -163,6 +173,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                         items.add(new Item(c.toString(),
                                 history.get(history.size()-1).dateToShow(), null));
                     }
+                    if(c.hasUnreadMessages()){
+                        //TODO 
+                    }
                 }
             }
         }
@@ -223,5 +236,28 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 this.drawing = drawing;
             }
         }
+    }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void showGlobalContextActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setBackgroundResource(0);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("Conversations");
+        actionBarTitle.setPadding(0,0,0,0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setBackgroundResource(R.drawable.ic_action_cc_bcc);
+
+        actionBarIcon2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ContactManagementFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+    }
+    private android.support.v7.app.ActionBar getActionBar() {
+        return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 }
