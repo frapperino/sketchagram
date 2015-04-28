@@ -33,6 +33,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * A fragment representing a list of Items.
@@ -70,7 +71,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        conversationList = MyApplication.getInstance().getUser().getConversationList();
+        conversationList = UserManager.getInstance().getAllConversations();
         mAdapter = new MyAdapter(getActivity(), conversationList);
     }
 
@@ -122,7 +123,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
      */
     public void updateList() {
         BaseAdapter adapter = (BaseAdapter)mAdapter;
-        adapter.notifyDataSetChanged();
+        if(adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     /**

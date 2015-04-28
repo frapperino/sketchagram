@@ -69,15 +69,11 @@ public class ConversationListActivity extends Activity implements WearableListVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listview_stub);
 
-
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                conversations = new ArrayList<String>();
-                messagePhone(BTCommType.GET_CONTACTS.toString(), null);
-                loadAdapter();
 
             }
         });
@@ -96,6 +92,9 @@ public class ConversationListActivity extends Activity implements WearableListVi
                 .build();
         mGoogleApiClient.connect();
 
+        conversations = new ArrayList<String>();
+        messagePhone(BTCommType.GET_CONTACTS.toString(), null);
+        loadAdapter();
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
@@ -104,7 +103,6 @@ public class ConversationListActivity extends Activity implements WearableListVi
     }
 
     private void loadAdapter(){
-        Log.e("ADAPTER", conversations.toString());
         mAdapter = new MyListAdapter(this, conversations);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(ConversationListActivity.this);
