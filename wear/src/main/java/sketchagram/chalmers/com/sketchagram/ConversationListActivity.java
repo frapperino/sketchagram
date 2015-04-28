@@ -95,6 +95,10 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
         conversations = new ArrayList<String>();
         messagePhone(BTCommType.GET_CONTACTS.toString(), null);
+<<<<<<< HEAD
+=======
+
+>>>>>>> Dev
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();

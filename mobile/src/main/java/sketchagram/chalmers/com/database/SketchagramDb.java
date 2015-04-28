@@ -79,7 +79,7 @@ public class SketchagramDb {
 
     public boolean updateContact (Contact contact )
     {
-        deleteContact(contact);
+        int i = deleteContact(contact);
         insertContact(contact);
         return true;
     }
