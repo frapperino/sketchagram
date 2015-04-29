@@ -4,10 +4,10 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:id="@android:id/text1"
-    android:textColor="#000000"
+    android:textColor="@drawable/drawer_text_selection_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/nav_drawer_text_layout"
+    android:background="@drawable/drawer_list_selector"
     android:textAppearance="?android:attr/textAppearanceListItemSmall"
     android:gravity="center_vertical"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
