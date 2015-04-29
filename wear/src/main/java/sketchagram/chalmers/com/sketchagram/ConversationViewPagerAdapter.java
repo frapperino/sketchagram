@@ -135,7 +135,7 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
         }
 
         public int getColumnCount() {
-            return columns.size();
+            return 1;
         }
     }
 
