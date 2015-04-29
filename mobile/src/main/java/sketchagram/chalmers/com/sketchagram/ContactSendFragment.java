@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -125,12 +127,43 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         public void onFragmentInteraction(String id);
     }
 
-    public void updateList(){
-        if(mAdapter != null) {
+    public void updateList() {
+        if (mAdapter != null) {
             Collections.sort(UserManager.getInstance().getAllContacts());
             BaseAdapter adapter = (BaseAdapter) mAdapter;
             adapter.notifyDataSetChanged();
         }
     }
 
+    private void showGlobalContextActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_back);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("Select receiver");
+        actionBarTitle.setPadding(25, 0, 0, 0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setImageResource(0);
+
+        actionBarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+    }
+    private android.support.v7.app.ActionBar getActionBar() {
+        return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
 }

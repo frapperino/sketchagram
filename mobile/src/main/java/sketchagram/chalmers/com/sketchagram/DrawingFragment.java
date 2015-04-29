@@ -6,11 +6,14 @@ import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Observable;
@@ -73,6 +76,7 @@ public class DrawingFragment extends Fragment implements Observer {
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
         }
+        showGlobalContextActionBar();
         return view;
     }
 
@@ -115,5 +119,45 @@ public class DrawingFragment extends Fragment implements Observer {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+    private void showGlobalContextActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_back);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("To: " + receivers.get(0).getUsername().toString());
+        actionBarTitle.setPadding(25, 0, 0, 0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setImageResource(R.drawable.ic_action_cancel);
+
+        actionBarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ContactSendFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ContactSendFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+    }
+    private android.support.v7.app.ActionBar getActionBar() {
+        return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 }

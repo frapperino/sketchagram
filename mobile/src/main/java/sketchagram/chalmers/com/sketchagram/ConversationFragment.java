@@ -241,12 +241,12 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setBackgroundResource(0);
+        actionBarIcon1.setImageResource(0);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Conversations");
         actionBarTitle.setPadding(0,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
-        actionBarIcon2.setBackgroundResource(R.drawable.ic_action_cc_bcc);
+        actionBarIcon2.setImageResource(R.drawable.ic_action_cc_bcc);
 
         actionBarIcon2.setOnClickListener(new View.OnClickListener() {
             @Override

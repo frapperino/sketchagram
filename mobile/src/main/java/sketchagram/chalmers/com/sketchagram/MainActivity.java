@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
         ContactManagementFragment.OnFragmentInteractionListener,
         AddContactFragment.OnFragmentInteractionListener,
+        ShowDrawingFragment.OnFragmentInteractionListener,
         DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks, Observer {
 
     private final String FILENAME = "user";

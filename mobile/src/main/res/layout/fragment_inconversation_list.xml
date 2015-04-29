@@ -11,4 +11,15 @@
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center" />
 
+    <!--TODO: ändra onClick-->
+    <ImageButton
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:id="@+id/imageButton"
+        android:background="@drawable/fab"
+        android:layout_gravity="bottom|right"
+        android:src="@drawable/ic_action_reply"
+        android:onClick="newMessage"
+        android:elevation="10dp"
+        android:layout_margin="16dp" />
 </FrameLayout>
