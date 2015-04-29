@@ -19,7 +19,7 @@
     android:background="@color/white" >
 
     <sketchagram.chalmers.com.sketchagram.DrawingView
-        android:id="@+id/drawing"
+        android:id="@+id/drawingview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="0dp"

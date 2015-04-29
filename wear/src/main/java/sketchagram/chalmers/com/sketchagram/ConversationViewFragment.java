@@ -40,7 +40,7 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
         final View view = inflater.inflate(R.layout.fragment_conversation, container, false);
         mImageView = (ImageView) view.findViewById(R.id.imageview);
         mImageView.setOnClickListener(this);
-        mDrawingView = (DrawingView) view.findViewById(R.id.drawing);
+        mDrawingView = (DrawingView) view.findViewById(R.id.drawingview);
         mDrawingView.addHelperObserver(this);
         mDrawingView.setTouchable(false);
         return view;
@@ -57,7 +57,6 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         if(mImageView.getVisibility() == View.INVISIBLE) {
             mImageView.setVisibility(View.VISIBLE);
-            mDrawingView.clearCanvas();
         } else if(mMessage instanceof Drawing){
             mImageView.setVisibility(View.INVISIBLE);
             mDrawingView.displayDrawing((Drawing) mMessage);
