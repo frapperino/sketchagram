@@ -138,11 +138,20 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        //TODO check if group or child. Group should not be clickable.
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId()==R.id.contact_management_list_view && ((ExpandableListView)v).getPackedPositionType(((ExpandableListView.ExpandableListContextMenuInfo)menuInfo).packedPosition) != ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-            menu.setHeaderTitle(contactList.get(info.position).getUsername());
+
+        ExpandableListView.ExpandableListContextMenuInfo info =
+                (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+
+        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+
+        int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+
+        int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+
+        // Only create a context menu for child items
+        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+            menu.setHeaderTitle(((Contact)mAdapter.getChild(group, child)).getUsername());
             String[] menuItems = getResources().getStringArray(R.array.contact_menu_items);
             for (int i = 0; i<menuItems.length; i++) {
                 menu.add(Menu.NONE, i, i, menuItems[i]);
@@ -168,8 +177,16 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-        Contact removedContact = contactList.get(info.position);
+        ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo)item.getMenuInfo();
+        int type =
+                ExpandableListView.getPackedPositionType(info.packedPosition);
+
+        int group =
+                ExpandableListView.getPackedPositionGroup(info.packedPosition);
+
+        int child =
+                ExpandableListView.getPackedPositionChild(info.packedPosition);
+        Contact removedContact = (Contact)mAdapter.getChild(group, child);
         String contactName = removedContact.getUsername();
         boolean success = MyApplication.getInstance().getUser().removeContact(removedContact);
         if(success) {
@@ -178,8 +195,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         } else {
             Toast.makeText(MyApplication.getContext(), contactName + " couldn't be removed.", Toast.LENGTH_SHORT).show();
         }
-        BaseAdapter adapter = (BaseAdapter)mAdapter;
-        adapter.notifyDataSetChanged();
+        this.update(null, null);
         return success;
     }
 
@@ -211,8 +227,10 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
     @Override
     public void update(Observable observable, Object data) {
-        BaseAdapter adapter = (BaseAdapter)mAdapter;
-        adapter.notifyDataSetChanged();
+        if(mAdapter != null) {
+            BaseExpandableListAdapter adapter = (BaseExpandableListAdapter)mAdapter;
+            adapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -231,23 +249,13 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     }
 
     public void updateList(){
-        if(mAdapter != null) {
-            Collections.sort(MyApplication.getInstance().getUser().getContactList(),new Comparator<Contact>() {
-                //Sort alphabetically
-
-                @Override
-                public int compare(Contact lhs, Contact rhs) {
-                    int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
-                    return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
-                }
-            });
-            BaseAdapter adapter = (BaseAdapter) mAdapter;
-            adapter.notifyDataSetChanged();
-        }
+        this.update(null, null);
     }
 
     /**
-     * Adapter used for sorting in alphabetical order.
+     * Adapter used for sorting in alphabetical order
+     * displaying information based upon groups and children.
+     * @author Alexander Harenstam
      */
     private class ExpandableAlphabeticalAdapter extends BaseExpandableListAdapter implements Scrollable {
         //TODO: Refactor logic to use map only and remove sections variable.
@@ -274,7 +282,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
                 }
                 Collections.sort(sections);
             }
-            Log.d("TEST", "TEST");
         }
 
         private Bitmap getCircleBitmap(Bitmap bitmap) {
