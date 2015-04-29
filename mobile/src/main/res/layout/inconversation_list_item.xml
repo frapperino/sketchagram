@@ -7,15 +7,17 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Large Text"
             android:id="@+id/titleTextView"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal" />
+
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -23,5 +25,4 @@
             android:background="@drawable/conversation_item_layout"
             android:layout_marginTop="50dp" />
     </FrameLayout>
-
 </LinearLayout>
