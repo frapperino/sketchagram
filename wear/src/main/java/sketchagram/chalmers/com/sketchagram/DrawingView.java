@@ -151,7 +151,11 @@ public class DrawingView extends View {
      * @param event
      */
     public boolean handleMotionEvent(DrawingEvent event) {
-        WindowManager wm = (WindowManager) findViewById(R.id.drawing).getContext().getSystemService(Context.WINDOW_SERVICE);
+        return handleSpecificMotionEvent(R.id.drawing, event);
+    }
+
+    public boolean handleSpecificMotionEvent(int resid, DrawingEvent event) {
+        WindowManager wm = (WindowManager) findViewById(resid).getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -224,7 +228,7 @@ public class DrawingView extends View {
 
         @Override
         public void run() {
-            handleMotionEvent(event);
+            handleSpecificMotionEvent(R.id.drawingview, event);
         }
     }
 
@@ -254,9 +258,7 @@ public class DrawingView extends View {
                 curr = events.get(i);
                 timeDeltaInMilli = ((curr.getTime() - first.getTime()) / 1000000);
                 handler.postDelayed(new EventRunnable(curr), timeDeltaInMilli);
-                publishProgress();
             }
-            Log.e("paintjob", "done");
             helper.notifyObservers();
             return null;
         }
@@ -308,6 +310,7 @@ public class DrawingView extends View {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Toast.makeText(getContext(), "Drawing sent.", Toast.LENGTH_SHORT).show();
                                         setChanged();
                                         drawing.setStaticDrawing(getCanvasBitmapAsByte());
                                         notifyObservers(drawing);
