@@ -86,7 +86,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     LruCache<Point, Drawable> mPageBackgrounds = new LruCache<Point, Drawable>(3) {
         @Override
         protected Drawable create(final Point page) {
-            // place bugdroid as the background at row 2, column 1
             if (page.y == 2 && page.x == 1) {
                 int resid = R.drawable.wl_circle;
                 new DrawableLoadingTask(mContext) {
@@ -105,16 +104,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
             return GridPagerAdapter.BACKGROUND_NONE;
         }
     };
-
-    private Fragment cardFragment(int titleRes, int textRes) {
-        Resources res = mContext.getResources();
-        CardFragment fragment =
-                CardFragment.create(res.getText(titleRes), res.getText(textRes));
-        // Add some extra bottom margin to leave room for the page indicator
-        fragment.setCardMarginBottom(
-                res.getDimensionPixelSize(R.dimen.card_margin_bottom));
-        return fragment;
-    }
 
     /** A convenient container for a row of fragments. */
     private class Row {
@@ -135,7 +124,7 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
         }
 
         public int getColumnCount() {
-            return columns.size();
+            return 1;
         }
     }
 
@@ -167,7 +156,7 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
 
     public void loadFragments(){
         int messageAmount = MessageHolder.getInstance().getDrawingsAmount();
-        for(int i = 0; i < messageAmount; i++) {
+        for(int i = messageAmount-1; i >= 0; i--) {
             ConversationViewFragment fragment = new ConversationViewFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("id", i);

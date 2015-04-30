@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -45,16 +46,17 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.network.Connection;
 
 
 public class MainActivity extends ActionBarActivity
         implements SendFragment.OnFragmentInteractionListener,
         ConversationFragment.OnFragmentInteractionListener,
-        InConversationFragment.OnFragmentInteractionListener, MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        InConversationFragment.OnFragmentInteractionListener,
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
         ContactManagementFragment.OnFragmentInteractionListener,
         AddContactFragment.OnFragmentInteractionListener,
@@ -72,16 +74,18 @@ public class MainActivity extends ActionBarActivity
     private FragmentManager fragmentManager;
     private Handler mHandler;
     private DataMap dataMap;
+    private IUserManager userManager;
 
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userManager = UserManager.getInstance();
 
         // Check if logged in, else start LoginActivity
         sendFragment = new SendFragment();
@@ -90,33 +94,7 @@ public class MainActivity extends ActionBarActivity
         contactManagementFragment = new ContactManagementFragment();
         drawingFragment = new DrawingFragment();
 
-        //  Needed for communication between watch and device.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle connectionHint) {
-                        Log.d(TAG, "onConnected: " + connectionHint);
-                        tellWatchConnectedState("connected");
-                        //  "onConnected: null" is normal.
-                        //  There's nothing in our bundle.
-                    }
 
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-                        Log.d(TAG, "onConnectionSuspended: " + cause);
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult result) {
-                        Log.d(TAG, "onConnectionFailed: " + result);
-                    }
-                })
-                .addApi(Wearable.API)
-                .build();
-
-        mGoogleApiClient.connect();
-        Wearable.MessageApi.addListener(mGoogleApiClient, this).setResultCallback(resultCallback);
         mHandler = new Handler(this);
 
         fragmentManager = getFragmentManager();
@@ -137,7 +115,7 @@ public class MainActivity extends ActionBarActivity
         dataMap = new DataMap();
 
         //Set observer
-        MyApplication.getInstance().getUser().addObserver(this);
+        userManager.addUserObserver(this);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -151,58 +129,6 @@ public class MainActivity extends ActionBarActivity
 
     public void startDrawingFragment(View v) {
         displayFragment(drawingFragment);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
-            MainActivity.this.startActivity(myIntent);
-        } else if (id == R.id.action_about) {
-            final Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.about_dialog);
-            dialog.setTitle("About");
-            ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }else if (id == R.id.action_change_password) {
-            changePassword();
-        } else if (id == R.id.action_logout) {
-            //Delete saved user
-            SharedPreferences pref = getSharedPreferences(FILENAME, 0);
-            SharedPreferences.Editor prefs = pref.edit();
-            prefs.clear();
-            prefs.apply();
-            MyApplication.getInstance().logout();
-            MyApplication.getInstance().getDatabase().update();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } else if (id == R.id.action_new_message) {
-            showContactSendFragment();
-        } else if (id == android.R.id.home) {
-            //Open or close navigation drawer on ActionBar click.
-            mDrawerLayout.closeDrawers();
-        } else {
-            throw new UnsupportedOperationException("Menu item selected not supported!");
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void showContactSendFragment() {
@@ -251,6 +177,34 @@ public class MainActivity extends ActionBarActivity
             case 1:
                 fragment = contactManagementFragment;
                 break;
+            case 2:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case 3:
+                final Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.about_dialog);
+                dialog.setTitle("About");
+                ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+                break;
+            case 4:
+                SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+                SharedPreferences.Editor prefs = pref.edit();
+                prefs.clear();
+                prefs.apply();
+                userManager.logout();
+                MyApplication.getInstance().getDatabase().update();
+                Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent2);
+                finish();
+                break;
             default:
                 throw new IllegalStateException("Illegal option chosen in NavigationDrawer!");
         }
@@ -294,8 +248,8 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString().toLowerCase();
-                if (MyApplication.getInstance().getUser().addContact(user)) {
+                String user = ((EditText) dialog.findViewById(R.id.user_name_dialog)).getText().toString();
+                if (userManager.addContact(user)) {
                     Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
@@ -311,219 +265,12 @@ public class MainActivity extends ActionBarActivity
         dialog.show();
     }
 
-    //Below code is for connecting and communicating with Wear
-    private void tellWatchConnectedState(final String state) {
-
-        new AsyncTask<Void, Void, List<Node>>() {
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for (Node node : nodeList) {
-                    Log.v(TAG, "telling " + node.getId() + " i am " + state);
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            " " + state,
-                            null
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.v(TAG, "Phone: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    private List<Node> getNodes() {
-        List<Node> nodes = new ArrayList<Node>();
-        NodeApi.GetConnectedNodesResult rawNodes =
-                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-        for (Node node : rawNodes.getNodes()) {
-            nodes.add(node);
-        }
-        return nodes;
-    }
-
-    /**
-     * Not needed, but here to show capabilities. This callback occurs after the MessageApi
-     * listener is added to the Google API Client.
-     */
-    private ResultCallback<Status> resultCallback = new ResultCallback<Status>() {
-        @Override
-        public void onResult(Status status) {
-            Log.v(TAG, "Status: " + status.getStatus().isSuccess());
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    //TODO put code here to do something when listener is added.
-                    return null;
-                }
-            }.execute();
-        }
-    };
-
-    /**
-     * Receives all messages from the wear device.
-     * @param messageEvent
-     */
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        dataMap = new DataMap();
-        if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) { //From contact-activity
-            ContactSync cs = new ContactSync(MyApplication.getInstance().getUser().getContactList());
-            sendToWatch(BTCommType.GET_CONTACTS.toString(), cs.putToDataMap(dataMap).toByteArray());
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_TO_CONTACT.toString())) { //From clock emoji-message
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            for(Contact c : cs.getContacts()) {
-                List<ADigitalPerson> ls = new ArrayList<>();
-                ls.add(c);
-                ClientMessage<String> clientMessage = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
-                        ls, "Emoticon from wear", MessageType.TEXTMESSAGE);
-                MyApplication.getInstance().getUser().addMessage(clientMessage, true);
-            }
-        } else if(messageEvent.getPath().equals(BTCommType.GET_USERNAME.toString())) { //From MainActivity in clock
-            dataMap.putString("username", MyApplication.getInstance().getUser().getUsername());
-            sendToWatch(BTCommType.GET_USERNAME.toString(), dataMap.toByteArray());
-        } else if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) { // From ConversationViewActivity
-            String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
-            Contact contact = null;
-            Conversation conversation = null;
-            for (Contact c : MyApplication.getInstance().getUser().getContactList()) {
-                if (c.getUsername().equals(username))
-                    contact = c;
-            }
-
-            for (Conversation c : MyApplication.getInstance().getUser().getConversationList()) {
-                for(ADigitalPerson p : c.getParticipants()){
-                    if(contact.getUsername().equals(p.getUsername()))
-                        conversation = c;
-                }
-
-            }
-
-            dataMap.clear();
-            int i = 0;
-
-            ArrayList<String> emojis = new ArrayList<String>();
-            ArrayList<Integer> emojiPositions = new ArrayList<Integer>();
-
-            if(conversation != null) {
-                for (ClientMessage message : conversation.getHistory()) {
-                    if (message.getType().equals(MessageType.EMOTICON)) {
-                        emojis.add(message.getContent().toString());
-                        emojiPositions.add(i);
-                    }
-                    if (message.getType().equals(MessageType.DRAWING)) {
-                        Drawing drawing = (Drawing) message.getContent();
-                        dataMap.putFloatArray("x-coordinates " + i, drawing.getX());
-                        dataMap.putFloatArray("y-coordinates " + i, drawing.getY());
-                        dataMap.putLongArray("drawing-times " + i, drawing.getTimes());
-                        dataMap.putStringArray("actions " + i, drawing.getActions());
-                        dataMap.putByteArray("staticDrawing " + i, drawing.getStaticDrawingByteArray());
-                    }
-
-                    i++;
-                }
-                dataMap.putInt("amountOfMessages", i);
-                dataMap.putStringArrayList("emojis", emojis);
-                dataMap.putIntegerArrayList("emojisPositions", emojiPositions);
-
-            } else {
-                dataMap.putInt("amountOfMessages", 0);
-            }
-
-            sendToWatch(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
-
-            //From DrawingActivity in clock
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_DRAWING.toString())) {
-
-            Drawing drawing = new Drawing(DataMap.fromByteArray(messageEvent.getData()));
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            ClientMessage<Drawing> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
-                    cs.getContacts(), drawing, MessageType.DRAWING);
-            MyApplication.getInstance().getUser().addMessage(cm, true);
-
-        } else if(messageEvent.getPath().equals(BTCommType.SEND_EMOJI.toString())) {
-            Log.e("EMOJI" , "trying to send");
-            ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
-            String emoji = DataMap.fromByteArray(messageEvent.getData()).getString(BTCommType.SEND_EMOJI.toString());
-            ClientMessage<String> cm = new ClientMessage(System.currentTimeMillis(), MyApplication.getInstance().getUser(),
-                    cs.getContacts(), EmoticonType.valueOf(emoji), MessageType.EMOTICON);
-            MyApplication.getInstance().getUser().addMessage(cm, true);
-
-        } else {
-            onFragmentInteraction(messageEvent.getPath());
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        //Must be implemented?
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        //Must be implemented?
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        //Must be implemented?
-    }
-
     @Override
     public boolean handleMessage(Message msg) {
         return false;
     }
 
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * There should only be one node however, which should be the watch.
-     */
-    private void sendToWatch(String msg, final byte[] data){
-        getSharedPreferences("WATCHMSG", 0).edit().putString("WATCHMSG", msg).commit();
 
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.v(TAG, "......Phone: Sending Msg:  to node:  " + node.getId());
-
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            getSharedPreferences("WATCHMSG",0).getString("WATCHMSG", ""),
-                            data
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.v("DEVELOPER", "......Clock: " + sendMessageResult.getStatus().getStatusMessage());
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
 
     @Override
     public void onBackPressed() {

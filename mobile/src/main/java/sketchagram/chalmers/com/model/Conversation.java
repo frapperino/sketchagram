@@ -56,10 +56,11 @@ public class Conversation implements Comparable{
     public String toString(){
         String participants = "";
         for(ADigitalPerson participant : getParticipants()) {
-            if(!participant.getUsername().toLowerCase().equals(MyApplication.getInstance().getUser().getUsername().toLowerCase())) {
+            if(!participant.getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
                 participants = participant.getUsername();
             }
         }
+
         /*String participants = getParticipants().toString();
         participants = participants.substring(1, participants.length()-1); //Remove [].
         participants = participants.replace(",", " ");//To remove commas

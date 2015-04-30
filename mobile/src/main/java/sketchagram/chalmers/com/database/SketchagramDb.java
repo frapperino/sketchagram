@@ -79,7 +79,7 @@ public class SketchagramDb {
 
     public boolean updateContact (Contact contact )
     {
-        deleteContact(contact);
+        int i = deleteContact(contact);
         insertContact(contact);
         return true;
     }
@@ -186,6 +186,9 @@ public class SketchagramDb {
         List<Conversation> convList = getAllConversations();
         for(Conversation c : convList){
             boolean same = true;
+            if(c.getParticipants().size() != participants.size()){
+                break;
+            }
             for(ADigitalPerson participant : c.getParticipants()) {
                 boolean participantexists = false;
                 for(ADigitalPerson receiver : participants){
