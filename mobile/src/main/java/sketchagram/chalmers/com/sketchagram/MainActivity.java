@@ -536,7 +536,7 @@ public class MainActivity extends ActionBarActivity
     public void update (Observable observable, Object data){
         conversationFragment.updateList();
         ((ContactSendFragment)contactSendFragment).updateList();
-        ((ContactManagementFragment)contactManagementFragment).updateList();
+        ((ContactManagementFragment)contactManagementFragment).update(null, null);
         if (data != null && inConversationFragment != null) {
             //Update relevant ListAdapters.
             inConversationFragment.updateList();

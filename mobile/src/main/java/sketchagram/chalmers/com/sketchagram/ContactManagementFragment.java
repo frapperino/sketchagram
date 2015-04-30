@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -71,7 +72,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private ExpandableListAdapter mAdapter;
+    private ExpandableAlphabeticalAdapter mAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -228,8 +229,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     @Override
     public void update(Observable observable, Object data) {
         if(mAdapter != null) {
-            BaseExpandableListAdapter adapter = (BaseExpandableListAdapter)mAdapter;
-            adapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -248,10 +248,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         public void onFragmentInteraction(String id);
     }
 
-    public void updateList(){
-        this.update(null, null);
-    }
-
     /**
      * Adapter used for sorting in alphabetical order
      * displaying information based upon groups and children.
@@ -262,26 +258,33 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         private HashMap<String, List<Contact>> alphaIndexer;
         private List<String> sections;
         private LayoutInflater inflater;
+        private List<Contact> contactList;
 
         public ExpandableAlphabeticalAdapter(Context context, List<Contact> contactList) {
             inflater = LayoutInflater.from(context);
-            alphaIndexer = new HashMap<>();
+            this.contactList = contactList;
+            alphaIndexer = setupMap();
+        }
+
+        private HashMap<String, List<Contact>> setupMap() {
+            HashMap<String, List<Contact>> hashMap = new HashMap();
             sections = new ArrayList();
             for (Contact c: contactList) {
                 String s = c.getUsername().substring(0, 1).toUpperCase();
-                if(!alphaIndexer.containsKey(s)) {
+                if(!hashMap.containsKey(s)) {
                     sections.add(s);
                     List<Contact> contacts = new ArrayList<>();
                     contacts.add(c);
-                    alphaIndexer.put(s, contacts);
+                    hashMap.put(s, contacts);
                 } else {
-                    List<Contact> entries = alphaIndexer.get(s);
+                    List<Contact> entries = hashMap.get(s);
                     entries.add(c);
                     Collections.sort(entries);
-                    alphaIndexer.put(s, entries);
+                    hashMap.put(s, entries);
                 }
                 Collections.sort(sections);
             }
+            return hashMap;
         }
 
         private Bitmap getCircleBitmap(Bitmap bitmap) {
@@ -405,6 +408,12 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            alphaIndexer = setupMap();
+            super.notifyDataSetChanged();
         }
     }
 }
