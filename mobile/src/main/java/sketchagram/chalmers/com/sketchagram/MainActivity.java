@@ -191,6 +191,7 @@ public class MainActivity extends ActionBarActivity
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        fragmentManager.invalidateOptionsMenu();
                     }
                 });
                 dialog.show();
