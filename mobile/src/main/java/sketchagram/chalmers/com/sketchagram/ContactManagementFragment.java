@@ -47,6 +47,7 @@ import java.util.TreeMap;
 import quickscroll.QuickScroll;
 import quickscroll.Scrollable;
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Profile;
 
 /**
  * A fragment representing a list of Items.
@@ -196,7 +197,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         } else {
             Toast.makeText(MyApplication.getContext(), contactName + " couldn't be removed.", Toast.LENGTH_SHORT).show();
         }
-        this.update(null, null);
+        //this.update(null, null);
         return success;
     }
 
@@ -230,6 +231,9 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     public void update(Observable observable, Object data) {
         if(mAdapter != null) {
             mAdapter.notifyDataSetChanged();
+        }
+        if(MyApplication.getInstance().getUser().getContactList().contains(new Contact("test1", new Profile()))) {
+            Log.d("HERT", "EHASD");
         }
     }
 
@@ -391,15 +395,21 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             }
             roundedImage.setImageBitmap(bitmap);
 
-            switch(contact.getStatus()) {
-                case ONLINE:
-                    statusImage.setBackgroundColor(Color.GREEN);
-                case OFFLINE:
-                    statusImage.setBackgroundColor(Color.RED);
-                case AWAY:
-                    statusImage.setBackgroundColor(Color.YELLOW);
-                default:
-                    statusImage.setBackgroundColor(Color.WHITE);
+            if(contact.getStatus() != null) {
+                switch(contact.getStatus()) {
+                    case ONLINE:
+                        statusImage.setBackgroundColor(Color.GREEN);
+                        break;
+                    case OFFLINE:
+                        statusImage.setBackgroundColor(Color.RED);
+                        break;
+                    case AWAY:
+                        statusImage.setBackgroundColor(Color.YELLOW);
+                        break;
+                    default:
+                        statusImage.setBackgroundColor(Color.WHITE);
+                        break;
+                }
             }
 
             return convertView;

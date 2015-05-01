@@ -81,6 +81,7 @@ public class User extends ADigitalPerson  {
             MyApplication.getInstance().getDatabase().insertContact(newContact);
             contactList.add(newContact);
         }
+        this.updateObservers(null);
         return success;
     }
 
@@ -98,7 +99,7 @@ public class User extends ADigitalPerson  {
             MyApplication.getInstance().getDatabase().deleteContact(contact);
             contactList.remove(contact);
         }
-        updateObservers(null);
+        this.updateObservers(null);
         return success;
     }
 
@@ -134,7 +135,7 @@ public class User extends ADigitalPerson  {
             }
             conversation.addMessage(clientMessage);
             sortConversations();
-            updateObservers(clientMessage);
+            this.updateObservers(clientMessage);
         }
         return conversation;
     }
