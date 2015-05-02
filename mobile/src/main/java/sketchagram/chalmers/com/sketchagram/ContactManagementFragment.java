@@ -121,7 +121,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
-        showGlobalContextActionBar();
+
         return view;
     }
 

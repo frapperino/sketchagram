@@ -77,7 +77,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
-        showGlobalContextActionBar();
+
         return view;
     }
 

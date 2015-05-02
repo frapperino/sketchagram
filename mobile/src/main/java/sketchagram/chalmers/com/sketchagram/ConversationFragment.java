@@ -94,7 +94,6 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         // Set OnItemClickListener so we can be notified on item clicks
         gridView.setOnItemClickListener(this);
-        showGlobalContextActionBar();
 
         return view;
     }
