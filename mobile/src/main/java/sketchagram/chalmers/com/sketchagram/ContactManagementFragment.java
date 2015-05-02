@@ -225,8 +225,8 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     public void update(Observable observable, Object data) {
         if(mAdapter != null) {
             mAdapter.notifyDataSetChanged();
+            setGroupsExpanded();
         }
-        setGroupsExpanded();
     }
 
     /**

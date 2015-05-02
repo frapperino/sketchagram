@@ -16,4 +16,13 @@
         android:layout_marginTop="3dp"
         android:layout_weight="1"
         android:background="#FFFFFFFF" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:text="@string/send_emoticon"
+        android:id="@+id/sendEmoticonButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:onClick="sendEmoticon" />
 </LinearLayout>

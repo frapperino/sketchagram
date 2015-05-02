@@ -60,7 +60,7 @@ public class MainActivity extends ActionBarActivity
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
         ContactManagementFragment.OnFragmentInteractionListener,
         AddContactFragment.OnFragmentInteractionListener,
-        DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks, Observer {
+        DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks, EmoticonFragment.OnFragmentInteractionListener, Observer {
 
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
@@ -71,6 +71,7 @@ public class MainActivity extends ActionBarActivity
     private InConversationFragment inConversationFragment;
     private Fragment contactManagementFragment;
     private DrawingFragment drawingFragment;
+    private Fragment emoticonFragment;
     private FragmentManager fragmentManager;
     private Handler mHandler;
     private DataMap dataMap;
@@ -93,7 +94,7 @@ public class MainActivity extends ActionBarActivity
         conversationFragment = new ConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         drawingFragment = new DrawingFragment();
-
+        emoticonFragment = EmoticonFragment.newInstance();
 
         mHandler = new Handler(this);
 
@@ -252,7 +253,7 @@ public class MainActivity extends ActionBarActivity
                 if (userManager.addContact(user)) {
                     Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
+                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -263,6 +264,15 @@ public class MainActivity extends ActionBarActivity
             }
         });
         dialog.show();
+    }
+
+    /**
+     * Displays the fragment that allows one to send an emoticon.
+     * @param view
+     */
+    public void sendEmoticon(View view) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fragment_frame, emoticonFragment).addToBackStack(null).commit();
     }
 
     @Override
