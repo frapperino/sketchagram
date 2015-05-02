@@ -72,6 +72,11 @@ public class User extends ADigitalPerson  {
      * @param userName contact to be added.
      */
     public boolean addContact(String userName){
+        //Check if contact is already added locally.
+        for(Contact c: UserManager.getInstance().getAllContacts()) {
+            if(c.getUsername().toLowerCase().equals(userName.toLowerCase()))
+                return false;
+        }
         boolean success = Connection.getInstance().addContact(userName);
         if(success) {
             Contact newContact = new Contact(userName, new Profile());

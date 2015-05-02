@@ -3,7 +3,6 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ListFragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,8 +17,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.widget.AdapterViewCompat;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,14 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,17 +37,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
-import java.util.TreeMap;
 
 import quickscroll.QuickScroll;
 import quickscroll.Scrollable;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.UserManager;
-import sketchagram.chalmers.com.model.Profile;
 
 /**
  * A fragment representing a list of Items.
@@ -66,15 +55,14 @@ import sketchagram.chalmers.com.model.Profile;
  * interface.
  */
 public class ContactManagementFragment extends Fragment implements AbsListView.OnItemClickListener, Observer {
-
-    private List<Contact> contactList;
-
     private OnFragmentInteractionListener mListener;
 
     /**
      * The fragment's ListView/GridView.
      */
     private ExpandableListView mListView;
+
+    private List<Contact> contactList;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -93,13 +81,10 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         contactList = UserManager.getInstance().getAllContacts();
-        // Sets the adapter to customized one which enables our layout of items.
         mAdapter = new ExpandableAlphabeticalAdapter(getActivity(), contactList);
+
+        // Sets the adapter to customized one which enables our layout of items.
         UserManager.getInstance().addUserObserver(this);
     }
 
@@ -140,7 +125,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
         //Initialize quickscroll
         final QuickScroll quickscroll = (QuickScroll) view.findViewById(R.id.quickscroll);
-        quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, mListView, (ExpandableAlphabeticalAdapter)mAdapter, QuickScroll.STYLE_HOLO);
+        quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, mListView, mAdapter, QuickScroll.STYLE_HOLO);
         quickscroll.setIndicatorColor(PURPLE, PURPLE_DARK, Color.WHITE);
         quickscroll.setHandlebarColor(PURPLE, PURPLE, PURPLE_HANDLE);
         quickscroll.setFixedSize(2);
@@ -170,10 +155,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     }
 
     private void setupExpandableListView() {
-        //Set all groups expanded
-        int count = mAdapter.getGroupCount();
-        for(int i=0; i < count; i++)
-            mListView.expandGroup(i);
+        setGroupsExpanded();
 
         //Set an onClickListener to avoid collapsing.
         mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -185,17 +167,21 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         });
     }
 
+    private void setGroupsExpanded() {
+        //Set all groups expanded
+        int count = mAdapter.getGroupCount();
+        for(int i=0; i < count; i++)
+            mListView.expandGroup(i);
+    }
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo)item.getMenuInfo();
-        int type =
-                ExpandableListView.getPackedPositionType(info.packedPosition);
+        //int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
-        int group =
-                ExpandableListView.getPackedPositionGroup(info.packedPosition);
+        int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+        int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
 
-        int child =
-                ExpandableListView.getPackedPositionChild(info.packedPosition);
         Contact removedContact = (Contact)mAdapter.getChild(group, child);
         String contactName = removedContact.getUsername();
         boolean success = UserManager.getInstance().removeContact(removedContact);
@@ -240,9 +226,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         if(mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
-        if(MyApplication.getInstance().getUser().getContactList().contains(new Contact("test1", new Profile()))) {
-            Log.d("HERT", "EHASD");
-        }
+        setGroupsExpanded();
     }
 
     /**
@@ -257,8 +241,9 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        void onFragmentInteraction(String id);
     }
+
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
@@ -292,10 +277,22 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 
+    /**
+     * @deprecated currently not in use. Could perhaps be useful in future.
+     */
     public void updateList(){
         if(mAdapter != null) {
             Collections.sort(UserManager.getInstance().getAllContacts(),new Comparator<Contact>() {
                 //Sort alphabetically
+                @Override
+                public int compare(Contact lhs, Contact rhs) {
+                    int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
+                    return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
+                }
+            });
+            mAdapter.notifyDataSetChanged();
+        }
+    }
     /**
      * Adapter used for sorting in alphabetical order
      * displaying information based upon groups and children.
@@ -311,28 +308,29 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
         public ExpandableAlphabeticalAdapter(Context context, List<Contact> contactList) {
             inflater = LayoutInflater.from(context);
             this.contactList = contactList;
-            alphaIndexer = setupMap();
+            alphaIndexer = new HashMap<>();
+            sections = new ArrayList<>();
+            setupMap();
         }
 
-        private HashMap<String, List<Contact>> setupMap() {
-            HashMap<String, List<Contact>> hashMap = new HashMap();
-            sections = new ArrayList();
+        private void setupMap() {
+            alphaIndexer.clear();
+            sections.clear();
             for (Contact c: contactList) {
                 String s = c.getUsername().substring(0, 1).toUpperCase();
-                if(!hashMap.containsKey(s)) {
+                if(!alphaIndexer.containsKey(s)) {
                     sections.add(s);
                     List<Contact> contacts = new ArrayList<>();
                     contacts.add(c);
-                    hashMap.put(s, contacts);
+                    alphaIndexer.put(s, contacts);
                 } else {
-                    List<Contact> entries = hashMap.get(s);
+                    List<Contact> entries = alphaIndexer.get(s);
                     entries.add(c);
                     Collections.sort(entries);
-                    hashMap.put(s, entries);
+                    alphaIndexer.put(s, entries);
                 }
                 Collections.sort(sections);
             }
-            return hashMap;
         }
 
         private Bitmap getCircleBitmap(Bitmap bitmap) {
@@ -455,7 +453,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
                         break;
                 }
             }
-
             return convertView;
         }
 
@@ -466,7 +463,8 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
         @Override
         public void notifyDataSetChanged() {
-            alphaIndexer = setupMap();
+
+            setupMap();
             super.notifyDataSetChanged();
         }
     }

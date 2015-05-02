@@ -59,33 +59,33 @@ public class SketchagramDb {
     public void update() {
         dbh.onUpgrade(db);
     }
-    public boolean insertContact  (Contact contact)
-    {
+    public boolean insertContact  (Contact contact) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_USERNAME, contact.getUsername().toLowerCase());
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_NAME, contact.getProfile().getName());
         contentValues.put(ContactTable.COLUMN_NAME_CONTACT_EMAIL, contact.getProfile().getEmail());
         contentValues.put(ContactTable.COLUMN_NAME_LAST_ACCESSED, contact.getLastAccessed());
-        db.insert(ContactTable.TABLE_NAME, null, contentValues);
+        long i = db.insert(ContactTable.TABLE_NAME, null, contentValues);
         return true;
     }
 
-    public Integer deleteContact (Contact contact)
-    {
+    /**
+     * Removes a contact from the database.
+     * @param contact the one to be removed
+     * @return true if successfully removed, false otherwise.
+     */
+    public boolean deleteContact (Contact contact) {
         return db.delete(ContactTable.TABLE_NAME,
                 ContactTable.COLUMN_NAME_CONTACT_USERNAME + EQUALS + QUESTION_MARK,
-                new String[] { contact.getUsername().toLowerCase() });
+                new String[] { contact.getUsername().toLowerCase() }) > 0;
     }
 
-    public boolean updateContact (Contact contact )
-    {
-        int i = deleteContact(contact);
+    public void updateContact (Contact contact ) {
+        deleteContact(contact);
         insertContact(contact);
-        return true;
     }
 
-    public ArrayList<Contact> getAllContacts()
-    {
+    public ArrayList<Contact> getAllContacts() {
         ArrayList<Contact> contacts = new ArrayList();
         Cursor res =  db.rawQuery( SELECT_ALL + FROM + ContactTable.TABLE_NAME, null );
         res.moveToFirst();
@@ -149,8 +149,11 @@ public class SketchagramDb {
         return i;
     }
 
-    public Integer deleteMessage (ClientMessage message)
-    {
+    /**
+     *
+     * @deprecated not in use
+     */
+    public Integer deleteMessage (ClientMessage message) {
         return db.delete(MessagesTable.TABLE_NAME,
                 (MessagesTable.COLUMN_NAME_TIMESTAMP + EQUALS + QUESTION_MARK + AND + MessagesTable.COLUMN_NAME_SENDER + EQUALS + QUESTION_MARK ),
                 new String[] { String.valueOf(message.getTimestamp()), message.getSender().getUsername().toLowerCase() });
@@ -209,6 +212,11 @@ public class SketchagramDb {
         return -1;
     }
 
+    /**
+     * @deprecated not in use
+     * @param participants
+     * @return
+     */
     private int getConversation(List<ADigitalPerson> participants) {
         String query = SELECT + ConversationTable.COLUMN_NAME_CONVERSATION_ID + FROM + ConversationTable.TABLE_NAME +
                 WHERE + ConversationTable.COLUMN_NAME_CONVERSATION_ID + IN + " (";
@@ -317,8 +325,12 @@ public class SketchagramDb {
     }
 
 
-    public ArrayList<ClientMessage> getAllMessagesFromContacts(List<Contact> contacts)
-    {
+    /**
+     * @deprecated
+     * @param contacts
+     * @return
+     */
+    public ArrayList<ClientMessage> getAllMessagesFromContacts(List<Contact> contacts) {
         throw new UnsupportedOperationException();
         //TODO: finish this method
         /*ArrayList<ClientMessage> messages = new ArrayList();
@@ -403,6 +415,12 @@ public class SketchagramDb {
         return messages;
     }
 */
+
+    /**
+     * @deprecated
+     * @param tableName
+     * @return
+     */
     private int numberOfRows(String tableName){
         int numRows = (int) DatabaseUtils.queryNumEntries(db, tableName);
         return numRows;
