@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity
         ContactManagementFragment.OnFragmentInteractionListener,
         AddContactFragment.OnFragmentInteractionListener,
         ShowDrawingFragment.OnFragmentInteractionListener,
-        DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks, Observer {
+        DrawingFragment.OnFragmentInteractionListener/*, NavigationDrawerFragment.NavigationDrawerCallbacks*/, Observer {
 
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
@@ -79,7 +79,7 @@ public class MainActivity extends ActionBarActivity
     private IUserManager userManager;
 
     private DrawerLayout mDrawerLayout;
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    //private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private Toolbar toolbar;
 
@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity
          * Navigation drawer
          */
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        /*
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 fragmentManager.findFragmentById(R.id.navigation_drawer);
 
@@ -117,7 +117,7 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
+        */
         dataMap = new DataMap();
 
         //Set observer
@@ -192,7 +192,7 @@ public class MainActivity extends ActionBarActivity
         fragmentTransaction.replace(R.id.fragment_frame, fragment)
                 .addToBackStack(null).commit();
     }
-
+    /*
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         //Logic for item selection in navigation drawer.
@@ -238,7 +238,7 @@ public class MainActivity extends ActionBarActivity
         if (fragment != null) {
             displayFragment(fragment);
         }
-    }
+    }*/
 
     public void changePassword() {
         final Dialog dialog = new Dialog(this);

@@ -20,13 +20,13 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             />
-    <!-- Listview to display slider menu (Navigation drawer) -->
+    <!-- Listview to display slider menu (Navigation drawer)
     <fragment android:id="@+id/navigation_drawer"
         android:layout_width="240dp" android:layout_height="match_parent"
         android:layout_gravity="start"
         android:name="sketchagram.chalmers.com.sketchagram.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
-
+    -->
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
