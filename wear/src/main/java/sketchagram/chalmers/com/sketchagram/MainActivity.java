@@ -38,8 +38,6 @@ public class MainActivity extends Activity implements
 
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "SKETCHAGRAM";
-    public View btn;
-    public static final String KEY_REPLY = "reply";
     private static final int SAMPLE_NOTIFICATION_ID = 0;
     private DataMap dataMap;
 
@@ -49,7 +47,6 @@ public class MainActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn = findViewById(R.id.messageButton);
 
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -124,7 +121,7 @@ public class MainActivity extends Activity implements
         startActivity(intent);
     }
 
-    public void sendMessage(View view) {
+    public void sendEmoji(View view) {
         Log.e("WATCH", "Trying to send a message");
         Intent intent = new Intent(this, ContactListActivity.class);
         intent.putExtra("messagetype", 1);
