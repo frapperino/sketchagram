@@ -20,6 +20,7 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
@@ -73,6 +74,15 @@ public class DrawingFragment extends Fragment implements Observer {
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
         }
+        Button emoticonButton = (Button) view.findViewById(R.id.sendEmoticonButton);
+        emoticonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.add(R.id.fragment_frame, EmoticonFragment.newInstance(receivers)).addToBackStack(null).commit();
+            }
+        });
+
         return view;
     }
 

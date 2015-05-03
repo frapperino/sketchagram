@@ -2,63 +2,43 @@ package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-
-import com.google.android.gms.plus.PlusOneButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.Conversation;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.EmoticonType;
-import sketchagram.chalmers.com.model.MessageType;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
- * A fragment with a Google +1 button.
- * Activities that contain this fragment must implement the
- * {@link EmoticonFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
+ * Displays a list of emoticons above the drawing fragment.
  * Use the {@link EmoticonFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EmoticonFragment extends Fragment implements OnItemClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
+public class EmoticonFragment extends Fragment implements  AbsListView.OnItemClickListener {
     private ListAdapter mAdapter;
 
     private ListView listView;
+
+    private List<Contact> receivers;
+
+    private final EmoticonType[] EMOTICON_TYPES = EmoticonType.values();
 
     /**
      * Use this factory method to create a new instance of
@@ -67,8 +47,9 @@ public class EmoticonFragment extends Fragment implements OnItemClickListener {
      * @return A new instance of fragment EmoticonFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EmoticonFragment newInstance() {
+    public static EmoticonFragment newInstance(List<Contact> receivers) {
         EmoticonFragment fragment = new EmoticonFragment();
+        fragment.receivers = receivers;
         return fragment;
     }
 
@@ -98,53 +79,24 @@ public class EmoticonFragment extends Fragment implements OnItemClickListener {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Emoticon pressed.", Toast.LENGTH_LONG).show();
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        // Notify the active callbacks interface (the activity, if the
+        // fragment is attached to one) that an item has been selected.
+        UserManager.getInstance().sendMessage(receivers, new Emoticon(EMOTICON_TYPES[position]));
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                .addToBackStack(null).commit();
     }
 
     private class MyAdapter extends BaseAdapter {
         private List<Item> items = new ArrayList<Item>();
         private LayoutInflater inflater;
 
-        private final int IMAGE_SIZE = 400;
-
         public MyAdapter(Context context) {
             inflater = LayoutInflater.from(context);
-            EmoticonType[] emoticonTypes = EmoticonType.values();
-            for(int i=0; i<emoticonTypes.length; i++) {
-                items.add(new Item(new Emoticon(emoticonTypes[i])));
+
+            for(int i=0; i< EMOTICON_TYPES.length; i++) {
+                items.add(new Item(new Emoticon(EMOTICON_TYPES[i])));
             }
         }
 
@@ -168,16 +120,20 @@ public class EmoticonFragment extends Fragment implements OnItemClickListener {
             if(view == null) {
                 view = inflater.inflate(R.layout.fragment_emoticon_list_item, viewGroup, false);
             }
-            ImageButton emoticonButton = (ImageButton)view.findViewById(R.id.emoticonButton);
-            emoticonButton.setImageResource(((Item)getItem(i)).emoticon.getEmoticonType().getDrawable());
+            ImageView emoticonImage = (ImageView)view.findViewById(R.id.emoticonButton);
+            emoticonImage.setImageResource(((Item)getItem(i)).emoticon.getEmoticonType().getDrawable());
             return view;
         }
 
         private class Item {
-            final Emoticon emoticon;
+            final private Emoticon emoticon;
 
             Item(Emoticon emoticon) {
                 this.emoticon = emoticon;
+            }
+
+            public Emoticon getEmoticon() {
+                return emoticon;
             }
         }
     }
