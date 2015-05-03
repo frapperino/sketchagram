@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.util.List;
@@ -74,7 +75,7 @@ public class DrawingFragment extends Fragment implements Observer {
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
         }
-        Button emoticonButton = (Button) view.findViewById(R.id.sendEmoticonButton);
+        ImageButton emoticonButton = (ImageButton) view.findViewById(R.id.sendEmoticonButton);
         emoticonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
