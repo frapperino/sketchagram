@@ -4,22 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_mode_edit_white_36dp"
-        android:title="@string/action_settings"
+        android:id="@+id/contact_management_list"
+        android:icon="@drawable/ic_action_cc_bcc"
+        android:title="@string/action_contacts"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_search"
-        android:orderInCategory="200"
-        android:title="Search"
-        android:icon="@drawable/ic_action_reply"
-        app:showAsAction="ifRoom"
-        />
-    <item
-        android:id="@+id/action_user"
-        android:orderInCategory="300"
-        android:title="User"
-        android:icon="@drawable/ic_add_white_36dp"
-        app:showAsAction="ifRoom"/>
+
+    <item android:icon="@drawable/ic_action_overflow"
+        app:showAsAction="always"
+
+        android:title="hej">
+        <menu xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <item android:id="@+id/action_settings" android:title="@string/action_settings"
+                android:orderInCategory="200" app:showAsAction="never" />
+
+            <item android:id="@+id/action_about" android:title="@string/action_about"
+                android:orderInCategory="300" app:showAsAction="never" />
+
+            <item android:id="@+id/action_logout" android:title="@string/action_logout"
+                android:orderInCategory="400" app:showAsAction="never" />
+        </menu>
+    </item>
 </menu>

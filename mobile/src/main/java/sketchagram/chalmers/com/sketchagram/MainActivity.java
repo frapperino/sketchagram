@@ -136,6 +136,7 @@ public class MainActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.global, menu);
         return true;
     }
 
@@ -149,6 +150,9 @@ public class MainActivity extends ActionBarActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if(id == R.id.contact_management_list){
+            displayFragment(contactManagementFragment);
         }
 
         return super.onOptionsItemSelected(item);
