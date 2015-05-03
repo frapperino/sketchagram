@@ -38,6 +38,7 @@ public class MainActivity extends Activity implements
 
     private GoogleApiClient mGoogleApiClient;
     private final String TAG = "SKETCHAGRAM";
+    public static final String KEY_REPLY = "reply";
     private static final int SAMPLE_NOTIFICATION_ID = 0;
     private DataMap dataMap;
 
