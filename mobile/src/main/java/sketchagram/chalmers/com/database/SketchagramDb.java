@@ -24,6 +24,7 @@ import sketchagram.chalmers.com.database.DataContract.*;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.DrawingEvent;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
@@ -283,7 +284,8 @@ public class SketchagramDb {
                             messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum, read));
                             break;
                         case EMOTICON:
-                            //TODO: decode here
+                            Emoticon decodedEmoticon = gson.fromJson(content, Emoticon.class);
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedEmoticon, typeEnum, read));
                             break;
                         case DRAWING:
                             Drawing decodedDrawing = gson.fromJson(content, Drawing.class);
