@@ -5,12 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
@@ -51,23 +47,15 @@ public class ConversationListActivity extends Activity implements WearableListVi
     private WearableListView mListView;
     private MyListAdapter mAdapter;
     private List<String> conversations;
-    private SharedPreferences sp;
-    private final Handler handler;
 
     public ConversationListActivity() {
-        handler = new Handler() {
-            public void handleMessage(Message msg) {
-                if(msg.arg1 == 1)
-                    Toast.makeText(getApplicationContext(),"No messages found", Toast.LENGTH_SHORT).show();
-            }
-        };
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listview_stub);
+        setContentView(R.layout.activity_contact_listview);
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -99,7 +87,6 @@ public class ConversationListActivity extends Activity implements WearableListVi
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void loadAdapter(){
@@ -254,9 +241,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
             Log.e("drawings", "new drawings");
             MessageHolder.getInstance().setDrawings(messages);
             if(messageAmount < 1){
-                Message msg = handler.obtainMessage();
-                msg.arg1 = 1;
-                handler.sendMessage(msg);
+                Toast.makeText(getApplicationContext(),"No messages found", Toast.LENGTH_SHORT).show();
             }
             else {
                 Intent intent = new Intent(this, ConversationViewActivity.class);
@@ -303,7 +288,7 @@ public class ConversationListActivity extends Activity implements WearableListVi
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.activity_contact_view, this);
+            View.inflate(context, R.layout.contact_listview_content, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }

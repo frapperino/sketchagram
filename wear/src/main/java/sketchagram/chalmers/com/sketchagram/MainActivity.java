@@ -10,9 +10,11 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,9 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity implements
-        View.OnClickListener,
         MessageApi.MessageListener,
-        GoogleApiClient.ConnectionCallbacks, WearableListView.ClickListener {
+        GoogleApiClient.ConnectionCallbacks{
 
 
     private GoogleApiClient mGoogleApiClient;
@@ -42,12 +43,18 @@ public class MainActivity extends Activity implements
     private static final int SAMPLE_NOTIFICATION_ID = 0;
     private DataMap dataMap;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_main_stub);
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
+            }
+        });
 
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -70,16 +77,6 @@ public class MainActivity extends Activity implements
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
-
-    }
-
-    @Override
-    public void onClick(WearableListView.ViewHolder viewHolder) {
-
-    }
-
-    @Override
-    public void onTopEmptyRegionClick() {
 
     }
 
@@ -116,14 +113,14 @@ public class MainActivity extends Activity implements
     };
 
     public void sendDrawing(View view) {
-        Log.e("WATCH", "Trying to send a message");
+        Log.e("WATCH", "Trying to send a drawing");
         Intent intent = new Intent(this, ContactListActivity.class);
         intent.putExtra("messagetype", 0);
         startActivity(intent);
     }
 
     public void sendEmoji(View view) {
-        Log.e("WATCH", "Trying to send a message");
+        Log.e("WATCH", "Trying to send emoji");
         Intent intent = new Intent(this, ContactListActivity.class);
         intent.putExtra("messagetype", 1);
         startActivity(intent);
@@ -131,7 +128,8 @@ public class MainActivity extends Activity implements
 
     public void showConversations(View view) {
         Log.e("WATCH", "Showing conversations");
-        Intent intent = new Intent(this, ConversationListActivity.class);
+        Intent intent = new Intent(this, ContactListActivity.class);
+        intent.putExtra("messagetype", 2);
         startActivity(intent);
     }
 
@@ -154,10 +152,6 @@ public class MainActivity extends Activity implements
         dataMap = DataMap.fromByteArray(messageEvent.getData());
         getSharedPreferences("user",0).edit().putString("username", dataMap.getString("username")).commit();
 
-    }
-
-    @Override
-    public void onClick(View v) {
     }
 
 
