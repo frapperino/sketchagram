@@ -310,7 +310,6 @@ public class DrawingView extends View {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getContext(), "Drawing sent.", Toast.LENGTH_SHORT).show();
                                         setChanged();
                                         drawing.setStaticDrawing(getCanvasBitmapAsByte());
                                         notifyObservers(drawing);
