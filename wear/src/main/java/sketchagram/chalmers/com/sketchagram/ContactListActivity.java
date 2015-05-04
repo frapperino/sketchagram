@@ -227,7 +227,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS)) {
+        if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) {
             dataMap = DataMap.fromByteArray(messageEvent.getData());
             contacts = new ContactSync(dataMap);
             runOnUiThread(new Runnable() {
