@@ -81,16 +81,17 @@ public class MainActivity extends ActionBarActivity
     private DrawerLayout mDrawerLayout;
     //private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private Toolbar toolbar;
+    //private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* if using toolbar
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
-
+        */
         userManager = UserManager.getInstance();
 
         // Check if logged in, else start LoginActivity

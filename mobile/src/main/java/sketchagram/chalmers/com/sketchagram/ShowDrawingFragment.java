@@ -84,7 +84,7 @@ public class ShowDrawingFragment extends Fragment implements Observer {
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
         }
-
+        showGlobalContextActionBar();
         return view;
     }
 

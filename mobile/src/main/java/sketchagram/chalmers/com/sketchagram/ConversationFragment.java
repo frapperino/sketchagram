@@ -95,6 +95,13 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         // Set OnItemClickListener so we can be notified on item clicks
         gridView.setOnItemClickListener(this);
 
+        //initiate the custom toolbar, used here since this is the first fragment with the actionbar
+        final android.support.v7.app.ActionBar actionBar = getActionBar();
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
+        //actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.custom_actionbar);
+        showGlobalContextActionBar();
         return view;
     }
 
@@ -238,12 +245,12 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void showGlobalContextActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setImageResource(0);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_cancel); //use our logo here with the right sizes
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Conversations");
-        actionBarTitle.setPadding(0,0,0,0);
+        actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setImageResource(R.drawable.ic_action_cc_bcc);
 

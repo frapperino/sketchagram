@@ -17,15 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center" />
-        <ImageButton
-            android:layout_width="56dp"
+        <Button
+            android:layout_width="fill_parent"
             android:layout_height="56dp"
             android:id="@+id/add_contact_button"
-            android:background="@drawable/fab"
+            android:background="@drawable/button_layout"
             android:layout_gravity="bottom|right"
-            android:src="@drawable/ic_action_add_person"
+            android:text="Add Contact"
+            android:textColor="@drawable/button_text_layout"
             android:onClick="addContact"
-            android:elevation="10dp"
-            android:layout_margin="16dp" />
+            android:elevation="10dp" />
+
     </FrameLayout>
 </RelativeLayout>
