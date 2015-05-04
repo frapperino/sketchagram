@@ -1,34 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:minWidth="300dp"
+    android:minHeight="100dp"
+    android:paddingLeft="20dp"
+    android:paddingTop="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="8dp">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/user_name_dialog"
         android:layout_gravity="center_horizontal"
-        android:hint="@string/enter_username" />
+        android:hint="@string/enter_username"
+        android:layout_marginBottom="24dp" />
 
-    <RelativeLayout
+    <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_contact"
-            android:id="@+id/add_contact_dialog_button"
-            android:layout_gravity="end"
-            android:layout_alignParentEnd="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:textColor="@drawable/button_text_layout"
             android:text="@string/cancel_add_contact"
             android:id="@+id/cancel_dialog_button"
-            android:layout_gravity="start" />
-    </RelativeLayout>
+            android:layout_gravity="start|right"
+            android:background="@android:color/transparent" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@drawable/button_text_layout"
+            android:text="@string/add_contact"
+            android:id="@+id/add_contact_dialog_button"
+            android:layout_gravity="end|right"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent" />
+
+    </LinearLayout>
 
 </LinearLayout>

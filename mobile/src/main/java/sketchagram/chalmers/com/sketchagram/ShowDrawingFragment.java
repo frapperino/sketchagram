@@ -75,7 +75,7 @@ public class ShowDrawingFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_drawing, container, false);
+        View view = inflater.inflate(R.layout.fragment_showdrawing, container, false);
         //Get view that is displayed in the Activity on which we can call
         //the methods in the DrawingView class.
         drawView = (DrawingView) view.findViewById(R.id.drawing);
@@ -132,7 +132,7 @@ public class ShowDrawingFragment extends Fragment implements Observer {
 
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
         actionBarIcon1.setImageResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText(msg.getSender().getUsername().toString() +"'s drawing");

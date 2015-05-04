@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity
             displayFragment(conversationFragment);
         }
      }
-    /*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -151,15 +151,39 @@ public class MainActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         }
-        else if(id == R.id.contact_management_list){
-            displayFragment(contactManagementFragment);
+        else if(id == R.id.action_about){
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.about_dialog);
+            dialog.setTitle("About");
+            ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+            return true;
+        }
+        else if(id == R.id.action_logout){
+            SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+            SharedPreferences.Editor prefs = pref.edit();
+            prefs.clear();
+            prefs.apply();
+            userManager.logout();
+            MyApplication.getInstance().getDatabase().update();
+            Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent2);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
-*/
+
     public void startDrawingFragment(View v) {
         displayFragment(drawingFragment);
     }
