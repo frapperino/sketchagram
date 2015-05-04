@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -17,7 +18,10 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import sketchagram.chalmers.com.model.DrawMotionEvents;
 import sketchagram.chalmers.com.model.Drawing;
@@ -42,6 +46,7 @@ public class DrawingView extends View {
     private static int BRUSH_COLOR = 0xff00304e;    //http://colrd.com/color/
     //canvas
     private Canvas drawCanvas;
+
     //canvas bitmap
     private Bitmap canvasBitmap;
 
@@ -53,6 +58,7 @@ public class DrawingView extends View {
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
+        helper = new DrawingHelper();
     }
 
     public void setTouchable(boolean isTouchable) {
@@ -137,7 +143,6 @@ public class DrawingView extends View {
             }
             if(drawingEvent != null) {
                 helper.addMotion(drawingEvent);    //Must use a copy since android recycles.
-
                 return handleMotionEvent(drawingEvent);
             }
             return false;
@@ -185,27 +190,32 @@ public class DrawingView extends View {
     /**
      * Start a new drawing.
      */
-    public void startNew(){
+    public void clearCanvas(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
         //TODO: Animations that will make graphics fade.
     }
 
     /**
-     * Set the Drawing helper in the fragment that uses the view.
-     */
-    public void setHelper(DrawingHelper helper) {
-        this.helper = helper;
-    }
-
-    /**
-     * Displays the provided drawing.
+     * Displays the provided drawing
+     * drawn with the original time-delay between strokes.
      * @param drawing
      */
     public void displayDrawing(Drawing drawing) {
         CountdownTask task = new CountdownTask(drawing);
         task.execute();
-        //TODO: Animations that make the drawing seem alive.
+    }
+
+    /**
+     * Instantly displays the drawing on canvas.
+     * @param drawing
+     * @deprecated No longer in any use.
+     */
+    public void displayStaticDrawing(Drawing drawing) {
+        List<DrawingEvent> motions = drawing.getMotions();
+        for(DrawingEvent e: motions) {
+            handleMotionEvent(e);
+        }
     }
 
     /**
@@ -243,7 +253,6 @@ public class DrawingView extends View {
             long timeDeltaInMilli;
             List<DrawingEvent> events = drawing.getMotions();
             DrawingEvent first = events.get(0);
-            String s = "S";
 
             handler.post(new EventRunnable(first));
             for (int i = 1; i < events.size(); i++) {
@@ -252,6 +261,81 @@ public class DrawingView extends View {
                 handler.postDelayed(new EventRunnable(curr), timeDeltaInMilli);
             }
             return null;
+        }
+    }
+
+    /**
+     * Return a copy of the image in form a bitmap.
+     * @return the bitmap in question.
+     */
+    private byte[] getCanvasBitmapAsByte() {
+        Bitmap bmp = canvasBitmap;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
+
+    public void addHelperObserver(Observer observer) {
+        helper.addObserver(observer);
+    }
+
+    /**
+     * Helpclass for drawing. Tracking time passed since last action on drawing.
+     * If the maximum awaiting time has passed, an action is made.
+     * Created by Alexander on 2015-03-27.
+     */
+    private class DrawingHelper extends Observable {
+        private long lastActionTime;
+        private Handler handler;
+        private boolean isRunning;
+        private Drawing drawing;
+
+        //Max nano-time allowed while awaiting input.
+        private static final long MAX_AWAIT_TIME = 2000000000;
+
+        public DrawingHelper() {
+            handler = new Handler();
+            isRunning = false;
+            drawing = new Drawing();
+        }
+
+        public void startMeasuring() {
+            if(!isRunning) {
+                isRunning = true;
+                AsyncTask asyncTask = new AsyncTask() {
+                    @Override
+                    protected Object doInBackground(Object[] params) {
+                        while(true) {
+                            if((System.nanoTime() - lastActionTime) >= MAX_AWAIT_TIME ) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(MyApplication.getContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
+                                        setChanged();
+                                        drawing.setStaticDrawing(getCanvasBitmapAsByte());
+                                        notifyObservers(drawing);
+                                    }
+                                });
+                                isRunning = false;
+                                return null;
+                            }
+                        }
+                    }
+                };
+                asyncTask.execute();
+            }
+        }
+
+        public void setAccessed() {
+            lastActionTime = System.nanoTime();
+        }
+
+        public void addMotion(DrawingEvent event) {
+            drawing.addMotion(event);
+        }
+
+        public Drawing getDrawing() {
+            return drawing;
         }
     }
 }

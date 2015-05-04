@@ -9,8 +9,12 @@ import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.Profile;
+import sketchagram.chalmers.com.model.User;
+import sketchagram.chalmers.com.model.UserManager;
+import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
  * Created by Olliver on 15-03-06.
@@ -25,7 +29,7 @@ public class NetworkMessage<T> {
 
     }
 
-    public NetworkMessage(long timestamp,String sender, List<String> receivers, T content){
+    public NetworkMessage(long timestamp, String sender, List<String> receivers, T content){
         this.timestamp = timestamp;
         this.sender = sender;
         this.receivers = receivers;
@@ -52,26 +56,27 @@ public class NetworkMessage<T> {
     }
 
     public ClientMessage convertFromNetworkMessage(MessageType type){
+        IUserManager userManager = UserManager.getInstance();
         List<String> receivers = getReceivers();
         List<ADigitalPerson> personReceivers = new ArrayList<>();
         for(String user : receivers){
-            for(Contact contact : SystemUser.getInstance().getUser().getContactList()){
+            for(Contact contact : userManager.getAllContacts()){
                 if(user.equals(contact.getUsername())){
                     personReceivers.add(contact);
                     break;
-                } else if (user.equals(SystemUser.getInstance().getUser().getUsername())){
-                    personReceivers.add(SystemUser.getInstance().getUser());
+                } else if (user.equals(userManager.getUsername())){
+                    personReceivers.add(new Contact(userManager.getUsername(), new Profile()));
                     break;
                 }
             }
 
         }
         Set<ADigitalPerson> allUsers = new HashSet<>();
-        allUsers.addAll(SystemUser.getInstance().getUser().getContactList());
-        allUsers.add(SystemUser.getInstance().getUser());
+        allUsers.addAll(UserManager.getInstance().getAllContacts());
+        allUsers.add(new Contact(UserManager.getInstance().getUsername(), new Profile()));
         ADigitalPerson sender = null;
         for(ADigitalPerson person : allUsers){
-            if(person.getUsername().equals(getSender())){
+            if(person.getUsername().toLowerCase().equals(getSender().toLowerCase())){
                 sender = person;
             }
         }

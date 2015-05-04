@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.model;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 /**
@@ -11,7 +12,7 @@ public class Profile {
     private String nickName;
     private String description;
     private String status;
-    private Image image;
+    private Bitmap image;
 
     public String getName() {
         return name;
@@ -53,11 +54,11 @@ public class Profile {
         this.status = status;
     }
 
-    public Image getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 }

@@ -1,42 +1,28 @@
 package sketchagram.chalmers.com.model;
 
 import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import sketchagram.chalmers.com.network.Connection;
 import sketchagram.chalmers.com.sketchagram.MyApplication;
 
 /**
+ * A representation of the application user's user information and its interface.
  * Created by Bosch on 10/02/15.
  */
 public class User extends ADigitalPerson  {
-    private String password = "password";   //TODO: replace with real password.
-    private boolean requireLogin = true;
     private List<Conversation> conversationList;
     private List<Contact> contactList;
 
-
     public User(String username, Profile profile) {
         super(username, profile);
-        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username);
-        /*for(Contact contact : getContactList()) {
-            List<ClientMessage> messageList = MyApplication.getInstance().getDatabase().getAllMessagesFromAContact(contact);
-            if(!messageList.isEmpty()) {
-                List<ADigitalPerson> participants = new ArrayList<>();
-                participants.add(contact);
-                conversationList.add(new Conversation(participants, messageList));
-            }
-        }*/
+        conversationList = MyApplication.getInstance().getDatabase().getAllConversations(username.toLowerCase());
         contactList = MyApplication.getInstance().getDatabase().getAllContacts();
+        sortConversations();
+        updateStatuses();
     }
 
     /**
@@ -44,7 +30,7 @@ public class User extends ADigitalPerson  {
      *
      * @param conversation the conversation to be added.
      */
-    public void addConversation(Conversation conversation){
+    private void addConversation(Conversation conversation){
         boolean exist = false;
         for(Conversation c : conversationList){
             if(c.getParticipants().equals(conversation.getParticipants())) {
@@ -54,6 +40,13 @@ public class User extends ADigitalPerson  {
         if(!exist)
             conversationList.add(conversation);
         updateObservers(null);
+    }
+
+    public void updateStatuses(){
+        for(Contact contact : Connection.getInstance().getContacts()){
+            Contact con = contactList.get(contactList.indexOf(contact));
+            con.setStatus(contact.getStatus());
+        }
     }
 
     /**
@@ -79,12 +72,18 @@ public class User extends ADigitalPerson  {
      * @param userName contact to be added.
      */
     public boolean addContact(String userName){
+        //Check if contact is already added locally.
+        for(Contact c: UserManager.getInstance().getAllContacts()) {
+            if(c.getUsername().toLowerCase().equals(userName.toLowerCase()))
+                return false;
+        }
         boolean success = Connection.getInstance().addContact(userName);
         if(success) {
             Contact newContact = new Contact(userName, new Profile());
             MyApplication.getInstance().getDatabase().insertContact(newContact);
             contactList.add(newContact);
         }
+        this.updateObservers(null);
         return success;
     }
 
@@ -93,7 +92,7 @@ public class User extends ADigitalPerson  {
         if(success){
             List<ADigitalPerson> participants = new ArrayList<>();
             participants.add(contact);
-            participants.add(SystemUser.getInstance().getUser());
+            participants.add(this);
             Conversation conversation = conversationExists(participants);
             if(conversation != null) {
                 MyApplication.getInstance().getDatabase().removeConversation(conversation);
@@ -102,63 +101,43 @@ public class User extends ADigitalPerson  {
             MyApplication.getInstance().getDatabase().deleteContact(contact);
             contactList.remove(contact);
         }
-        updateObservers(null);
+        this.updateObservers(null);
         return success;
-    }
-
-    /**
-     * Sends the specified message
-     * @param clientMessage The message to be sent contains receivers
-     */
-    public void sendMessage(ClientMessage clientMessage){
-        boolean exist = true;
-        Conversation conversation = null;
-        List<ADigitalPerson> participants = new ArrayList<>();
-        participants.addAll(clientMessage.getReceivers());
-        participants.add(clientMessage.getSender());
-
-        conversation = conversationExists(participants);
-        if(conversation == null){
-            exist = false;
-        }
-
-        int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
-        if(conversationId >= 0) {
-            Connection.getInstance().sendMessage(clientMessage);
-            if(!exist) {
-                conversation = new Conversation(participants, conversationId);
-                this.addConversation(conversation);
-            }
-            conversation.addMessage(clientMessage);
-            updateObservers(clientMessage);
-        }
     }
 
     /**
      * Adds a message that was received from the server to the proper conversation.
      * @param clientMessage The message received.
+     * @param send If the message is to be sent via the server
      * @return The conversation which the message was appended to.
      */
-    public Conversation addMessage(ClientMessage clientMessage){
-        Conversation conversation;
+    public Conversation addMessage(ClientMessage clientMessage, boolean send){
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
         participants.add(clientMessage.getSender());
+        Conversation conversation = null;
 
-        conversation = conversationExists(participants);
-        boolean exist = true;
-
-        if(conversation == null) {
-            exist = false;
-        }
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);
+        Contact contact;
+        if(send){
+            contact = getContact(((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername());
+        }else {
+            contact = getContact(clientMessage.getSender().getUsername());
+        }
+        contact.setLastAccessed(clientMessage.getTimestamp());
+        MyApplication.getInstance().getDatabase().updateContact(contact);
         if(conversationId >= 0) {
-            if(!exist) {
+            if(!((ADigitalPerson)clientMessage.getReceivers().get(0)).getUsername().equals(clientMessage.getSender().getUsername()) && send){
+                Connection.getInstance().sendMessage(clientMessage);
+            }
+            conversation = getConversation(conversationId);
+            if(conversation == null) {
                 conversation = new Conversation(participants, conversationId);
                 this.addConversation(conversation);
             }
             conversation.addMessage(clientMessage);
-            updateObservers(clientMessage);
+            sortConversations();
+            this.updateObservers(clientMessage);
         }
         return conversation;
     }
@@ -169,7 +148,7 @@ public class User extends ADigitalPerson  {
      * @return
      */
     private Conversation conversationExists(List<ADigitalPerson> participants){
-        List<Conversation> convList = SystemUser.getInstance().getUser().getConversationList();
+        List<Conversation> convList = this.getConversationList();
         for(Conversation c : convList){
             boolean same = true;
             for(ADigitalPerson participant : c.getParticipants()) {
@@ -190,6 +169,10 @@ public class User extends ADigitalPerson  {
             }
         }
         return null;
+    }
+
+    public boolean changePassword(String password) {
+        return Connection.getInstance().changePassword(password);
     }
 
     private void updateObservers(final ClientMessage message){
@@ -213,6 +196,26 @@ public class User extends ADigitalPerson  {
         for(Conversation c: conversationList) {
             if(c.getConversationId() == conversationId) {
                 return c;
+            }
+        }
+        return null;
+    }
+
+    public List<String> search(String userName){
+        return Connection.getInstance().searchUsers(userName);
+    }
+
+    /**
+     * Sorts conversations when an update has come.
+     */
+    private void sortConversations() {
+       Collections.sort(conversationList);
+    }
+
+    public Contact getContact(String username) {
+        for(Contact contact : contactList) {
+            if(contact.getUsername().toLowerCase().equals(username.toLowerCase())){
+                return contact;
             }
         }
         return null;

@@ -29,7 +29,15 @@
         <activity
             android:name=".DrawingActivity"
             android:label="@string/title_activity_drawing"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
+        </activity>
+        <activity
+            android:name=".ConversationViewActivity"
+            android:label="@string/title_activity_conversation_view" >
+        </activity>
+        <activity
+            android:name=".EmojiListActivity"
+            android:label="@string/title_activity_emoji_list" >
         </activity>
     </application>
 

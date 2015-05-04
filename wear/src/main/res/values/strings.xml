@@ -35,7 +35,15 @@
     <string name="choice_1">Choice #1</string>
     <string name="title_activity_drawing">DrawingActivity</string>
 
+    <string name="long_press_intro">Hold to go back</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_conversation_view">conversation_view</string>
+
+    <string name="welcometitle">Welcome</string>
+    <string name="welcometext">Text text</string>
+    <string name="custom_fragment_text">Custom fragment text</string>
+    <string name="title_activity_emoji_list">EmojiListActivity</string>
 
 </resources>

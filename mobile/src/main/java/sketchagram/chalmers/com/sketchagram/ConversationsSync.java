@@ -5,8 +5,9 @@ import com.google.android.gms.wearable.DataMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.UserManager;
 
 /**
  * Created by Bosch on 31/03/15.
@@ -15,7 +16,7 @@ public class ConversationsSync {
     private List<Conversation> conversations;
 
     public ConversationsSync() {
-        conversations = SystemUser.getInstance().getUser().getConversationList();
+        conversations = UserManager.getInstance().getAllConversations();
 
     }
 
@@ -25,8 +26,11 @@ public class ConversationsSync {
 
     public DataMap putToDataMap(DataMap dataMap) {
         ArrayList<String> ls = new ArrayList<>();
-        for(Conversation c : conversations)
-            ls.add(c.getParticipants().get(0).getUsername());
+        List<ADigitalPerson> conversationList;
+        for (Conversation c : conversations) {
+            conversationList = new ArrayList<>(c.getParticipants());
+            ls.add(conversationList.get(0).getUsername());
+        }
         dataMap.remove("CONVERSATIONS");
         dataMap.putStringArrayList("CONVERSATIONS", ls);
         return dataMap;

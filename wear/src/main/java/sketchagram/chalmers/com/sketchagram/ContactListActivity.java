@@ -1,14 +1,10 @@
 package sketchagram.chalmers.com.sketchagram;
 
-/**
- * Created by Bosch on 27/02/15.
- */
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,6 +32,12 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Created by Bosch on 27/02/15.
+ * This is the view where you choose contacts, if ever needed then just use this
+ * activity for selecting contacts.
+ */
 public class ContactListActivity extends Activity implements WearableListView.ClickListener,
         MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
@@ -47,6 +48,8 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
     private DataMap dataMap;
     private ContactSync contacts;
     private ContactSync receivers;
+
+    private int messageType;
 
     private ArrayList<String> choices;
 
@@ -60,14 +63,13 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
         contacts = new ContactSync();
         choices = new ArrayList<>();
 
+        messageType = getIntent().getIntExtra("messagetype", 0);
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                receivers = new ContactSync();
-                messagePhone("contacts", null);
                 loadAdapter();
 
             }
@@ -87,6 +89,8 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                 .build();
         mGoogleApiClient.connect();
 
+        receivers = new ContactSync();
+        messagePhone(BTCommType.GET_CONTACTS.toString(), null);     //sends a message to phone asking for contacts
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
@@ -98,7 +102,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      * the adapter should be updated.
      */
     private void loadAdapter(){
-        choices = contacts.getContactChoices();
+        choices = contacts.getContacts();
         mAdapter = new MyListAdapter(this, choices);
         mListView.setAdapter(mAdapter);
         mListView.setClickListener(ContactListActivity.this);
@@ -172,21 +176,18 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      */
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
-        if(viewHolder.getPosition() == choices.size()-1){
-            receivers.putToDataMap(dataMap);
-            Drawing drawing = DrawingHolder.getInstance().getDrawing();
-            if(drawing != null) {
-                drawing.putToDataMap(dataMap);
-                messagePhone("drawing", dataMap.toByteArray());
-            } else {
-                messagePhone("messageTo", dataMap.toByteArray());
+            Intent intent;
+            switch(messageType) {
+                case 0: intent = new Intent(this, DrawingActivity.class);
+                    intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
+                    startActivity(intent);
+                    break;
+                case 1: intent = new Intent(this, EmojiListActivity.class);
+                    intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
+                    startActivity(intent);
+                    break;
             }
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else {
-            receivers.addContact(choices.get(viewHolder.getPosition()));
-        }
-        Log.e("contacts", viewHolder.getPosition() + " : " + choices.size());
+
     }
 
     @Override
@@ -263,17 +264,15 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-            if(i >= items.size()-1) {
-                txt.setBackgroundColor(Color.GREEN);
-                txt.setTextColor(Color.BLACK);
-            }
 
 
         }
 
         @Override
         public int getItemCount() {
-            return items.size();
+            if(items != null)
+                return items.size();
+            return 0;
         }
     }
 
@@ -284,7 +283,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.wearable_listview_item, this);
+            View.inflate(context, R.layout.activity_contact_view, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }

@@ -16,8 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.UserManager;
+
 
 /**
  * A fragment representing a list of Items.
@@ -27,6 +27,7 @@ import sketchagram.chalmers.com.model.SystemUser;
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
+ * @deprecated Couldn't find any usage of this class. Redundant.
  */
 public class AddContactFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
@@ -121,7 +122,7 @@ public class AddContactFragment extends ListFragment implements AbsListView.OnIt
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(SystemUser.getInstance().getUser().getContactList().get(position).toString());
+            mListener.onFragmentInteraction(UserManager.getInstance().getAllContacts().get(position).toString());
         }
     }
 

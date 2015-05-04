@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.SignInButton;
 
-import sketchagram.chalmers.com.model.SystemUser;
 
 
 /**

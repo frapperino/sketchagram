@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import java.util.List;
 import java.util.Observable;
@@ -18,7 +21,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
-import sketchagram.chalmers.com.model.SystemUser;
+import sketchagram.chalmers.com.model.UserManager;
 
 
 /**
@@ -33,16 +36,14 @@ public class DrawingFragment extends Fragment implements Observer {
 
     private DrawingView drawView;
 
-    private DrawingHelper helper;
-
-    private List<ADigitalPerson> receivers;
+    private List<Contact> receivers;
     private Drawing drawing = null;
 
     public DrawingFragment() {
         //android requires empty constructor
     }
 
-    public static DrawingFragment newInstance(List<ADigitalPerson> receivers){
+    public static DrawingFragment newInstance(List<Contact> receivers){
         DrawingFragment fragment = new DrawingFragment();
         fragment.receivers = receivers;
         return fragment;
@@ -67,9 +68,7 @@ public class DrawingFragment extends Fragment implements Observer {
         //Get view that is displayed in the Activity on which we can call
         //the methods in the DrawingView class.
         drawView = (DrawingView) view.findViewById(R.id.drawing);
-        helper = new DrawingHelper();
-        drawView.setHelper(helper);
-        helper.addObserver(this);
+        drawView.addHelperObserver(this);
         if(drawing != null){
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
@@ -96,8 +95,8 @@ public class DrawingFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        ClientMessage<Drawing> message = new ClientMessage<>(System.currentTimeMillis(), SystemUser.getInstance().getUser(), receivers, (Drawing)data, MessageType.DRAWING);
-        SystemUser.getInstance().getUser().sendMessage(message);
+        Drawing drawing = (Drawing)data;
+        UserManager.getInstance().sendMessage(receivers, drawing);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();

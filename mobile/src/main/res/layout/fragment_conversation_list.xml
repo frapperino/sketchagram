@@ -2,13 +2,28 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_floating_material_light"
+    android:background="@color/grey"
+    android:orientation="vertical"
     tools:context="sketchagram.chalmers.com.sketchagram.ConversationFragment">
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/conversation_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="3dp"
+        android:verticalSpacing="3dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:layout_margin="3dp" />
 
-    <ListView android:id="@+id/conversation_list" android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <TextView android:id="@android:id/empty" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:gravity="center" />
-
+    <ImageButton
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:id="@+id/imageButton"
+        android:background="@drawable/fab"
+        android:layout_gravity="bottom|right"
+        android:src="@drawable/ic_mode_edit_white_36dp"
+        android:onClick="newMessage"
+        android:elevation="10dp"
+        android:layout_margin="16dp" />
 </FrameLayout>
