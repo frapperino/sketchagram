@@ -72,12 +72,18 @@ public class User extends ADigitalPerson  {
      * @param userName contact to be added.
      */
     public boolean addContact(String userName){
+        //Check if contact is already added locally.
+        for(Contact c: UserManager.getInstance().getAllContacts()) {
+            if(c.getUsername().toLowerCase().equals(userName.toLowerCase()))
+                return false;
+        }
         boolean success = Connection.getInstance().addContact(userName);
         if(success) {
             Contact newContact = new Contact(userName, new Profile());
             MyApplication.getInstance().getDatabase().insertContact(newContact);
             contactList.add(newContact);
         }
+        this.updateObservers(null);
         return success;
     }
 
@@ -95,7 +101,7 @@ public class User extends ADigitalPerson  {
             MyApplication.getInstance().getDatabase().deleteContact(contact);
             contactList.remove(contact);
         }
-        updateObservers(null);
+        this.updateObservers(null);
         return success;
     }
 
@@ -131,7 +137,7 @@ public class User extends ADigitalPerson  {
             }
             conversation.addMessage(clientMessage);
             sortConversations();
-            updateObservers(clientMessage);
+            this.updateObservers(clientMessage);
         }
         return conversation;
     }

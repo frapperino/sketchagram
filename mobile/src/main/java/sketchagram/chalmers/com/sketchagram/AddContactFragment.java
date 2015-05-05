@@ -27,6 +27,7 @@ import sketchagram.chalmers.com.model.UserManager;
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
+ * @deprecated Couldn't find any usage of this class. Redundant.
  */
 public class AddContactFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
