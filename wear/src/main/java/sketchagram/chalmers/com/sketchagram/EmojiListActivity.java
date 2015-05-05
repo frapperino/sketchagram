@@ -64,7 +64,6 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mListView = (WearableListView) stub.findViewById(R.id.emojiListView);
-                messagePhone(BTCommType.GET_EMOJIS.toString(), null);
                 loadAdapter();
 
             }
