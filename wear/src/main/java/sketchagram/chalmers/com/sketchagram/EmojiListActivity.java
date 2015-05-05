@@ -178,8 +178,7 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         //Send to phone
         messagePhone(BTCommType.SEND_EMOJI.toString(), dataMap.toByteArray());
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 
     @Override

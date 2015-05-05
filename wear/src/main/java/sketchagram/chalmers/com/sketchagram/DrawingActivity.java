@@ -121,8 +121,6 @@ public class DrawingActivity extends Activity implements Observer,
             messagePhone(BTCommType.SEND_DRAWING.toString(), dataMap.toByteArray());
             Toast.makeText(getApplicationContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
             this.finish();
         }
     }

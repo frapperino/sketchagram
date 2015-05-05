@@ -63,6 +63,7 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
             Intent intent = new Intent(getActivity(), DrawingActivity.class);
             intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), contact);
             startActivity(intent);
+            getActivity().finish();
         } else
             mReplyView.setVisibility(View.VISIBLE);
     }

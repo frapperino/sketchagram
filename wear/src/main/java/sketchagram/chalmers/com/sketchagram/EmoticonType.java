@@ -6,7 +6,7 @@ package sketchagram.chalmers.com.sketchagram;
 public enum EmoticonType {
     SAD("SAD", R.drawable.emoji_sad), HAPPY("HAPPY", R.drawable.emoji_happy),
     FLIRT("FLIRT", R.drawable.emoji_flirt), HEART("HEART", R.drawable.emoji_heart),
-    THUMBSUP("THUMBSUP", 0), THUMBSDOWN("THUMBSDOWN", 0);
+    THUMBSUP("THUMBSUP", R.drawable.emoji_up), THUMBSDOWN("THUMBSDOWN", R.drawable.emoji_down);
 
 
     private final String type;
