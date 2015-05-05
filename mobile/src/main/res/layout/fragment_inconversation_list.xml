@@ -6,7 +6,9 @@
     tools:context="sketchagram.chalmers.com.sketchagram.InConversationFragment">
 
     <ListView android:id="@android:id/list" android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
 
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center" />
@@ -16,10 +18,10 @@
         android:layout_width="fill_parent"
         android:layout_height="56dp"
         android:id="@+id/reply_button"
+        android:clickable="true"
         android:background="@drawable/button_layout"
         android:layout_gravity="bottom|right"
         android:text="Reply"
         android:textColor="@drawable/button_text_layout"
-        android:onClick="newMessage"
         android:elevation="10dp" />
 </FrameLayout>

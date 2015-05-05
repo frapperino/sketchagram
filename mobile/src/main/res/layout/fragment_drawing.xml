@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCCCCCC"
+    android:background="@color/grey"
     android:orientation="vertical"
     tools:context=".MainActivity">
     <sketchagram.chalmers.com.sketchagram.DrawingView
@@ -15,13 +15,15 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="3dp"
         android:layout_weight="1"
-        android:background="#FFFFFFFF" />
+        android:background="#FFFFFF" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:background="@color/black"
+        android:paddingTop="1dp">
 
         <Button
             android:layout_width="wrap_content"

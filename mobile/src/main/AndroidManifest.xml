@@ -30,7 +30,7 @@
 
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustPan"> <!--android:windowSoftInputMode="adjustResize|stateHidden"-->
+            android:windowSoftInputMode="adjustPan"> <!--android:windowSoftInputMode="adjustResize|stateHidden"-->
             <!--Using stateHidden above, starts app minimized if Android Studio launch-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

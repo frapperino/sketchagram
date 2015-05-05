@@ -205,6 +205,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
          */
         private class ViewHolder{
             TextView titleText;
+            TextView dateText;
             ImageView drawing;
         }
 
@@ -228,22 +229,24 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                 viewToUse = mInflater.inflate(R.layout.inconversation_list_item, null);
                 holder = new ViewHolder();
                 holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
+                holder.dateText = (TextView)viewToUse.findViewById(R.id.dateTextView);
                 holder.drawing = (ImageView) viewToUse.findViewById(R.id.drawingToShow);
                 viewToUse.setTag(holder);
             } else {
                 viewToUse = convertView;
                 holder = (ViewHolder) viewToUse.getTag();
             }
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            Date resultDate = new Date(item.getTimestamp());
+
+            holder.dateText.setText(sdf.format(resultDate));
             holder.titleText.setText(item.toString());
-            //TODO: check if drawing or smiley
             holder.drawing.setImageBitmap(((Drawing)item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            //TODO: check if drawing or smiley
             if (item.getSender().getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
-                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-                Date resultDate = new Date(item.getTimestamp());
-                holder.titleText.setText("[" + sdf.format(resultDate) + "] Me: " + item.getContent().toString());
+                holder.titleText.setText("Me: ");
             }
             item.setRead(true); //Mark message as read.
-
             return viewToUse;
         }
     }
