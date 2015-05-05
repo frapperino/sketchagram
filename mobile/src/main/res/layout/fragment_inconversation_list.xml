@@ -19,8 +19,9 @@
         android:id="@+id/reply_button"
         android:background="@drawable/fab"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_action_add_person"
+        android:src="@drawable/ic_action_reply"
         android:onClick="Reply"
+        android:elevation="4dp"
         android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />

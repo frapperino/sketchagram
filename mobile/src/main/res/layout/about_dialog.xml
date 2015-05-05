@@ -25,5 +25,5 @@
         android:text="@string/ok_string"
         android:id="@+id/dialogButtonOK"
         android:layout_gravity="bottom|right"
-        android:background="@android:color/transparent" />
+        android:background="@drawable/button_layout" />
 </LinearLayout>

@@ -25,21 +25,21 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:textColor="@drawable/button_text_layout"
             android:text="@string/cancel_add_contact"
             android:id="@+id/cancel_dialog_button"
             android:layout_gravity="start|right"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_layout" />
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:textColor="@drawable/button_text_layout"
             android:text="@string/add_contact"
             android:id="@+id/add_contact_dialog_button"
             android:layout_gravity="end|right"
             android:layout_alignParentEnd="true"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_layout" />
 
     </LinearLayout>
 

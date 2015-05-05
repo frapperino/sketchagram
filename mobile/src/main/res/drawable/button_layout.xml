@@ -3,21 +3,13 @@
     <item android:state_pressed="false">
         <shape
             android:shape="rectangle">
-            <gradient android:angle="270"
-                android:startColor="@color/black"
-                android:centerColor="#eeffffff"
-                android:endColor="#eeffffff"
-                android:centerX="0.01"/>
+            <solid android:color="@color/blackTransparent"></solid>
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape
             android:shape="rectangle">
-            <gradient android:angle="270"
-                android:startColor="@color/black"
-                android:centerColor="#eeeeeeee"
-                android:endColor="#eeeeeeee"
-                android:centerX="0.01"/>
+            <solid android:color="@color/grey"></solid>
         </shape>
     </item>
 </selector>
