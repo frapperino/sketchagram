@@ -13,15 +13,17 @@
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center" />
 
-    <!--TODO: ändra onClick-->
-    <Button
-        android:layout_width="fill_parent"
+    <ImageButton
+        android:layout_width="56dp"
         android:layout_height="56dp"
         android:id="@+id/reply_button"
-        android:clickable="true"
-        android:background="@drawable/button_layout"
-        android:layout_gravity="bottom|right"
-        android:text="Reply"
-        android:textColor="@drawable/button_text_layout"
-        android:elevation="10dp" />
+        android:background="@drawable/fab"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_action_add_person"
+        android:onClick="Reply"
+        android:layout_margin="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+
 </FrameLayout>

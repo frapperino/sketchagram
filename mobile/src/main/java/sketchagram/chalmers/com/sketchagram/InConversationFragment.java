@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -13,16 +14,19 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.MessageType;
@@ -92,8 +96,26 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
+        final android.support.v7.app.ActionBar actionBar = getActionBar();
+        //getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
+        //actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.custom_actionbar);
+
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+
+        final ImageButton reply = (ImageButton) view.findViewById(R.id.reply_button);
+        reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
+                        .addToBackStack(null).commit();
+            }
+        });
+
         showGlobalContextActionBar();
         return view;
     }
@@ -158,7 +180,11 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
         actionBarIcon1.setImageResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
-        actionBarTitle.setText(conversation.getParticipants().get(0).getUsername().toString());
+        if(conversation.getParticipants().get(0).getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())){
+            actionBarTitle.setText(conversation.getParticipants().get(1).getUsername().toString());
+        }else{
+            actionBarTitle.setText(conversation.getParticipants().get(0).getUsername().toString());
+        }
         actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setImageResource(0);
@@ -240,8 +266,8 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             Date resultDate = new Date(item.getTimestamp());
 
             holder.dateText.setText(sdf.format(resultDate));
-            holder.titleText.setText(item.toString());
-            holder.drawing.setImageBitmap(((Drawing)item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            holder.titleText.setText(item.getSender().getUsername().toString());
+            holder.drawing.setImageBitmap(((Drawing) item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
             //TODO: check if drawing or smiley
             if (item.getSender().getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
                 holder.titleText.setText("Me: ");

@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
@@ -105,6 +106,8 @@ public class MainActivity extends ActionBarActivity
         mHandler = new Handler(this);
 
         fragmentManager = getFragmentManager();
+
+
 
         /*
          * Navigation drawer

@@ -15,14 +15,14 @@
         android:stretchMode="columnWidth"
         android:gravity="center" />
 
-    <Button
-        android:layout_width="fill_parent"
+    <ImageButton
+        android:layout_width="56dp"
         android:layout_height="56dp"
         android:id="@+id/imageButton"
-        android:background="@drawable/button_layout"
+        android:background="@drawable/fab"
         android:layout_gravity="bottom|right"
-        android:text="New Message"
-        android:textColor="@drawable/button_text_layout"
+        android:src="@drawable/ic_mode_edit_white_36dp"
         android:onClick="newMessage"
-        android:elevation="10dp" />
+        android:elevation="10dp"
+        android:layout_margin="16dp" />
 </FrameLayout>

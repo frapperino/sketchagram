@@ -17,12 +17,11 @@
             android:layout_height="50dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="'name'"
+            android:textColor="@color/white"
             android:background="@drawable/border"
             android:id="@+id/titleTextView"
             android:layout_gravity="left|center_horizontal"
-            android:gravity="left|center"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp" />
+            android:gravity="left|center" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,6 +29,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:background="@drawable/border"
             android:text="'date'"
+            android:textColor="@color/white"
             android:layout_gravity="center_horizontal|right"
             android:id="@+id/dateTextView"
             android:gravity="center|right"
