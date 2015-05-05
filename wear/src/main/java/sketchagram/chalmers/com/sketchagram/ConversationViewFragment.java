@@ -2,19 +2,13 @@ package sketchagram.chalmers.com.sketchagram;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.wearable.view.DismissOverlayView;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import java.util.Observable;
-import java.util.Observer;
 
 
 /**
@@ -22,11 +16,12 @@ import java.util.Observer;
  * A container for one message in a conversation.
  */
 
-public class ConversationViewFragment extends Fragment implements View.OnClickListener, Observer{
+public class ConversationViewFragment extends Fragment implements View.OnClickListener{
 
     private int id;
-    private ImageView mImageView;
-    private DrawingView mDrawingView;
+    private String contact;
+    private ImageView mMessageView;
+    private ImageView mReplyView;
     private AMessage mMessage;
 
     public ConversationViewFragment() { id = 0; }
@@ -36,17 +31,20 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         id = bundle.getInt("id");
+        contact = ((ConversationViewActivity) getActivity()).getContact();
+        Log.d("Contact in fragment", contact);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-        mImageView = (ImageView) view.findViewById(R.id.imageview);
-        mImageView.setOnClickListener(this);
-        mDrawingView = (DrawingView) view.findViewById(R.id.drawingview);
-        mDrawingView.addHelperObserver(this);
-        mDrawingView.setTouchable(false);
+        mMessageView = (ImageView) view.findViewById(R.id.imageView);
+        mMessageView.setOnClickListener(this);
+        mReplyView = (ImageView) view.findViewById(R.id.replyView);
+        mReplyView.setOnClickListener(this);
+        mReplyView.setVisibility(View.INVISIBLE);
+        mReplyView.setBackgroundResource(R.drawable.ic_return);
 
         return view;
     }
@@ -55,23 +53,17 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMessage = MessageHolder.getInstance().getMessage(id);
-        mImageView.setImageBitmap(mMessage.getStaticDrawing());
+        mMessageView.setImageBitmap(mMessage.getStaticDrawing());
     }
 
     @Override
     public void onClick(View v) {
-        if(mImageView.getVisibility() == View.INVISIBLE) {
-            mImageView.setVisibility(View.VISIBLE);
-        } else if(mMessage instanceof Drawing){
-            mImageView.setVisibility(View.INVISIBLE);
-            mDrawingView.displayDrawing((Drawing) mMessage);
-        }
-    }
-
-    @Override
-    public void update(Observable observable, Object data) {
-        Log.e("FRAGMENT", "notified");
-        mImageView.setVisibility(View.VISIBLE);
-        mDrawingView.clearCanvas();
+        if(mReplyView.getVisibility() == View.VISIBLE){
+            mReplyView.setVisibility(View.INVISIBLE);
+            Intent intent = new Intent(getActivity(), DrawingActivity.class);
+            intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), contact);
+            startActivity(intent);
+        } else
+            mReplyView.setVisibility(View.VISIBLE);
     }
 }

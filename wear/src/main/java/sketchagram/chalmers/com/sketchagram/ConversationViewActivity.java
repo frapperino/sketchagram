@@ -44,12 +44,16 @@ public class ConversationViewActivity extends Activity  implements
 
     private GridViewPager pager;
 
+    private String contact;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation_view);
         final Resources res = getResources();
+        contact = getIntent().getStringExtra(BTCommType.SEND_TO_CONTACT.toString());
+
         pager = (GridViewPager) findViewById(R.id.pager);
         pager.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
@@ -198,5 +202,9 @@ public class ConversationViewActivity extends Activity  implements
         public void onReceive(Context context, Intent intent) {
             //What to do if a message is received
         }
+    }
+
+    public String getContact(){
+        return contact;
     }
 }

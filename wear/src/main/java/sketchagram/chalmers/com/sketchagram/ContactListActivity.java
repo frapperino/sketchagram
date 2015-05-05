@@ -47,6 +47,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
     private GoogleApiClient mGoogleApiClient;
     private DataMap dataMap;
     private ContactSync contacts;
+    private String contact;
 
     private int messageType;
 
@@ -58,6 +59,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_listview);
 
+        contact = "";
         dataMap = new DataMap();
         contacts = new ContactSync();
         choices = new ArrayList<>();
@@ -172,14 +174,17 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                 case 0: intent = new Intent(this, DrawingActivity.class);
                     intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
                     startActivity(intent);
+                    this.finish();
                     break;
                 case 1: intent = new Intent(this, EmojiListActivity.class);
                     intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
                     startActivity(intent);
+                    this.finish();
                     break;
                 case 2:
                     DataMap dataMap = new DataMap();
-                    dataMap.putString("convid", choices.get(viewHolder.getPosition()));
+                    contact = choices.get(viewHolder.getPosition());
+                    dataMap.putString("convid", contact);
                     messagePhone(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
             }
 
@@ -269,7 +274,9 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             }
             else {
                 Intent intent = new Intent(this, ConversationViewActivity.class);
+                intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), contact);
                 startActivity(intent);
+                this.finish();
             }
         }
     }
@@ -293,10 +300,11 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             MyItemView mItemView = (MyItemView) viewHolder.itemView;
             final String item = items.get(i);
 
+            ImageView img = (ImageView) mItemView.findViewById(R.id.image);
+            img.setBackgroundResource(R.drawable.contact);
+
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-
-
         }
 
         @Override

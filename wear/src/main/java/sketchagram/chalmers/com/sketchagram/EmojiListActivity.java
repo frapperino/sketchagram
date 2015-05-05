@@ -59,11 +59,11 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         setContentView(R.layout.activity_emoji_list);
 
 
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.emoji_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mListView = (WearableListView) stub.findViewById(R.id.listView1);
+                mListView = (WearableListView) stub.findViewById(R.id.emojiListView);
                 messagePhone(BTCommType.GET_EMOJIS.toString(), null);
                 loadAdapter();
 

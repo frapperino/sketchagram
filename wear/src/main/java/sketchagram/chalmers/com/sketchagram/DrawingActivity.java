@@ -123,6 +123,7 @@ public class DrawingActivity extends Activity implements Observer,
 
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            this.finish();
         }
     }
 
