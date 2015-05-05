@@ -141,7 +141,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         actionBarIcon1.setImageResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Select receiver");
-        actionBarTitle.setPadding(25, 0, 0, 0);
+        //actionBarTitle.setPadding(25, 0, 0, 0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setImageResource(0);
 

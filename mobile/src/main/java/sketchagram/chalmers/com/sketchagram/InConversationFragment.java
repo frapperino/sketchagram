@@ -185,7 +185,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         }else{
             actionBarTitle.setText(conversation.getParticipants().get(0).getUsername().toString());
         }
-        actionBarTitle.setPadding(25,0,0,0);
+        //actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setImageResource(0);
 
@@ -270,7 +270,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             holder.drawing.setImageBitmap(((Drawing) item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
             //TODO: check if drawing or smiley
             if (item.getSender().getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
-                holder.titleText.setText("Me: ");
+                holder.titleText.setText(UserManager.getInstance().getUsername().toString());
             }
             item.setRead(true); //Mark message as read.
             return viewToUse;
