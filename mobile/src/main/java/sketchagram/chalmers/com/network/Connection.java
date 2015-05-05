@@ -49,6 +49,7 @@ import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.IUserManager;
+import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.Status;
@@ -375,6 +376,9 @@ public class Connection implements IConnection{
             case DRAWING:
                 networkMessage= new NetworkMessage<Drawing>();
                 break;
+            case EMOTICON:
+                networkMessage = new NetworkMessage<EmoticonType>();
+                break;
             default:
                 throw new UnsupportedOperationException();
         }
@@ -608,6 +612,10 @@ public class Connection implements IConnection{
                 Type classType = new TypeToken<NetworkMessage<Drawing>>(){}.getType();
                 NetworkMessage<Drawing> drawingNetworkMessage = gson.fromJson(body, classType);
                 clientMessage = drawingNetworkMessage.convertFromNetworkMessage(messageType);
+                break;
+            case EMOTICON:
+                NetworkMessage<EmoticonType> emoticonTypeNetworkMessage = gson.fromJson(body, NetworkMessage.class);
+                clientMessage = emoticonTypeNetworkMessage.convertFromNetworkMessage(messageType);
                 break;
             default:
                 throw new UnsupportedOperationException();

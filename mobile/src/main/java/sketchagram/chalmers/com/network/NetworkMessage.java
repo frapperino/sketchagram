@@ -10,6 +10,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.IUserManager;
+import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
@@ -86,6 +87,8 @@ public class NetworkMessage<T> {
                 return new ClientMessage<String>(getTimestamp(), sender, personReceivers, (String)getContent(), MessageType.TEXTMESSAGE);
             case DRAWING:
                 return new ClientMessage<Drawing>(getTimestamp(),sender, personReceivers, (Drawing)getContent(), MessageType.DRAWING);
+            case EMOTICON:
+                return new ClientMessage<EmoticonType>(getTimestamp(),sender, personReceivers, (EmoticonType)getContent(), MessageType.EMOTICON);
 
 
         }
