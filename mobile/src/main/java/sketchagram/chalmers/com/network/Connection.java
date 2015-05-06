@@ -48,7 +48,9 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.IUserManager;
+import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.Status;
@@ -373,7 +375,10 @@ public class Connection implements IConnection{
                 networkMessage = new NetworkMessage<String>();
                 break;
             case DRAWING:
-                networkMessage= new NetworkMessage<Drawing>();
+                networkMessage = new NetworkMessage<Drawing>();
+                break;
+            case EMOTICON:
+                networkMessage = new NetworkMessage<Emoticon>();
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -531,7 +536,6 @@ public class Connection implements IConnection{
                     }
                 }
             }
-
         }
         if(!exists){
             ChatManager chatManager = getChatManager();
@@ -608,6 +612,11 @@ public class Connection implements IConnection{
                 Type classType = new TypeToken<NetworkMessage<Drawing>>(){}.getType();
                 NetworkMessage<Drawing> drawingNetworkMessage = gson.fromJson(body, classType);
                 clientMessage = drawingNetworkMessage.convertFromNetworkMessage(messageType);
+                break;
+            case EMOTICON:
+                Type classType2 = new TypeToken<NetworkMessage<Emoticon>>(){}.getType();
+                NetworkMessage<Emoticon> emoticonNetworkMessage = gson.fromJson(body, classType2);
+                clientMessage = emoticonNetworkMessage.convertFromNetworkMessage(messageType);
                 break;
             default:
                 throw new UnsupportedOperationException();

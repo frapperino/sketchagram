@@ -35,7 +35,7 @@ public class UserManager implements IUserManager  {
             type = MessageType.DRAWING;
         } else if(content instanceof String) {
             type = MessageType.TEXTMESSAGE;
-        } else if(content instanceof EmoticonType) {
+        } else if(content instanceof Emoticon) {
             type = MessageType.EMOTICON;
         } else {
             throw new UnsupportedOperationException("Sending a message of type " + content.getClass() + " not supported!");
