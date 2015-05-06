@@ -119,8 +119,7 @@ public class DrawingActivity extends Activity implements Observer,
             cs.putToDataMap(dataMap);
             messagePhone(BTCommType.SEND_DRAWING.toString(), dataMap.toByteArray());
 
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            this.finish();
         }
     }
 
