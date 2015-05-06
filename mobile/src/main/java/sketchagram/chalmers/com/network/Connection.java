@@ -48,6 +48,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.MessageType;
@@ -374,10 +375,10 @@ public class Connection implements IConnection{
                 networkMessage = new NetworkMessage<String>();
                 break;
             case DRAWING:
-                networkMessage= new NetworkMessage<Drawing>();
+                networkMessage = new NetworkMessage<Drawing>();
                 break;
             case EMOTICON:
-                networkMessage = new NetworkMessage<EmoticonType>();
+                networkMessage = new NetworkMessage<Emoticon>();
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -535,7 +536,6 @@ public class Connection implements IConnection{
                     }
                 }
             }
-
         }
         if(!exists){
             ChatManager chatManager = getChatManager();
@@ -614,8 +614,9 @@ public class Connection implements IConnection{
                 clientMessage = drawingNetworkMessage.convertFromNetworkMessage(messageType);
                 break;
             case EMOTICON:
-                NetworkMessage<EmoticonType> emoticonTypeNetworkMessage = gson.fromJson(body, NetworkMessage.class);
-                clientMessage = emoticonTypeNetworkMessage.convertFromNetworkMessage(messageType);
+                Type classType2 = new TypeToken<NetworkMessage<Emoticon>>(){}.getType();
+                NetworkMessage<Emoticon> emoticonNetworkMessage = gson.fromJson(body, classType2);
+                clientMessage = emoticonNetworkMessage.convertFromNetworkMessage(messageType);
                 break;
             default:
                 throw new UnsupportedOperationException();
