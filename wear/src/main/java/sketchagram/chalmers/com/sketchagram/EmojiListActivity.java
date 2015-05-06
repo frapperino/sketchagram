@@ -58,17 +58,8 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emoji_list);
 
-
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                messagePhone(BTCommType.GET_EMOJIS.toString(), null);
-                loadAdapter();
-
-            }
-        });
+        mListView = (WearableListView) findViewById(R.id.emojiListView);
+        loadAdapter();
 
 
         //  Is needed for communication between the wearable and the device.
@@ -187,8 +178,7 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         //Send to phone
         messagePhone(BTCommType.SEND_EMOJI.toString(), dataMap.toByteArray());
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 
     @Override

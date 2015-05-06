@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.model;
 
+
 import sketchagram.chalmers.com.sketchagram.R;
 
 /**

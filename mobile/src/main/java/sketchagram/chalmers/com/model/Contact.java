@@ -43,7 +43,7 @@ public class Contact extends ADigitalPerson implements Comparable{
 
     @Override
     public int compareTo(Object obj) {
-        return (int)(this.lastAccessed - ((Contact)obj).getLastAccessed());
+        return (int)(((Contact)obj).getLastAccessed() - this.lastAccessed);
     }
 
 }

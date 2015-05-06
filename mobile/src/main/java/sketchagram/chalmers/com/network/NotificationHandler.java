@@ -7,8 +7,8 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.WearableExtender;
 
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
@@ -61,7 +61,16 @@ public class NotificationHandler {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
+
+        // Create the action
+        NotificationCompat.Action action =
+                new NotificationCompat.Action.Builder(R.drawable.ic_photos,
+                        "Reply", resultPendingIntent)
+                        .build();
+
+        mBuilder.extend(new WearableExtender().addAction(action))
+            .setContentIntent(resultPendingIntent);
+
         notificationManager.notify(messageId, mBuilder.build());
     }
 }

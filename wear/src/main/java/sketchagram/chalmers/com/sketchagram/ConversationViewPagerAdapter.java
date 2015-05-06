@@ -48,100 +48,33 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
 
     private final Context mContext;
     private List<Row> mRows;
-    private ColorDrawable mDefaultBg;
-
-    private ColorDrawable mClearBg;
 
     public ConversationViewPagerAdapter(Context ctx, FragmentManager fm) {
         super(fm);
         mContext = ctx;
 
-        mRows = new ArrayList<>();
+        mRows = new ArrayList<Row>();
 
         loadFragments();
-        mDefaultBg = new ColorDrawable(R.color.white);
-        mClearBg = new ColorDrawable(android.R.color.transparent);
     }
-
-
-    LruCache<Integer, Drawable> mRowBackgrounds = new LruCache<Integer, Drawable>(3) {
-        @Override
-        protected Drawable create(final Integer row) {
-            new DrawableLoadingTask(mContext) {
-                @Override
-                protected void onPostExecute(Drawable result) {
-                    TransitionDrawable background = new TransitionDrawable(new Drawable[] {
-                            mDefaultBg,
-                            result
-                    });
-                    mRowBackgrounds.put(row, background);
-                    notifyRowBackgroundChanged(row);
-                    background.startTransition(TRANSITION_DURATION_MILLIS);
-                }
-            };
-            return mDefaultBg;
-        }
-    };
-
-    LruCache<Point, Drawable> mPageBackgrounds = new LruCache<Point, Drawable>(3) {
-        @Override
-        protected Drawable create(final Point page) {
-            if (page.y == 2 && page.x == 1) {
-                int resid = R.drawable.wl_circle;
-                new DrawableLoadingTask(mContext) {
-                    @Override
-                    protected void onPostExecute(Drawable result) {
-                        TransitionDrawable background = new TransitionDrawable(new Drawable[] {
-                                mClearBg,
-                                result
-                        });
-                        mPageBackgrounds.put(page, background);
-                        notifyPageBackgroundChanged(page.y, page.x);
-                        background.startTransition(TRANSITION_DURATION_MILLIS);
-                    }
-                }.execute(resid);
-            }
-            return GridPagerAdapter.BACKGROUND_NONE;
-        }
-    };
 
     /** A convenient container for a row of fragments. */
     private class Row {
-        final List<Fragment> columns = new ArrayList<Fragment>();
+        Fragment fragment;
 
-        public Row(Fragment... fragments) {
-            for (Fragment f : fragments) {
-                add(f);
-            }
+        public Row(Fragment fragment) {
+            this.fragment = fragment;
         }
 
-        public void add(Fragment f) {
-            columns.add(f);
-        }
-
-        Fragment getColumn(int i) {
-            return columns.get(i);
-        }
-
-        public int getColumnCount() {
-            return 1;
+        Fragment getFragment() {
+            return fragment;
         }
     }
 
     @Override
     public Fragment getFragment(int row, int col) {
         Row adapterRow = mRows.get(row);
-        return adapterRow.getColumn(col);
-    }
-
-    @Override
-    public Drawable getBackgroundForRow(final int row) {
-        return mRowBackgrounds.get(row);
-    }
-
-    @Override
-    public Drawable getBackgroundForPage(final int row, final int column) {
-        return mPageBackgrounds.get(new Point(column, row));
+        return adapterRow.getFragment();
     }
 
     @Override
@@ -151,7 +84,7 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int rowNum) {
-        return mRows.get(rowNum).getColumnCount();
+        return 1;
     }
 
     public void loadFragments(){
@@ -162,21 +95,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
             bundle.putInt("id", i);
             fragment.setArguments(bundle);
             mRows.add(new Row(fragment));
-        }
-    }
-
-    class DrawableLoadingTask extends AsyncTask<Integer, Void, Drawable> {
-        private static final String TAG = "Loader";
-        private Context context;
-
-        DrawableLoadingTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Drawable doInBackground(Integer... params) {
-            Log.d(TAG, "Loading asset 0x" + Integer.toHexString(params[0]));
-            return context.getResources().getDrawable(params[0]);
         }
     }
 }

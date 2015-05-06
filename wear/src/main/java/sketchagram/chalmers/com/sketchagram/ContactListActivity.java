@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -47,7 +47,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
     private GoogleApiClient mGoogleApiClient;
     private DataMap dataMap;
     private ContactSync contacts;
-    private ContactSync receivers;
+    private String contact;
 
     private int messageType;
 
@@ -57,23 +57,17 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listview_stub);
+        setContentView(R.layout.activity_contact_listview);
 
+        contact = "";
         dataMap = new DataMap();
         contacts = new ContactSync();
         choices = new ArrayList<>();
 
         messageType = getIntent().getIntExtra("messagetype", 0);
 
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                loadAdapter();
-
-            }
-        });
+        mListView = (WearableListView) findViewById(R.id.listView1);
+        loadAdapter();
 
 
         //  Is needed for communication between the wearable and the device.
@@ -89,7 +83,6 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                 .build();
         mGoogleApiClient.connect();
 
-        receivers = new ContactSync();
         messagePhone(BTCommType.GET_CONTACTS.toString(), null);     //sends a message to phone asking for contacts
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -181,11 +174,18 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                 case 0: intent = new Intent(this, DrawingActivity.class);
                     intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
                     startActivity(intent);
+                    this.finish();
                     break;
                 case 1: intent = new Intent(this, EmojiListActivity.class);
                     intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), choices.get(viewHolder.getPosition()));
                     startActivity(intent);
+                    this.finish();
                     break;
+                case 2:
+                    DataMap dataMap = new DataMap();
+                    contact = choices.get(viewHolder.getPosition());
+                    dataMap.putString("convid", contact);
+                    messagePhone(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
             }
 
     }
@@ -232,15 +232,53 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      */
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        dataMap = DataMap.fromByteArray(messageEvent.getData());
-        contacts = new ContactSync(dataMap);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-                loadAdapter();
+        if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) {
+            dataMap = DataMap.fromByteArray(messageEvent.getData());
+            contacts = new ContactSync(dataMap);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                    loadAdapter();
+                }
+            });
+        }
+
+        if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) {
+            List<AMessage> messages = new ArrayList<AMessage>();
+            DataMap data = DataMap.fromByteArray(messageEvent.getData());
+
+            List<String> emojis = data.getStringArrayList("emojis");
+            List<Integer> pos = data.getIntegerArrayList("emojisPositions");
+
+            int messageAmount = data.getInt("amountOfMessages");
+            for (int i = 0; i < messageAmount; i++) {
+                if(pos.contains(i)){
+                    Emoticon emoji = new Emoticon(EmoticonType.valueOf(emojis.get(0)).getRes());
+                    emojis.remove(0);
+                    messages.add(emoji);
+                } else {
+                    Drawing drawing = new Drawing(data.getFloatArray("y-coordinates " + i)
+                            , data.getFloatArray("x-coordinates " + i)
+                            , data.getLongArray("drawing-times " + i)
+                            , data.getStringArray("actions " + i)
+                            , data.getByteArray("staticDrawing " + i));
+                    messages.add(drawing);
+                }
+
             }
-        });
+            Log.e("drawings", "new drawings");
+            MessageHolder.getInstance().setDrawings(messages);
+            if(messageAmount < 1){
+                Toast.makeText(getApplicationContext(), "No messages found", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Intent intent = new Intent(this, ConversationViewActivity.class);
+                intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), contact);
+                startActivity(intent);
+                this.finish();
+            }
+        }
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
@@ -262,10 +300,11 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             MyItemView mItemView = (MyItemView) viewHolder.itemView;
             final String item = items.get(i);
 
+            ImageView img = (ImageView) mItemView.findViewById(R.id.image);
+            img.setBackgroundResource(R.drawable.contact);
+
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item.toString());
-
-
         }
 
         @Override
@@ -283,7 +322,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.activity_contact_view, this);
+            View.inflate(context, R.layout.contact_listview_content, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }
