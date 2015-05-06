@@ -1,10 +1,10 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 /**
  * Created by Bosch on 24/04/15.
  */
 public abstract class AMessage {
-    public abstract Bitmap getStaticDrawing();
+    public abstract Drawable getDrawable();
 }

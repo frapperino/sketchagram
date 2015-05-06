@@ -24,6 +24,7 @@ import sketchagram.chalmers.com.database.DataContract.*;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.DrawingEvent;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.Profile;
 import sketchagram.chalmers.com.model.User;
@@ -190,9 +191,12 @@ public class SketchagramDb {
         for(Conversation c : convList){
             boolean same = true;
             if(c.getParticipants().size() != participants.size()){
-                break;
+                same = false;
             }
             for(ADigitalPerson participant : c.getParticipants()) {
+                if (!same){
+                    break;
+                }
                 boolean participantexists = false;
                 for(ADigitalPerson receiver : participants){
                     if(participant.equals(receiver)){
@@ -283,7 +287,8 @@ public class SketchagramDb {
                             messages.add(new ClientMessage(timestamp, contactSender, participants, decodedContent, typeEnum, read));
                             break;
                         case EMOTICON:
-                            //TODO: decode here
+                            Emoticon decodedEmoticon = gson.fromJson(content, Emoticon.class);
+                            messages.add(new ClientMessage(timestamp, contactSender, participants, decodedEmoticon, typeEnum, read));
                             break;
                         case DRAWING:
                             Drawing decodedDrawing = gson.fromJson(content, Drawing.class);

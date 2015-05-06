@@ -1,8 +1,11 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -21,13 +24,18 @@ public class Drawing extends AMessage{
     List<DrawingEvent> events;
     private final int COLOR = Color.MAGENTA;
 
+    private final Resources res;
+
     private byte[] staticDrawing;
 
     public Drawing() {
         events = new LinkedList<>();
+        res = null;
     }
 
-    public Drawing(float[] xFloat, float[] yFloat, long[] longTimes, String[] actionsString, byte[] staticDrawing) {
+    public Drawing(float[] xFloat, float[] yFloat, long[] longTimes, String[] actionsString, byte[] staticDrawing, Resources res) {
+
+        this.res = res;
 
         events = new LinkedList<>();
 
@@ -91,11 +99,11 @@ public class Drawing extends AMessage{
         this.staticDrawing = staticDrawing;
     }
 
-    public Bitmap getStaticDrawing() {
-        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
+    public Drawable getDrawable(){
+        return new BitmapDrawable(res, getStaticDrawing());
     }
 
-    public byte[] getStaticDrawingByteArray() {
-        return staticDrawing;
+    public Bitmap getStaticDrawing() {
+        return BitmapFactory.decodeByteArray(staticDrawing, 0, staticDrawing.length);
     }
 }

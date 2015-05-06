@@ -254,7 +254,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             int messageAmount = data.getInt("amountOfMessages");
             for (int i = 0; i < messageAmount; i++) {
                 if(pos.contains(i)){
-                    Emoticon emoji = new Emoticon(EmoticonType.valueOf(emojis.get(0)).getRes());
+                    Emoticon emoji = new Emoticon(EmoticonType.valueOf(emojis.get(0)), getResources());
                     emojis.remove(0);
                     messages.add(emoji);
                 } else {
@@ -262,7 +262,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                             , data.getFloatArray("x-coordinates " + i)
                             , data.getLongArray("drawing-times " + i)
                             , data.getStringArray("actions " + i)
-                            , data.getByteArray("staticDrawing " + i));
+                            , data.getByteArray("staticDrawing " + i), getResources());
                     messages.add(drawing);
                 }
 
