@@ -51,8 +51,7 @@
             android:layout_height="55dp"
             android:scaleType="fitCenter"
             android:background="@null"
-            android:src="@drawable/ic_emoji_red"
-            android:id="@+id/" />
+            android:src="@drawable/ic_emoji_red"/>
 
         <TextView
             android:clickable="false"

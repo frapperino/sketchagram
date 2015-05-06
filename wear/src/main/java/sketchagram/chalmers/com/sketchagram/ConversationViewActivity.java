@@ -37,7 +37,6 @@ import java.util.List;
  * The activity for showing a conversation on Wear.
  */
 public class ConversationViewActivity extends Activity  implements
-        MessageApi.MessageListener,
         GoogleApiClient.ConnectionCallbacks  {
 
     private GoogleApiClient mGoogleApiClient;
@@ -90,72 +89,7 @@ public class ConversationViewActivity extends Activity  implements
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
-
-        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
-        MessageReceiver messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
-
-
-
-    /**
-     * This method will generate all the nodes that are attached to a Google Api Client.
-     * Now, theoretically, only one should be: the phone. However, they return us more
-     * a list. In the case where the phone happens to not be the first/only, I decided to
-     * make a List of all the nodes and we'll loop through them and send each of them
-     * a message. After getting the list of nodes, it sends a message to each of them telling
-     * it to start. One the last successful node, it saves it as our one peerNode.
-     */
-    private void messagePhone(final String message, final byte[] byteMap){
-
-        new AsyncTask<Void, Void, List<Node>>(){
-
-            @Override
-            protected List<Node> doInBackground(Void... params) {
-                return getNodes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Node> nodeList) {
-                for(Node node : nodeList) {
-                    Log.e("WATCH", "......Phone: Sending Msg:  to node:  " + node.getId());
-                    Log.e("WATCH", "Sending to: " + message.toString());
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(
-                            mGoogleApiClient,
-                            node.getId(),
-                            message.toString(),
-                            byteMap
-                    );
-
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            Log.e("DEVELOPER", "......Phone: " + sendMessageResult.getStatus().getStatusMessage());
-
-                        }
-                    });
-                }
-            }
-        }.execute();
-
-    }
-
-    /**
-     * Finds all nodes connected to the wear.
-     * @return
-     */
-    private List<Node> getNodes() {
-        List<Node> nodes = new ArrayList<Node>();
-        NodeApi.GetConnectedNodesResult rawNodes =
-                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-        for (Node node : rawNodes.getNodes()) {
-            nodes.add(node);
-        }
-        return nodes;
-    }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -187,21 +121,6 @@ public class ConversationViewActivity extends Activity  implements
     @Override
     public void onConnectionSuspended(int i) {
 
-    }
-
-    /**
-     * Receives new drawings and puts them into the static holder for drawings.
-     * @param messageEvent
-     */
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-    }
-
-    public class MessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //What to do if a message is received
-        }
     }
 
     public String getContact(){
