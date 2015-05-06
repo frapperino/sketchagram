@@ -242,13 +242,13 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         }
 
         private void loadBitmaps() {
-            items[0] = BitmapFactory.decodeResource(getResources(), EmoticonType.SAD.getRes());
+            items[0] = BitmapFactory.decodeResource(getResources(), EmoticonType.SAD.getDrawable());
             emojis.add(EmoticonType.SAD.toString());
-            items[1] = BitmapFactory.decodeResource(getResources(), EmoticonType.HAPPY.getRes());
+            items[1] = BitmapFactory.decodeResource(getResources(), EmoticonType.HAPPY.getDrawable());
             emojis.add(EmoticonType.HAPPY.toString());
-            items[2] = BitmapFactory.decodeResource(getResources(), EmoticonType.FLIRT.getRes());
+            items[2] = BitmapFactory.decodeResource(getResources(), EmoticonType.FLIRT.getDrawable());
             emojis.add(EmoticonType.FLIRT.toString());
-            items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getRes());
+            items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getDrawable());
             emojis.add(EmoticonType.HEART.toString());
 
         }

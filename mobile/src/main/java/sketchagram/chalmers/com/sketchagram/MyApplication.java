@@ -32,6 +32,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.MessageType;
@@ -122,10 +123,7 @@ public class MyApplication extends Application implements MessageApi.MessageList
 
                 userManager.sendMessage(ls, "Emoticon from wear");
             }
-        } /*else if(messageEvent.getPath().equals(BTCommType.GET_USERNAME.toString())) { //From MainActivity in clock
-            dataMap.putString("username", userManager.getUsername());
-            sendToWatch(BTCommType.GET_USERNAME.toString(), dataMap.toByteArray());
-        }*/ else if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) { // From ConversationViewActivity
+        } else if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) { // From ConversationViewActivity
             String username = DataMap.fromByteArray(messageEvent.getData()).getString("convid");
             Contact contact = null;
             Conversation conversation = null;
@@ -151,7 +149,7 @@ public class MyApplication extends Application implements MessageApi.MessageList
             if(conversation != null) {
                 for (ClientMessage message : conversation.getHistory()) {
                     if (message.getType().equals(MessageType.EMOTICON)) {
-                        emojis.add(message.getContent().toString());
+                        emojis.add(((Emoticon)message.getContent()).getEmoticonType().toString());
                         emojiPositions.add(i);
                     }
                     if (message.getType().equals(MessageType.DRAWING)) {
@@ -186,7 +184,7 @@ public class MyApplication extends Application implements MessageApi.MessageList
             Log.e("EMOJI", "trying to send");
             ContactSync cs = new ContactSync(DataMap.fromByteArray(messageEvent.getData()));
             String emoji = DataMap.fromByteArray(messageEvent.getData()).getString(BTCommType.SEND_EMOJI.toString());
-            userManager.sendMessage(cs.getContacts(), EmoticonType.valueOf(emoji));
+            userManager.sendMessage(cs.getContacts(), new Emoticon(EmoticonType.valueOf(emoji)));
 
         }
     }

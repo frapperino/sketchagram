@@ -53,7 +53,7 @@ public class ConversationViewFragment extends Fragment implements View.OnClickLi
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMessage = MessageHolder.getInstance().getMessage(id);
-        mMessageView.setImageBitmap(mMessage.getStaticDrawing());
+        mMessageView.setImageDrawable(mMessage.getDrawable());
     }
 
     @Override
