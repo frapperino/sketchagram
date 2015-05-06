@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -31,6 +33,7 @@ import java.util.List;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
@@ -165,7 +168,15 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                         items.add(new Item(c.toString(),
                                lastMessage.dateToShow(),
                                 ((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE), isRead));
-                    } else {
+                    }
+                    else if(lastMessage.getType() == MessageType.EMOTICON){
+                        int emote = ((Emoticon) lastMessage.getContent()).getEmoticonType().getDrawable();
+
+                        items.add(new Item(c.toString(),
+                                lastMessage.dateToShow(),
+                                (BitmapFactory.decodeResource(getActivity().getResources(), emote)), isRead));
+
+                    } else{
                         items.add(new Item(c.toString(),
                                 history.get(history.size()-1).dateToShow(), null, isRead));
                     }
@@ -220,8 +231,8 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 name.setTypeface(null, Typeface.NORMAL);
             }
 
-            if(item.drawing != null) {
-                picture.setImageBitmap(item.drawing);
+            if(item.bitmap != null) {
+                picture.setImageBitmap(item.bitmap);
             }
             name.setText(item.name);
             time.setText(item.time);
@@ -232,13 +243,13 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         private class Item {
             final String time;
             final String name;
-            final Bitmap drawing;
+            final Bitmap bitmap;
             final boolean isRead;
 
-            Item(String name, String time, Bitmap drawing, boolean isRead) {
+            Item(String name, String time, Bitmap bitmap, boolean isRead) {
                 this.time = time;
                 this.name = name;
-                this.drawing = drawing;
+                this.bitmap = bitmap;
                 this.isRead = isRead;
             }
             public boolean hasUnreadMessages(){

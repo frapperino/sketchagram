@@ -29,6 +29,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
@@ -267,7 +268,13 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
 
             holder.dateText.setText(sdf.format(resultDate));
             holder.titleText.setText(item.getSender().getUsername().toString());
-            holder.drawing.setImageBitmap(((Drawing) item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            if(item.getContent() instanceof Emoticon) {
+                holder.drawing.setImageResource(((Emoticon)item.getContent()).getEmoticonType().getDrawable());
+            } else if(item.getContent() instanceof Drawing) {
+                holder.drawing.setImageBitmap(((Drawing) item.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            } else {
+                throw new IllegalStateException("inConversationFragment attempt to display unsupported content type");
+            }
             //TODO: check if drawing or smiley
             if (item.getSender().getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {
                 holder.titleText.setText(UserManager.getInstance().getUsername().toString());
