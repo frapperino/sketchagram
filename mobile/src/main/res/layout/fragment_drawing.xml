@@ -6,6 +6,7 @@
     android:background="#FFCCCCCC"
     android:orientation="vertical"
     tools:context=".MainActivity" >
+
     <sketchagram.chalmers.com.sketchagram.DrawingView
         android:id="@+id/drawing"
         android:layout_width="match_parent"
@@ -20,7 +21,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/sketchagramPrimary2">
 
         <ImageButton
             android:layout_width="60dp"
