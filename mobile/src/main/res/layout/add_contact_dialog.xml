@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:minWidth="300dp"
     android:minHeight="100dp"
-    android:paddingLeft="20dp"
-    android:paddingTop="20dp"
-    android:paddingRight="20dp"
+    android:paddingLeft="24dp"
+    android:paddingTop="24dp"
+    android:paddingRight="24dp"
     android:paddingBottom="8dp">
 
     <EditText
@@ -15,7 +15,7 @@
         android:id="@+id/user_name_dialog"
         android:layout_gravity="center_horizontal"
         android:hint="@string/enter_username"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -25,21 +25,32 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:minWidth="64dp"
+            android:layout_height="36dp"
             android:textColor="@drawable/button_text_layout"
             android:text="@string/cancel_add_contact"
             android:id="@+id/cancel_dialog_button"
             android:layout_gravity="start|right"
-            android:background="@drawable/button_layout" />
+            android:background="@drawable/button_layout"
+            android:layout_marginRight="4dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp" />
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:minWidth="64dp"
+            android:layout_height="36dp"
             android:textColor="@drawable/button_text_layout"
             android:text="@string/add_contact"
             android:id="@+id/add_contact_dialog_button"
             android:layout_gravity="end|right"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/button_layout" />
+            android:background="@drawable/button_layout"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp" />
 
     </LinearLayout>
 
