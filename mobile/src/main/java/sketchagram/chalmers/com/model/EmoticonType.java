@@ -1,6 +1,8 @@
 package sketchagram.chalmers.com.model;
 
 
+import sketchagram.chalmers.com.sketchagram.R;
+
 /**
  * Created by Olliver on 2015-04-14.
  */
