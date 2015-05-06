@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -118,6 +119,7 @@ public class DrawingActivity extends Activity implements Observer,
             cs.addContact(receiver);
             cs.putToDataMap(dataMap);
             messagePhone(BTCommType.SEND_DRAWING.toString(), dataMap.toByteArray());
+            Toast.makeText(getApplicationContext(), "Sent drawing.", Toast.LENGTH_SHORT).show();
 
             this.finish();
         }

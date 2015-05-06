@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contact_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activity_emoji_list"
-    android:background="@color/white">
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".MainActivity"
+    tools:deviceIds="wear">
 
     <android.support.wearable.view.WearableListView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/emojiListView"
+        android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
         android:dividerHeight="0dp">
     </android.support.wearable.view.WearableListView>
+
 </LinearLayout>

@@ -29,9 +29,9 @@ public class BasicNotificationDisplayActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification_display);
 
         String title = getIntent().getStringExtra(EXTRA_TITLE);
+        setContentView(R.layout.activity_notification_display);
 
         ((TextView) findViewById(R.id.title)).setText(title);
     }
