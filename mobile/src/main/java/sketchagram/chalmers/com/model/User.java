@@ -114,7 +114,9 @@ public class User extends ADigitalPerson  {
     public Conversation addMessage(ClientMessage clientMessage, boolean send){
         List<ADigitalPerson> participants = new ArrayList<>();
         participants.addAll(clientMessage.getReceivers());
-        participants.add(clientMessage.getSender());
+        if(!participants.get(0).getUsername().toLowerCase().equals(clientMessage.getSender().getUsername().toLowerCase())) {
+            participants.add(clientMessage.getSender());
+        }
         Conversation conversation = null;
 
         int conversationId = MyApplication.getInstance().getDatabase().insertMessage(clientMessage);

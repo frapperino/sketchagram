@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.app.Fragment;    //v4 only used for android version 3 or lower.
 import android.support.v4.widget.DrawerLayout;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -21,20 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -42,15 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.BTCommType;
-import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Conversation;
-import sketchagram.chalmers.com.model.Drawing;
-import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.IUserManager;
-import sketchagram.chalmers.com.model.EmoticonType;
-import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 import sketchagram.chalmers.com.network.Connection;
 
@@ -101,7 +80,6 @@ public class MainActivity extends ActionBarActivity
         conversationFragment = new ConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
         drawingFragment = new DrawingFragment();
-
 
         mHandler = new Handler(this);
 
@@ -273,6 +251,9 @@ public class MainActivity extends ActionBarActivity
         }
     }*/
 
+    /**
+     * Displays a dialog allowing one to change the password.
+     */
     public void changePassword() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.change_password_dialog);
@@ -312,7 +293,7 @@ public class MainActivity extends ActionBarActivity
                 if (userManager.addContact(user)) {
                     Toast.makeText(getApplicationContext(), user + " added to contacts.", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();;
+                    Toast.makeText(getApplicationContext(), user + " couldn't be added.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -329,8 +310,6 @@ public class MainActivity extends ActionBarActivity
     public boolean handleMessage(Message msg) {
         return false;
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -354,5 +333,4 @@ public class MainActivity extends ActionBarActivity
     public void onFragmentInteraction(String id) {
         //Currently not in use but has to be implemented, as defined by a fragment.
     }
-
 }

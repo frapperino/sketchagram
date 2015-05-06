@@ -27,10 +27,6 @@ public class MessageHolder {
         return messages.get(i);
     }
 
-    public void addMessage(String emoji, int pos){
-        messages.add(pos, new Emoticon(EmoticonType.valueOf(emoji).getRes()));
-    }
-
     public void setDrawings(List<AMessage> messages) {
         this.messages = messages;
     }

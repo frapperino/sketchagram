@@ -58,17 +58,8 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emoji_list);
 
-
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mListView = (WearableListView) stub.findViewById(R.id.listView1);
-                messagePhone(BTCommType.GET_EMOJIS.toString(), null);
-                loadAdapter();
-
-            }
-        });
+        mListView = (WearableListView) findViewById(R.id.emojiListView);
+        loadAdapter();
 
 
         //  Is needed for communication between the wearable and the device.
@@ -187,8 +178,7 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         //Send to phone
         messagePhone(BTCommType.SEND_EMOJI.toString(), dataMap.toByteArray());
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 
     @Override
@@ -252,13 +242,13 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
         }
 
         private void loadBitmaps() {
-            items[0] = BitmapFactory.decodeResource(getResources(), EmoticonType.SAD.getRes());
+            items[0] = BitmapFactory.decodeResource(getResources(), EmoticonType.SAD.getDrawable());
             emojis.add(EmoticonType.SAD.toString());
-            items[1] = BitmapFactory.decodeResource(getResources(), EmoticonType.HAPPY.getRes());
+            items[1] = BitmapFactory.decodeResource(getResources(), EmoticonType.HAPPY.getDrawable());
             emojis.add(EmoticonType.HAPPY.toString());
-            items[2] = BitmapFactory.decodeResource(getResources(), EmoticonType.FLIRT.getRes());
+            items[2] = BitmapFactory.decodeResource(getResources(), EmoticonType.FLIRT.getDrawable());
             emojis.add(EmoticonType.FLIRT.toString());
-            items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getRes());
+            items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getDrawable());
             emojis.add(EmoticonType.HEART.toString());
 
         }

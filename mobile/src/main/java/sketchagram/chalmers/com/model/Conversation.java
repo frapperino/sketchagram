@@ -54,6 +54,9 @@ public class Conversation implements Comparable{
 
     @Override
     public String toString(){
+        if(getParticipants().size() == 1){
+            return getParticipants().get(0).getUsername();
+        }
         String participants = "";
         for(ADigitalPerson participant : getParticipants()) {
             if(!participant.getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())) {

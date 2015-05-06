@@ -116,7 +116,6 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("ITEM_CLICK", "ITEM_CLICK");
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
