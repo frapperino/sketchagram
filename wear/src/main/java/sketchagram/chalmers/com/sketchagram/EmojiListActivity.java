@@ -250,6 +250,10 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
             emojis.add(EmoticonType.FLIRT.toString());
             items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getRes());
             emojis.add(EmoticonType.HEART.toString());
+            items[4] = BitmapFactory.decodeResource(getResources(), EmoticonType.THUMBSUP.getRes());
+            emojis.add(EmoticonType.THUMBSUP.toString());
+            items[5] = BitmapFactory.decodeResource(getResources(), EmoticonType.THUMBSDOWN.getRes());
+            emojis.add(EmoticonType.THUMBSDOWN.toString());
 
         }
 
