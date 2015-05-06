@@ -1,7 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.net.Uri;
@@ -11,20 +10,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
-import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
 
@@ -78,7 +73,7 @@ public class ShowDrawingFragment extends Fragment implements Observer {
         View view = inflater.inflate(R.layout.fragment_showdrawing, container, false);
         //Get view that is displayed in the Activity on which we can call
         //the methods in the DrawingView class.
-        drawView = (DrawingView) view.findViewById(R.id.drawing);
+        drawView = (DrawingView) view.findViewById(R.id.showDrawingView);
         drawView.addHelperObserver(this);
         if(drawing != null){
             drawView.displayDrawing(drawing);
@@ -110,7 +105,7 @@ public class ShowDrawingFragment extends Fragment implements Observer {
         Drawing drawing = (Drawing)data;
         UserManager.getInstance().sendMessage(receivers, drawing);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+        fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();
     }
 
@@ -160,7 +155,7 @@ public class ShowDrawingFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });

@@ -1,7 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -14,8 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,7 +86,7 @@ public class MainActivity extends ActionBarActivity
         /*
          * Navigation drawer
          */
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         /*
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 fragmentManager.findFragmentById(R.id.navigation_drawer);
@@ -200,7 +196,7 @@ public class MainActivity extends ActionBarActivity
      */
     private void displayFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_frame, fragment)
+        fragmentTransaction.replace(R.id.main_fragment_frame, fragment)
                 .addToBackStack(null).commit();
     }
     /*

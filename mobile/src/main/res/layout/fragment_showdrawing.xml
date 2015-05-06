@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
     <sketchagram.chalmers.com.sketchagram.DrawingView
-        android:id="@+id/drawing"
+        android:id="@+id/showDrawingView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginBottom="3dp"

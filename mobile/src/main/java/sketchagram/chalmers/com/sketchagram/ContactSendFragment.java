@@ -19,11 +19,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.UserManager;
 
@@ -105,7 +102,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
             List<Contact> receiverList = new ArrayList<>();
             receiverList.add(UserManager.getInstance().getAllContacts().get(position));
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
+            fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(receiverList))
                     .addToBackStack(null).commit();
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
@@ -149,7 +146,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });
@@ -158,7 +155,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });

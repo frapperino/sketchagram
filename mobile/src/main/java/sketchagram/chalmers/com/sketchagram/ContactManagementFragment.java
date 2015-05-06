@@ -249,7 +249,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });
@@ -258,7 +258,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });

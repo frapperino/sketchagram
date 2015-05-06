@@ -101,7 +101,7 @@ public class SendFragment extends Fragment implements View.OnClickListener {
             newMessage(uri.buildUpon().path(":D").build());
         } else if(v.getId() == R.id.paint_button){
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_frame, new DrawingFragment())
+            fragmentTransaction.replace(R.id.main_fragment_frame, new DrawingFragment())
                     .addToBackStack(null).commit();
         }
     }

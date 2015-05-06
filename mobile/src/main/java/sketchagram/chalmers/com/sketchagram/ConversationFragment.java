@@ -8,12 +8,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -273,7 +271,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ContactManagementFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ContactManagementFragment())
                         .addToBackStack(null).commit();
             }
         });

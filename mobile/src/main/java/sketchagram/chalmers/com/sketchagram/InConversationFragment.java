@@ -1,6 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -14,19 +13,16 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
-import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.Emoticon;
@@ -112,7 +108,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             public void onClick(View v) {
 
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
+                fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
                         .addToBackStack(null).commit();
             }
         });
@@ -147,7 +143,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             ClientMessage message = conversation.getHistory().get(position);
             if(message.getType() == MessageType.DRAWING){
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, ShowDrawingFragment.newInstance((Drawing)message.getContent(), message))
+                fragmentTransaction.replace(R.id.main_fragment_frame, ShowDrawingFragment.newInstance((Drawing)message.getContent(), message))
                         .addToBackStack(null).commit();
             }
         }
@@ -194,7 +190,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });
@@ -203,7 +199,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });
