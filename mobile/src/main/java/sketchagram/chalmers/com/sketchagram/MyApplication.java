@@ -32,6 +32,7 @@ import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.IUserManager;
 import sketchagram.chalmers.com.model.MessageType;
@@ -151,7 +152,7 @@ public class MyApplication extends Application implements MessageApi.MessageList
             if(conversation != null) {
                 for (ClientMessage message : conversation.getHistory()) {
                     if (message.getType().equals(MessageType.EMOTICON)) {
-                        emojis.add(message.getContent().toString());
+                        emojis.add(((Emoticon)message.getContent()).getEmoticonType().toString());
                         emojiPositions.add(i);
                     }
                     if (message.getType().equals(MessageType.DRAWING)) {
