@@ -1,5 +1,6 @@
 package sketchagram.chalmers.com.sketchagram;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +62,8 @@ public class MainActivity extends ActionBarActivity
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
         ContactManagementFragment.OnFragmentInteractionListener,
         AddContactFragment.OnFragmentInteractionListener,
-        DrawingFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks, Observer {
+        ShowDrawingFragment.OnFragmentInteractionListener,
+        DrawingFragment.OnFragmentInteractionListener/*, NavigationDrawerFragment.NavigationDrawerCallbacks*/, Observer {
 
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
@@ -77,14 +80,19 @@ public class MainActivity extends ActionBarActivity
     private IUserManager userManager;
 
     private DrawerLayout mDrawerLayout;
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    //private NavigationDrawerFragment mNavigationDrawerFragment;
 
+    //private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* if using toolbar
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        */
         userManager = UserManager.getInstance();
 
         // Check if logged in, else start LoginActivity
@@ -99,11 +107,13 @@ public class MainActivity extends ActionBarActivity
 
         fragmentManager = getFragmentManager();
 
+
+
         /*
          * Navigation drawer
          */
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        /*
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 fragmentManager.findFragmentById(R.id.navigation_drawer);
 
@@ -111,7 +121,7 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
+        */
         dataMap = new DataMap();
 
         //Set observer
@@ -126,6 +136,56 @@ public class MainActivity extends ActionBarActivity
             displayFragment(conversationFragment);
         }
      }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.global, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        else if(id == R.id.action_about){
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.about_dialog);
+            dialog.setTitle("About");
+            ((Button) dialog.findViewById(R.id.dialogButtonOK)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+            return true;
+        }
+        else if(id == R.id.action_logout){
+            SharedPreferences pref = getSharedPreferences(FILENAME, 0);
+            SharedPreferences.Editor prefs = pref.edit();
+            prefs.clear();
+            prefs.apply();
+            userManager.logout();
+            MyApplication.getInstance().getDatabase().update();
+            Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent2);
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     public void startDrawingFragment(View v) {
         displayFragment(drawingFragment);
@@ -165,7 +225,7 @@ public class MainActivity extends ActionBarActivity
         fragmentTransaction.replace(R.id.fragment_frame, fragment)
                 .addToBackStack(null).commit();
     }
-
+    /*
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         //Logic for item selection in navigation drawer.
@@ -211,7 +271,7 @@ public class MainActivity extends ActionBarActivity
         if (fragment != null) {
             displayFragment(fragment);
         }
-    }
+    }*/
 
     public void changePassword() {
         final Dialog dialog = new Dialog(this);

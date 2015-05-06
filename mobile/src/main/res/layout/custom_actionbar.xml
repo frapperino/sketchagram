@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/action_bar_icon1"
         android:layout_gravity="left|center_vertical"
-        android:background="@drawable/gradient"
+        android:background="@color/sketchagramPrimary"
         android:clickable="true"
         android:layout_marginLeft="0dp" />
     <TextView
@@ -30,7 +30,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/action_bar_icon2"
         android:layout_gravity="center_vertical|right"
-        android:layout_marginRight="15dp"
-        android:background="@drawable/gradient"
+        android:background="@color/sketchagramPrimary"
         android:clickable="true"/>
 </LinearLayout>

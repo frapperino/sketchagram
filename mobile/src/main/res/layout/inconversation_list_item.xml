@@ -7,15 +7,41 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:background="@color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="'name'"
+            android:textColor="@color/black"
+            android:id="@+id/titleTextView"
+            android:layout_gravity="left|center_horizontal"
+            android:gravity="left|center"
+            android:layout_marginLeft="10dp" /><!--android:background="@drawable/border"-->
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/titleTextView"
-            android:layout_gravity="center" />
-    </FrameLayout>
+            android:layout_height="50dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="'date'"
+            android:textColor="@color/darkGrey"
+            android:layout_gravity="center_horizontal|right"
+            android:id="@+id/dateTextView"
+            android:gravity="center|right"
+            android:layout_marginRight="10dp" /><!--android:background="@drawable/border"-->
 
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="300dp"
+            android:id="@+id/drawingToShow"
+            android:background="@drawable/image_border_top"
+            android:layout_marginTop="55dp" />
+    </FrameLayout>
 </LinearLayout>

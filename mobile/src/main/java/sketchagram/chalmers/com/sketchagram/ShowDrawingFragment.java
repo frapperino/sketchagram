@@ -1,82 +1,89 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Observable;
+import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ADigitalPerson;
+import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
+import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
+
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
+ * A {@link Fragment} subclass. Used for allowing user to draw.
+ * Activities that contain this fragment must implement the
+ * {@link DrawingFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
  */
-public class ContactSendFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class ShowDrawingFragment extends Fragment implements Observer {
+
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
-    private AbsListView mListView;
+    private DrawingView drawView;
 
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
-    private ListAdapter mAdapter;
+    private ClientMessage msg;
+    private List<Contact> receivers;
+    private Drawing drawing = null;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public ContactSendFragment() {
+    public ShowDrawingFragment() {
+        //android requires empty constructor
     }
 
+    public static ShowDrawingFragment newInstance(List<Contact> receivers){
+        ShowDrawingFragment showFragment = new ShowDrawingFragment();
+        showFragment.receivers = receivers;
+        return showFragment;
+    }
+
+    public static ShowDrawingFragment newInstance(Drawing drawing){
+        ShowDrawingFragment showFragment = new ShowDrawingFragment();
+        showFragment.drawing = drawing;
+        return showFragment;
+    }
+
+    public static ShowDrawingFragment newInstance(Drawing drawing, ClientMessage msg){
+        ShowDrawingFragment showFragment = new ShowDrawingFragment();
+        showFragment.drawing = drawing;
+        showFragment.msg = msg;
+        return showFragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Sets the adapter to customized one which enables our layout of items.
-        mAdapter = new ContactSendListAdapter(getActivity(), UserManager.getInstance().getAllContacts());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Collections.sort(UserManager.getInstance().getAllContacts());
-        View view = inflater.inflate(R.layout.fragment_contact_send_list, container, false);
-
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(R.id.contact_send_list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_showdrawing, container, false);
+        //Get view that is displayed in the Activity on which we can call
+        //the methods in the DrawingView class.
+        drawView = (DrawingView) view.findViewById(R.id.drawing);
+        drawView.addHelperObserver(this);
+        if(drawing != null){
+            drawView.displayDrawing(drawing);
+            drawView.setTouchable(false);
+        }
         showGlobalContextActionBar();
         return view;
     }
@@ -99,17 +106,12 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("ListButtonPress", "button pressed" + id);
-        if (null != mListener) {
-            List<Contact> receiverList = new ArrayList<>();
-            receiverList.add(UserManager.getInstance().getAllContacts().get(position));
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
-                    .addToBackStack(null).commit();
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-        }
+    public void update(Observable observable, Object data) {
+        Drawing drawing = (Drawing)data;
+        UserManager.getInstance().sendMessage(receivers, drawing);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                .addToBackStack(null).commit();
     }
 
     /**
@@ -124,37 +126,37 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(Uri uri);
     }
 
-    public void updateList() {
-        if (mAdapter != null) {
-            Collections.sort(UserManager.getInstance().getAllContacts());
-            BaseAdapter adapter = (BaseAdapter) mAdapter;
-            adapter.notifyDataSetChanged();
-        }
-    }
 
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
         actionBarIcon1.setImageResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
-        actionBarTitle.setText("Select receiver");
+        actionBarTitle.setText(msg.getSender().getUsername().toString() +"'s drawing");
         //actionBarTitle.setPadding(25, 0, 0, 0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
-        actionBarIcon2.setImageResource(0);
+        actionBarIcon2.setImageResource(R.drawable.ic_action_view_as_grid);
 
         actionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
-                        .addToBackStack(null).commit();
+                FragmentManager fm = getActivity().getFragmentManager();
+                fm.popBackStack();
             }
         });
 
         actionBarIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getFragmentManager();
+                fm.popBackStack();
+            }
+        });
+
+        actionBarIcon2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
