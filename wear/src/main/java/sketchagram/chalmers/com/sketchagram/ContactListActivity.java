@@ -322,7 +322,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
 
         public MyItemView(Context context) {
             super(context);
-            View.inflate(context, R.layout.contact_listview_content, this);
+            View.inflate(context, R.layout.contact_listview, this);
             image = (ImageView) findViewById(R.id.image);
             txtView = (TextView) findViewById(R.id.text);
         }
