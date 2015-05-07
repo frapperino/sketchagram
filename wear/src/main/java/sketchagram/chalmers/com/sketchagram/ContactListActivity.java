@@ -231,6 +231,10 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      * The phone is called earlier to send contacts to the
      * wear-device, when the phone has sent back all the
      * contacts then the adapter has to be notified and reloaded.
+     *
+     * @synchronized because of reasons the phone-app sends
+     * multiple messages to the clock with same content,
+     * synchronized is there so that they dont overlap.
      * @param messageEvent
      */
     @Override
