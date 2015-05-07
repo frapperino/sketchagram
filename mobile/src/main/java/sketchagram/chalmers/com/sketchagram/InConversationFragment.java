@@ -108,7 +108,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             @Override
             public void onClick(View v) {
                 //TODO implement reply to self case
-                if(!conversation.getParticipants().get(0).getUsername().equals(UserManager.getInstance().getUsername())){
+                if(conversation.getOtherParticipants().size() > 0){
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
                             .addToBackStack(null).commit();
