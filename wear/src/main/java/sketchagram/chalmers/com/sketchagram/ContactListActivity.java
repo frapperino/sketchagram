@@ -234,7 +234,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
      * @param messageEvent
      */
     @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
+    public synchronized void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().equals(BTCommType.GET_CONTACTS.toString())) {
             dataMap = DataMap.fromByteArray(messageEvent.getData());
             contacts = new ContactSync(dataMap);
@@ -270,10 +270,14 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                 }
 
             }
-            Log.e("drawings", "new drawings");
+            Log.e("drawings", "new drawings: " + messageAmount);
             MessageHolder.getInstance().setDrawings(messages);
             if(messageAmount < 1){
-                Toast.makeText(getApplicationContext(), "No messages found", Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "No messages found.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
                 startConversation = true;
                 Intent intent = new Intent(this, ConversationViewActivity.class);
