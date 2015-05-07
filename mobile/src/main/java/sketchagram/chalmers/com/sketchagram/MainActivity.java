@@ -31,8 +31,7 @@ import sketchagram.chalmers.com.network.Connection;
 
 
 public class MainActivity extends ActionBarActivity
-        implements SendFragment.OnFragmentInteractionListener,
-        ConversationFragment.OnFragmentInteractionListener,
+        implements ConversationFragment.OnFragmentInteractionListener,
         InConversationFragment.OnFragmentInteractionListener,
         Handler.Callback, ContactSendFragment.OnFragmentInteractionListener,
         ContactManagementFragment.OnFragmentInteractionListener,
@@ -43,12 +42,10 @@ public class MainActivity extends ActionBarActivity
     private final String FILENAME = "user";
     private final String MESSAGE = "message";
     private final String TAG = "Sketchagram";
-    private Fragment sendFragment;
     private Fragment contactSendFragment;
     private ConversationFragment conversationFragment;
     private InConversationFragment inConversationFragment;
     private Fragment contactManagementFragment;
-    private DrawingFragment drawingFragment;
     private FragmentManager fragmentManager;
     private Handler mHandler;
     private DataMap dataMap;
@@ -71,11 +68,9 @@ public class MainActivity extends ActionBarActivity
         userManager = UserManager.getInstance();
 
         // Check if logged in, else start LoginActivity
-        sendFragment = new SendFragment();
         contactSendFragment = new ContactSendFragment();
         conversationFragment = new ConversationFragment();
         contactManagementFragment = new ContactManagementFragment();
-        drawingFragment = new DrawingFragment();
 
         mHandler = new Handler(this);
 
@@ -159,10 +154,6 @@ public class MainActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void startDrawingFragment(View v) {
-        displayFragment(drawingFragment);
     }
 
     public void showContactSendFragment() {

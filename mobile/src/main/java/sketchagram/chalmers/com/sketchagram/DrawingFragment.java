@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,7 +137,11 @@ public class DrawingFragment extends Fragment implements Observer {
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
         actionBarIcon1.setImageResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
-        actionBarTitle.setText("To: " + receivers.get(0).getUsername().toString());
+        if(receivers.size()>0) {
+            actionBarTitle.setText("To: " + receivers.get(0).getUsername().toString());
+        } else {
+            throw new IllegalStateException("DrawingFragment - There are no receivers for this conversation?");
+        }
         //actionBarTitle.setPadding(25, 0, 0, 0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
         actionBarIcon2.setImageResource(R.drawable.ic_action_cancel);

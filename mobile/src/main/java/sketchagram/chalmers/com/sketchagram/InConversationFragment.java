@@ -61,6 +61,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
+     * Use newInstance instead.
      */
     public InConversationFragment() {
     }
