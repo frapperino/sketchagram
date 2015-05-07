@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -46,6 +48,11 @@ public class DrawingFragment extends Fragment implements Observer {
         return fragment;
     }
 
+    /**
+     * @deprecated not in use
+     * @param drawing
+     * @return DrawingFragment
+     */
     public static DrawingFragment newInstance(Drawing drawing){
         DrawingFragment fragment = new DrawingFragment();
         fragment.drawing = drawing;
@@ -66,7 +73,7 @@ public class DrawingFragment extends Fragment implements Observer {
         //the methods in the DrawingView class.
         drawView = (DrawingView) view.findViewById(R.id.createDrawingView);
         drawView.addHelperObserver(this);
-        if(drawing != null){
+        if(drawing != null) {
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
         }
@@ -74,8 +81,8 @@ public class DrawingFragment extends Fragment implements Observer {
         emoticonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.add(R.id.main_fragment_frame, EmoticonFragment.newInstance(receivers)).commit();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.main_fragment_frame, EmoticonFragment.newInstance(receivers)).commit();
             }
         });
 
@@ -105,6 +112,7 @@ public class DrawingFragment extends Fragment implements Observer {
         Drawing drawing = (Drawing)data;
         UserManager.getInstance().sendMessage(receivers, drawing);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out);
         fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();
     }
