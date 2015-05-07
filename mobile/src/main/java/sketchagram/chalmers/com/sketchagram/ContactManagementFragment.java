@@ -91,15 +91,6 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Collections.sort(UserManager.getInstance().getAllContacts(),new Comparator<Contact>() {
-            //Sort alphabetically
-
-            @Override
-            public int compare(Contact lhs, Contact rhs) {
-                int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
-                return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
-            }
-        });
         View view = inflater.inflate(R.layout.fragment_contact_management, container, false);
 
         // Set the adapter
@@ -326,7 +317,15 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
                 } else {
                     List<Contact> entries = alphaIndexer.get(s);
                     entries.add(c);
-                    Collections.sort(entries);
+                    Collections.sort(entries,new Comparator<Contact>() {
+                        //Sort alphabetically
+
+                        @Override
+                        public int compare(Contact lhs, Contact rhs) {
+                            int result = String.CASE_INSENSITIVE_ORDER.compare(lhs.getUsername(), rhs.getUsername());
+                            return (result != 0) ? result : lhs.getUsername().compareTo(rhs.toString());
+                        }
+                    });
                     alphaIndexer.put(s, entries);
                 }
                 Collections.sort(sections);

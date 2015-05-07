@@ -7,6 +7,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -197,11 +199,18 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
             mPasswordView.setError(passwordError);
         }
         if (usernameError == null && passwordError == null) {
-            if (loginServer(username, password)) {
-                SharedPreferences.Editor editor = getSharedPreferences(FILENAME, 0).edit();
-                editor.putString("username", username);
-                editor.putString("password", password);
-                editor.commit();
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if(networkInfo != null && networkInfo.isConnected()) {
+                if (loginServer(username, password)) {
+                    SharedPreferences.Editor editor = getSharedPreferences(FILENAME, 0).edit();
+                    editor.putString("username", username);
+                    editor.putString("password", password);
+                    editor.commit();
+                }
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
     }

@@ -275,6 +275,8 @@ public class Connection implements IConnection{
                     }
                     if(connection.isConnected()){
                         connection.login(userName, password);
+                    } else {
+                        return false;
                     }
                 } catch (XMPPException e) {
                     e.printStackTrace();
