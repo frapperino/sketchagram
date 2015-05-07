@@ -6,18 +6,13 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.WearableExtender;
 
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
-import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.sketchagram.MainActivity;
 import sketchagram.chalmers.com.sketchagram.R;
@@ -47,8 +42,10 @@ public class NotificationHandler {
         mBuilder.setContentTitle(message.getSender().getUsername());
         mBuilder.setContentText(message.getContent().toString());  //TODO: Display message content.
         if(message.getType().equals(MessageType.DRAWING)) {
+            Bitmap mBitmap = ((Drawing) message.getContent()).getStaticDrawing(720,720);
+
             mBuilder.setStyle(new NotificationCompat.BigPictureStyle()
-                    .bigPicture(((Drawing) message.getContent()).getStaticDrawing(720, 720)));
+                    .bigPicture(mBitmap));
         }
         mBuilder.setAutoCancel(true);
         mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);

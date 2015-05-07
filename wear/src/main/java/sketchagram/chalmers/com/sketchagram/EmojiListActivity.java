@@ -232,7 +232,7 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
 
         public MyListAdapter(Context context) {
             this.context = context;
-            items = new Bitmap[4];
+            items = new Bitmap[6];
             emojis = new ArrayList<String>();
             loadBitmaps();
         }
@@ -250,6 +250,10 @@ public class EmojiListActivity extends Activity implements WearableListView.Clic
             emojis.add(EmoticonType.FLIRT.toString());
             items[3] = BitmapFactory.decodeResource(getResources(), EmoticonType.HEART.getDrawable());
             emojis.add(EmoticonType.HEART.toString());
+            items[4] = BitmapFactory.decodeResource(getResources(), EmoticonType.THUMBSUP.getDrawable());
+            emojis.add(EmoticonType.THUMBSUP.toString());
+            items[5] = BitmapFactory.decodeResource(getResources(), EmoticonType.THUMBSDOWN.getDrawable());
+            emojis.add(EmoticonType.THUMBSDOWN.toString());
 
         }
 

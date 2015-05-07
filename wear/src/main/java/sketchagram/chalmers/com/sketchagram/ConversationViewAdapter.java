@@ -19,18 +19,9 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.util.LruCache;
-import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
-import android.support.wearable.view.GridPagerAdapter;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +34,13 @@ import java.util.List;
  * loaded from an background task and then updated using {@link #notifyRowBackgroundChanged(int)}
  * and {@link #notifyPageBackgroundChanged(int, int)}.
  */
-public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
+public class ConversationViewAdapter extends FragmentGridPagerAdapter {
     private static final int TRANSITION_DURATION_MILLIS = 100;
 
     private final Context mContext;
     private List<Row> mRows;
 
-    public ConversationViewPagerAdapter(Context ctx, FragmentManager fm) {
+    public ConversationViewAdapter(Context ctx, FragmentManager fm) {
         super(fm);
         mContext = ctx;
 
@@ -83,12 +74,13 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
     }
 
     @Override
-    public int getColumnCount(int rowNum) {
+    public int getColumnCount(int i) {
         return 1;
     }
 
     public void loadFragments(){
         int messageAmount = MessageHolder.getInstance().getDrawingsAmount();
+
         for(int i = messageAmount-1; i >= 0; i--) {
             ConversationViewFragment fragment = new ConversationViewFragment();
             Bundle bundle = new Bundle();
@@ -96,5 +88,6 @@ public class ConversationViewPagerAdapter extends FragmentGridPagerAdapter {
             fragment.setArguments(bundle);
             mRows.add(new Row(fragment));
         }
+
     }
 }
