@@ -107,11 +107,12 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
-                        .addToBackStack(null).commit();
-            }
+                //TODO implement reply to self case
+                if(!conversation.getParticipants().get(0).getUsername().equals(UserManager.getInstance().getUsername())){
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
+                            .addToBackStack(null).commit();
+                }}
         });
 
         showGlobalContextActionBar();

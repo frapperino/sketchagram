@@ -240,7 +240,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setImageResource(R.drawable.ic_home); //use our logo here with the right sizes
+        actionBarIcon1.setImageResource(0); //use our logo here with the right sizes
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Conversations");
         //actionBarTitle.setPadding(25,0,0,0);

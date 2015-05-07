@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="62dp"
     android:layout_width="match_parent"
-    android:paddingStart="70dp">
+    android:paddingLeft="62dp"
+    android:orientation="horizontal">
 
     <!--RelativeLayout android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,14 +21,22 @@
             android:cropToPadding="false"/>
 
     </RelativeLayout-->
-
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:id="@+id/photoImageView"
+        android:src="@drawable/ic_action_person"
+        android:background="@drawable/fab"
+        android:layout_gravity="left|center_vertical" />
     <TextView
         android:id="@+id/contact_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:layout_gravity="center_vertical" />
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp" />
 
     <ImageView
         android:id="@+id/status_image"

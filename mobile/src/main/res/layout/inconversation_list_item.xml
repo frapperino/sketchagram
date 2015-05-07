@@ -39,7 +39,7 @@
 
         <ImageView
             android:layout_width="fill_parent"
-            android:layout_height="400dp"
+            android:layout_height="450dp"
             android:id="@+id/drawingToShow"
             android:background="@drawable/image_border_top"
             android:layout_marginTop="55dp" />
