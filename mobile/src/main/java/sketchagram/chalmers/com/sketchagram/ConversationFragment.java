@@ -72,7 +72,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         conversationList = UserManager.getInstance().getAllConversations();
-        mAdapter = new MyAdapter(getActivity(), conversationList);
+        mAdapter = new MyAdapter(getActivity());
     }
 
     @Override
@@ -150,14 +150,13 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     }
 
     private class MyAdapter extends BaseAdapter {
-        private List<Item> items = new ArrayList<Item>();
         private LayoutInflater inflater;
 
         private final int IMAGE_SIZE = 400;
 
-        public MyAdapter(Context context, List<Conversation> conversations) {
+        public MyAdapter(Context context) {
             inflater = LayoutInflater.from(context);
-            if(conversations != null){
+            /*if(conversations != null){
                 for (Conversation c: conversations){
                     List<ClientMessage> history = c.getHistory();
                     ClientMessage lastMessage = c.getHistory().get(history.size()-1);
@@ -169,36 +168,31 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                     }
                     else if(lastMessage.getType() == MessageType.EMOTICON){
                         int emote = ((Emoticon) lastMessage.getContent()).getEmoticonType().getDrawable();
-
                         items.add(new Item(c.toString(),
                                 lastMessage.dateToShow(),
                                 (BitmapFactory.decodeResource(getActivity().getResources(), emote)), isRead));
-
                     } else{
                         items.add(new Item(c.toString(),
                                 history.get(history.size()-1).dateToShow(), null, isRead));
                     }
                     if(c.hasUnreadMessages()){
                         //TODO 
-                    }
-                }
-            }
+                    }*/
         }
 
         @Override
         public int getCount() {
-            return items.size();
+            return conversationList.size();
         }
 
         @Override
-        public Object getItem(int i)
-        {
-            return items.get(i);
+        public Object getItem(int position) {
+            return conversationList.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
@@ -219,9 +213,11 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             name = (TextView)v.getTag(R.id.senderText);
             time = (TextView)v.getTag(R.id.senderDate);
 
-            Item item = (Item)getItem(i);
+            Conversation conversation = (Conversation) getItem(i);
+            List<ClientMessage> history = conversation.getHistory();
+            ClientMessage lastMessage = conversation.getHistory().get(history.size()-1);
 
-            if(item.hasUnreadMessages()) {  //Highlight unread conversations.
+            if(conversation.hasUnreadMessages()) {  //Highlight unread conversations.
                 time.setTypeface(null, Typeface.BOLD);
                 name.setTypeface(null, Typeface.BOLD);
             } else {
@@ -229,31 +225,15 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 name.setTypeface(null, Typeface.NORMAL);
             }
 
-            if(item.bitmap != null) {
-                picture.setImageBitmap(item.bitmap);
+            if(lastMessage.getContent() instanceof Drawing) {
+                picture.setImageBitmap(((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            } else if(lastMessage.getContent() instanceof Emoticon) {
+                picture.setImageResource((((Emoticon) lastMessage.getContent()).getEmoticonType().getDrawable()));
             }
-            name.setText(item.name);
-            time.setText(item.time);
+            name.setText(conversation.toString());
+            time.setText(lastMessage.dateToShow());
 
             return v;
-        }
-
-        private class Item {
-            final String time;
-            final String name;
-            final Bitmap bitmap;
-            final boolean isRead;
-
-            Item(String name, String time, Bitmap bitmap, boolean isRead) {
-                this.time = time;
-                this.name = name;
-                this.bitmap = bitmap;
-                this.isRead = isRead;
-            }
-            public boolean hasUnreadMessages(){
-                return isRead;
-            }
-
         }
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
