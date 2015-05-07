@@ -1,21 +1,16 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,7 +32,7 @@ import java.util.List;
  * The activity for showing a conversation on Wear.
  */
 public class ConversationViewActivity extends Activity  implements
-        GoogleApiClient.ConnectionCallbacks  {
+        GoogleApiClient.ConnectionCallbacks {
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -73,9 +68,7 @@ public class ConversationViewActivity extends Activity  implements
                 return insets;
             }
         });
-        pager.setAdapter(new ConversationViewPagerAdapter(this, getFragmentManager()));
-        DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
-        dotsPageIndicator.setPager(pager);
+        pager.setAdapter(new ConversationViewAdapter(this, getFragmentManager()));
 
         //  Is needed for communication between the wearable and the device.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -126,4 +119,5 @@ public class ConversationViewActivity extends Activity  implements
     public String getContact(){
         return contact;
     }
+
 }

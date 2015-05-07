@@ -48,6 +48,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
     private DataMap dataMap;
     private ContactSync contacts;
     private String contact;
+    private boolean startConversation;
 
     private int messageType;
 
@@ -63,6 +64,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
         dataMap = new DataMap();
         contacts = new ContactSync();
         choices = new ArrayList<>();
+        startConversation = false;
 
         messageType = getIntent().getIntExtra("messagetype", 0);
 
@@ -186,6 +188,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
                     contact = choices.get(viewHolder.getPosition());
                     dataMap.putString("convid", contact);
                     messagePhone(BTCommType.GET_DRAWINGS.toString(), dataMap.toByteArray());
+                    startConversation = false;
             }
 
     }
@@ -244,7 +247,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             });
         }
 
-        if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString())) {
+        if(messageEvent.getPath().equals(BTCommType.GET_DRAWINGS.toString()) && !startConversation) {
             List<AMessage> messages = new ArrayList<AMessage>();
             DataMap data = DataMap.fromByteArray(messageEvent.getData());
 
@@ -271,14 +274,15 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             MessageHolder.getInstance().setDrawings(messages);
             if(messageAmount < 1){
                 Toast.makeText(getApplicationContext(), "No messages found", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
+                startConversation = true;
                 Intent intent = new Intent(this, ConversationViewActivity.class);
                 intent.putExtra(BTCommType.SEND_TO_CONTACT.toString(), contact);
                 startActivity(intent);
                 this.finish();
             }
         }
+
     }
 
     public class MyListAdapter extends WearableListView.Adapter {
@@ -301,10 +305,10 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             final String item = items.get(i);
 
             ImageView img = (ImageView) mItemView.findViewById(R.id.image);
-            img.setBackgroundResource(R.drawable.contact);
+            img.setBackgroundResource(R.drawable.ic_contact_red);
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
-            txt.setText(item.toString());
+            txt.setText(item);
         }
 
         @Override
