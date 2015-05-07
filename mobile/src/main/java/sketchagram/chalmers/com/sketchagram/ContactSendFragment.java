@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +12,15 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.UserManager;
 
@@ -75,7 +74,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
-
+        showGlobalContextActionBar();
         return view;
     }
 
@@ -103,7 +102,7 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
             List<Contact> receiverList = new ArrayList<>();
             receiverList.add(UserManager.getInstance().getAllContacts().get(position));
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_frame, DrawingFragment.newInstance(receiverList))
+            fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(receiverList))
                     .addToBackStack(null).commit();
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
@@ -125,12 +124,43 @@ public class ContactSendFragment extends Fragment implements AbsListView.OnItemC
         public void onFragmentInteraction(String id);
     }
 
-    public void updateList(){
-        if(mAdapter != null) {
+    public void updateList() {
+        if (mAdapter != null) {
             Collections.sort(UserManager.getInstance().getAllContacts());
             BaseAdapter adapter = (BaseAdapter) mAdapter;
             adapter.notifyDataSetChanged();
         }
     }
 
+    private void showGlobalContextActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_back);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("Select receiver");
+        //actionBarTitle.setPadding(25, 0, 0, 0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setImageResource(0);
+
+        actionBarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+    }
+    private android.support.v7.app.ActionBar getActionBar() {
+        return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
 }

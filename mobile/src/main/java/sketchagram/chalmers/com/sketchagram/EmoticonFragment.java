@@ -1,6 +1,5 @@
 package sketchagram.chalmers.com.sketchagram;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -21,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.Contact;
-import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.EmoticonType;
 import sketchagram.chalmers.com.model.UserManager;
@@ -84,7 +81,7 @@ public class EmoticonFragment extends Fragment implements  AbsListView.OnItemCli
         // fragment is attached to one) that an item has been selected.
         UserManager.getInstance().sendMessage(receivers, new Emoticon(EMOTICON_TYPES[position]));
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+        fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();
     }
 

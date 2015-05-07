@@ -73,6 +73,17 @@ public class Conversation implements Comparable{
         return participants;
     }
 
+    public List<Contact> getOtherParticipants() {
+        List<Contact> recipants = new ArrayList<>();
+
+        for(ADigitalPerson participant : getParticipants()) {
+            if(!UserManager.getInstance().isUser(participant)) {
+                recipants.add((Contact) participant);
+            }
+        }
+        return recipants;
+    }
+
     @Override
     public int compareTo(Object other) {
         if (this == other)  {

@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <sketchagram.chalmers.com.sketchagram.SquareImageView
         android:id="@+id/picture"
         android:layout_width="match_parent"
@@ -10,25 +11,28 @@
         android:background="@drawable/conversation_item_layout"
         />
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/senderText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="15dp"
+        android:text="test"
         android:paddingBottom="15dp"
         android:layout_gravity="top|left"
         android:textColor="@android:color/white"
-        android:background="#55000000"
+        android:background="@color/blackTransparent"
         />
     <TextView
-        android:id="@+id/text2"
+        android:id="@+id/senderDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="test2"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:layout_gravity="right|top"
         android:textColor="@android:color/white" />
+
 </FrameLayout>
