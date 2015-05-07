@@ -237,19 +237,19 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        final ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setBackgroundResource(R.drawable.ic_action_back);
+        ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_back);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Contacts");
-        actionBarTitle.setPadding(25,0,0,0);
+        //actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
-        actionBarIcon2.setBackgroundResource(0);
+        actionBarIcon2.setImageResource(0);
 
         actionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });
@@ -258,7 +258,7 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                         .addToBackStack(null).commit();
             }
         });

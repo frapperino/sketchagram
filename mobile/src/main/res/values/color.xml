@@ -7,11 +7,13 @@
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
     <color name="grey">#e0e0e0</color>
-    <color name="light_blue">#5589B8BA</color>
-    <color name="sketchagramPrimary">#673AB7</color>
-    <color name="sketchagramPrimary2">#512DA8</color>
+    <color name="darkGrey">#cccccc</color>
+    <color name="light_blue">#333281ff</color>
+    <color name="sketchagramPrimary">#f44336</color>
+    <color name="sketchagramPrimary2">#d32f2f</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="sketchagramSecondary">#1E71A2</color>
-    <color name="sketchagramSecondary2">#095A8A</color>
+    <color name="blackTransparent">#55000000</color>
+    <color name="sketchagramSecondary">#3281ff</color>
+    <color name="sketchagramSecondary2">#116DFF</color>
 </resources>

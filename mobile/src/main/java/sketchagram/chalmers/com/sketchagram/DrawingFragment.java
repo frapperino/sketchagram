@@ -1,28 +1,25 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import sketchagram.chalmers.com.model.ADigitalPerson;
-import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Drawing;
-import sketchagram.chalmers.com.model.Emoticon;
-import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
 
@@ -51,6 +48,11 @@ public class DrawingFragment extends Fragment implements Observer {
         return fragment;
     }
 
+    /**
+     * @deprecated not in use
+     * @param drawing
+     * @return DrawingFragment
+     */
     public static DrawingFragment newInstance(Drawing drawing){
         DrawingFragment fragment = new DrawingFragment();
         fragment.drawing = drawing;
@@ -69,9 +71,9 @@ public class DrawingFragment extends Fragment implements Observer {
         View view = inflater.inflate(R.layout.fragment_drawing, container, false);
         //Get view that is displayed in the Activity on which we can call
         //the methods in the DrawingView class.
-        drawView = (DrawingView) view.findViewById(R.id.drawing);
+        drawView = (DrawingView) view.findViewById(R.id.createDrawingView);
         drawView.addHelperObserver(this);
-        if(drawing != null){
+        if(drawing != null) {
             drawView.displayDrawing(drawing);
             drawView.setTouchable(false);
         }
@@ -79,11 +81,12 @@ public class DrawingFragment extends Fragment implements Observer {
         emoticonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.add(R.id.fragment_frame, EmoticonFragment.newInstance(receivers)).addToBackStack(null).commit();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.main_fragment_frame, EmoticonFragment.newInstance(receivers)).commit();
             }
         });
 
+        showGlobalContextActionBar();
         return view;
     }
 
@@ -109,7 +112,8 @@ public class DrawingFragment extends Fragment implements Observer {
         Drawing drawing = (Drawing)data;
         UserManager.getInstance().sendMessage(receivers, drawing);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_frame, new ConversationFragment())
+        fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out);
+        fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
                 .addToBackStack(null).commit();
     }
 
@@ -126,5 +130,45 @@ public class DrawingFragment extends Fragment implements Observer {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+    private void showGlobalContextActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_back);
+        TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("To: " + receivers.get(0).getUsername().toString());
+        //actionBarTitle.setPadding(25, 0, 0, 0);
+        ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
+        actionBarIcon2.setImageResource(R.drawable.ic_action_cancel);
+
+        actionBarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ContactSendFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ContactSendFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+
+        actionBarIcon2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ConversationFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
+    }
+    private android.support.v7.app.ActionBar getActionBar() {
+        return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 }

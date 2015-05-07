@@ -60,7 +60,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
         loginFragment = new LoginFragment();
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.fragment_frame, loginFragment).commit();
+        fragmentManager.beginTransaction().add(R.id.fragment_frame_login, loginFragment).commit();
 
         currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
@@ -148,7 +148,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
                 UserManager.getInstance().createAccount(mUserName, mPassword);
                 //TODO: Get entered email and check if correct.
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_frame, loginFragment);
+                ft.replace(R.id.fragment_frame_login, loginFragment);
                 ft.addToBackStack(null);
                 ft.commit();
                 Toast toast = Toast.makeText(getApplicationContext(), "Account created successfully!", Toast.LENGTH_SHORT);

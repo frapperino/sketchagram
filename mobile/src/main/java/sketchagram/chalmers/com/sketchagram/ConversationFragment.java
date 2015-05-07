@@ -4,43 +4,34 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.app.ListFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import sketchagram.chalmers.com.model.ClientMessage;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
+import sketchagram.chalmers.com.model.Emoticon;
 import sketchagram.chalmers.com.model.MessageType;
 import sketchagram.chalmers.com.model.UserManager;
 
@@ -81,7 +72,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         conversationList = UserManager.getInstance().getAllConversations();
-        mAdapter = new MyAdapter(getActivity(), conversationList);
+        mAdapter = new MyAdapter(getActivity());
     }
 
     @Override
@@ -94,8 +85,14 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         // Set OnItemClickListener so we can be notified on item clicks
         gridView.setOnItemClickListener(this);
-        showGlobalContextActionBar();
 
+        //initiate the custom toolbar, used here since this is the first fragment with the actionbar
+        android.support.v7.app.ActionBar actionBar = getActionBar();
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
+        //actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.custom_actionbar);
+        showGlobalContextActionBar();
         return view;
     }
 
@@ -153,46 +150,49 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     }
 
     private class MyAdapter extends BaseAdapter {
-        private List<Item> items = new ArrayList<Item>();
         private LayoutInflater inflater;
 
         private final int IMAGE_SIZE = 400;
 
-        public MyAdapter(Context context, List<Conversation> conversations) {
+        public MyAdapter(Context context) {
             inflater = LayoutInflater.from(context);
-            if(conversations != null){
+            /*if(conversations != null){
                 for (Conversation c: conversations){
                     List<ClientMessage> history = c.getHistory();
                     ClientMessage lastMessage = c.getHistory().get(history.size()-1);
+                    boolean isRead = c.hasUnreadMessages();
                     if(lastMessage.getType() == MessageType.DRAWING) {
                         items.add(new Item(c.toString(),
                                lastMessage.dateToShow(),
-                                ((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE)));
-                    } else {
+                                ((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE), isRead));
+                    }
+                    else if(lastMessage.getType() == MessageType.EMOTICON){
+                        int emote = ((Emoticon) lastMessage.getContent()).getEmoticonType().getDrawable();
                         items.add(new Item(c.toString(),
-                                history.get(history.size()-1).dateToShow(), null));
+                                lastMessage.dateToShow(),
+                                (BitmapFactory.decodeResource(getActivity().getResources(), emote)), isRead));
+                    } else{
+                        items.add(new Item(c.toString(),
+                                history.get(history.size()-1).dateToShow(), null, isRead));
                     }
                     if(c.hasUnreadMessages()){
                         //TODO 
-                    }
-                }
-            }
+                    }*/
         }
 
         @Override
         public int getCount() {
-            return items.size();
+            return conversationList.size();
         }
 
         @Override
-        public Object getItem(int i)
-        {
-            return items.get(i);
+        public Object getItem(int position) {
+            return conversationList.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
@@ -204,54 +204,54 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
             if(v == null) {
                 v = inflater.inflate(R.layout.fragment_conversation_item, viewGroup, false);
-                v.setTag(R.id.text2, v.findViewById(R.id.text2));
                 v.setTag(R.id.picture, v.findViewById(R.id.picture));
-                v.setTag(R.id.text, v.findViewById(R.id.text));
+                v.setTag(R.id.senderDate, v.findViewById(R.id.senderDate));
+                v.setTag(R.id.senderText, v.findViewById(R.id.senderText));
             }
 
             picture = (ImageView)v.getTag(R.id.picture);
-            name = (TextView)v.getTag(R.id.text);
-            time = (TextView)v.getTag(R.id.text2);
+            name = (TextView)v.getTag(R.id.senderText);
+            time = (TextView)v.getTag(R.id.senderDate);
 
-            Item item = (Item)getItem(i);
+            Conversation conversation = (Conversation) getItem(i);
+            List<ClientMessage> history = conversation.getHistory();
+            ClientMessage lastMessage = conversation.getHistory().get(history.size()-1);
 
-            if(item.drawing != null) {
-                picture.setImageBitmap(item.drawing);
+            if(conversation.hasUnreadMessages()) {  //Highlight unread conversations.
+                time.setTypeface(null, Typeface.BOLD);
+                name.setTypeface(null, Typeface.BOLD);
+            } else {
+                time.setTypeface(null, Typeface.NORMAL);
+                name.setTypeface(null, Typeface.NORMAL);
             }
-            name.setText(item.name);
-            time.setText(item.time);
+
+            if(lastMessage.getContent() instanceof Drawing) {
+                picture.setImageBitmap(((Drawing)lastMessage.getContent()).getStaticDrawing(IMAGE_SIZE, IMAGE_SIZE));
+            } else if(lastMessage.getContent() instanceof Emoticon) {
+                picture.setImageResource((((Emoticon) lastMessage.getContent()).getEmoticonType().getDrawable()));
+            }
+            name.setText(conversation.toString());
+            time.setText(lastMessage.dateToShow());
 
             return v;
-        }
-
-        private class Item {
-            final String time;
-            final String name;
-            final Bitmap drawing;
-
-            Item(String name, String time, Bitmap drawing) {
-                this.time = time;
-                this.name = name;
-                this.drawing = drawing;
-            }
         }
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void showGlobalContextActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setBackgroundResource(0);
+        actionBarIcon1.setImageResource(R.drawable.ic_action_cancel); //use our logo here with the right sizes
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         actionBarTitle.setText("Conversations");
-        actionBarTitle.setPadding(0,0,0,0);
+        //actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
-        actionBarIcon2.setBackgroundResource(R.drawable.ic_action_cc_bcc);
+        actionBarIcon2.setImageResource(R.drawable.ic_action_cc_bcc);
 
         actionBarIcon2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame, new ContactManagementFragment())
+                fragmentTransaction.replace(R.id.main_fragment_frame, new ContactManagementFragment())
                         .addToBackStack(null).commit();
             }
         });
