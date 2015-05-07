@@ -179,7 +179,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         if(conversation.getParticipants().get(0).getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase())){
             actionBarTitle.setText(conversation.getParticipants().get(1).getUsername().toString());
-        }else{
+        } else{
             actionBarTitle.setText(conversation.getParticipants().get(0).getUsername().toString());
         }
         //actionBarTitle.setPadding(25,0,0,0);

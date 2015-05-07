@@ -9,7 +9,7 @@ import sketchagram.chalmers.com.sketchagram.R;
 public enum EmoticonType {
     SAD("SAD", R.drawable.emoji_sad), HAPPY("HAPPY", R.drawable.emoji_happy),
     FLIRT("FLIRT", R.drawable.emoji_flirt), HEART("HEART", R.drawable.emoji_heart),
-    THUMBSUP("THUMBSUP", R.drawable.happyface), THUMBSDOWN("THUMBSDOWN", R.drawable.happyface);
+    THUMBSUP("THUMBSUP", R.drawable.thumbs_up), THUMBSDOWN("THUMBSDOWN", R.drawable.thumbs_down);
     //TODO: Change thumbs up and down to real images.
 
     private final String type;
