@@ -110,15 +110,14 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
 
     private void setupQuickScroll(View view) {
         //TODO: Setup proper colors to match the rest of application.
-        final int PURPLE = Color.parseColor("#9C27B0");
-        final int PURPLE_DARK = Color.parseColor("#673AB7");
-        final int PURPLE_HANDLE = Color.parseColor("#8E24AA");
+        final int blue = getResources().getColor(R.color.sketchagramSecondary);
+        final int blue_dark = getResources().getColor(R.color.sketchagramSecondary2);
 
         //Initialize quickscroll
         final QuickScroll quickscroll = (QuickScroll) view.findViewById(R.id.quickscroll);
         quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, mListView, mAdapter, QuickScroll.STYLE_HOLO);
-        quickscroll.setIndicatorColor(PURPLE, PURPLE_DARK, Color.WHITE);
-        quickscroll.setHandlebarColor(PURPLE, PURPLE, PURPLE_HANDLE);
+        quickscroll.setIndicatorColor(blue, blue_dark, Color.WHITE);
+        quickscroll.setHandlebarColor(blue, blue_dark, blue_dark);
         quickscroll.setFixedSize(2);
     }
 
@@ -419,12 +418,12 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             Contact contact = alphaIndexer.get(sections.get(groupPosition)).get(childPosition);
             if(convertView == null) {
                 convertView = inflater.inflate(R.layout.fragment_contact_management_list_item, parent, false);
-                convertView.setTag(R.id.rounded_contact_image, convertView.findViewById(R.id.rounded_contact_image));
+                //convertView.setTag(R.id.rounded_contact_image, convertView.findViewById(R.id.rounded_contact_image));
                 convertView.setTag(R.id.contact_name, convertView.findViewById(R.id.contact_name));
                 convertView.setTag(R.id.status_image, convertView.findViewById(R.id.status_image));
             }
 
-            ImageView roundedImage = (ImageView)convertView.getTag(R.id.rounded_contact_image);
+            //ImageView roundedImage = (ImageView)convertView.getTag(R.id.rounded_contact_image);
             TextView contactName = (TextView)convertView.getTag(R.id.contact_name);
             ImageView statusImage = (ImageView)convertView.getTag(R.id.status_image);
 
@@ -434,18 +433,18 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
             if(bitmap == null) {    // Use default image from resources
                 bitmap = getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.profile));
             }
-            roundedImage.setImageBitmap(bitmap);
+            //roundedImage.setImageBitmap(bitmap);
 
             if(contact.getStatus() != null) {
                 switch(contact.getStatus()) {
                     case ONLINE:
-                        statusImage.setBackgroundColor(Color.GREEN);
+                        statusImage.setBackgroundResource(R.drawable.status_online);
                         break;
                     case OFFLINE:
-                        statusImage.setBackgroundColor(Color.RED);
+                        statusImage.setBackgroundResource(R.drawable.status_offline);
                         break;
                     case AWAY:
-                        statusImage.setBackgroundColor(Color.YELLOW);
+                        statusImage.setBackgroundResource(R.drawable.status_away);
                         break;
                     default:
                         statusImage.setBackgroundColor(Color.WHITE);

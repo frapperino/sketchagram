@@ -16,4 +16,7 @@
     <color name="blackTransparent">#55000000</color>
     <color name="sketchagramSecondary">#3281ff</color>
     <color name="sketchagramSecondary2">#116DFF</color>
+    <color name="offline">#f44336</color>
+    <color name="online">#33CC33</color>
+    <color name="away">#FFFF66</color>
 </resources>

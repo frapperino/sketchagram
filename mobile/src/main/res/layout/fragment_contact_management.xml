@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E0E0E0"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context="sketchagram.chalmers.com.sketchagram.ContactManagementFragment">
 
@@ -11,7 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:groupIndicator="@null"
-        android:scrollbars="none"/>
+        android:scrollbars="none"
+        android:divider="@null"
+        android:dividerHeight="0dp"/>
 
     <quickscroll.QuickScroll
         android:id="@+id/quickscroll"

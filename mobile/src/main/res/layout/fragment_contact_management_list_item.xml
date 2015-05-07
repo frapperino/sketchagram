@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="64dp"
-    android:layout_width="match_parent">
+    android:layout_height="62dp"
+    android:layout_width="match_parent"
+    android:paddingStart="70dp">
 
-    <RelativeLayout android:layout_width="wrap_content"
+    <!--RelativeLayout android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_horizontal|center_vertical"
         android:layout_marginStart="10dp">
@@ -18,7 +19,7 @@
             android:layout_marginRight="10dp"
             android:cropToPadding="false"/>
 
-    </RelativeLayout>
+    </RelativeLayout-->
 
     <TextView
         android:id="@+id/contact_name"
@@ -32,7 +33,6 @@
         android:id="@+id/status_image"
         android:layout_height="10dp"
         android:layout_width="10dp"
-        android:background="@color/black"
         android:layout_gravity="center|end"
         android:layout_margin="10dp"/>
 </LinearLayout>

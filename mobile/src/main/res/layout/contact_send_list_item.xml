@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <TextView
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:id="@+id/photoImageView"
+        android:src="@drawable/ic_action_person"
+        android:background="@drawable/fab"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="20dp" />
+
+    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Large Text"
             android:id="@+id/titleTextView"
-            android:layout_gravity="center" />
+            android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="20dp" />
 
-        <ImageView
-            android:layout_width="131dp"
-            android:layout_height="122dp"
-            android:id="@+id/photoImageView"
-            android:layout_gravity="left|bottom"
-            android:src="@drawable/profile" />
-    </FrameLayout>
 
 </LinearLayout>
