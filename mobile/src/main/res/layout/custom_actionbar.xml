@@ -17,7 +17,7 @@
         android:clickable="true"
         android:layout_marginLeft="0dp" />
     <TextView
-        android:id="@id/action_bar_title"
+        android:id="@+id/action_bar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
