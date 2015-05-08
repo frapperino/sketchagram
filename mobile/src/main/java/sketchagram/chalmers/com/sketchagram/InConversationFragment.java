@@ -223,7 +223,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
     public class InConversationListAdapter extends ArrayAdapter<ClientMessage> {
         private Context context;
         private List<ClientMessage> messages;
-        private final int IMAGE_SIZE = 400;
+        private final int IMAGE_SIZE = 300;
 
         public InConversationListAdapter(Context context, List<ClientMessage> items) {
             super(context, android.R.layout.simple_list_item_1, items);

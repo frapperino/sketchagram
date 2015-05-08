@@ -164,7 +164,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     private class MyAdapter extends BaseAdapter {
         private LayoutInflater inflater;
 
-        private final int IMAGE_SIZE = 200;
+        private final int IMAGE_SIZE = 300;
 
         public MyAdapter(Context context) {
             inflater = LayoutInflater.from(context);
