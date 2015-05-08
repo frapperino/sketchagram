@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -93,6 +94,17 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.custom_actionbar);
         showGlobalContextActionBar();
+
+        TextView noMessages;
+        noMessages = (TextView) view.findViewById(R.id.noMessages);
+
+        if(UserManager.getInstance().getAllConversations().size() == 0){
+            noMessages.setVisibility(View.VISIBLE);
+            noMessages.setText("You have no conversations, start a new by clicking the blue botton.");
+        } else {
+            noMessages.setVisibility(View.INVISIBLE);
+        }
+
         return view;
     }
 
@@ -152,7 +164,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
     private class MyAdapter extends BaseAdapter {
         private LayoutInflater inflater;
 
-        private final int IMAGE_SIZE = 400;
+        private final int IMAGE_SIZE = 200;
 
         public MyAdapter(Context context) {
             inflater = LayoutInflater.from(context);
@@ -201,28 +213,32 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             ImageView picture;
             TextView name;
             TextView time;
+            ImageView unreadMessage;
+            ImageView fast_reply;
 
             if(v == null) {
                 v = inflater.inflate(R.layout.fragment_conversation_item, viewGroup, false);
                 v.setTag(R.id.picture, v.findViewById(R.id.picture));
                 v.setTag(R.id.senderDate, v.findViewById(R.id.senderDate));
                 v.setTag(R.id.senderText, v.findViewById(R.id.senderText));
+                v.setTag(R.id.unreadMessage, v.findViewById(R.id.unreadMessage));
+                v.setTag(R.id.fast_reply, v.findViewById(R.id.fast_reply));
             }
 
             picture = (ImageView)v.getTag(R.id.picture);
             name = (TextView)v.getTag(R.id.senderText);
             time = (TextView)v.getTag(R.id.senderDate);
+            unreadMessage = (ImageView) v.getTag(R.id.unreadMessage);
+            fast_reply = (ImageView) v.getTag(R.id.fast_reply);
 
-            Conversation conversation = (Conversation) getItem(i);
+            final Conversation conversation = (Conversation) getItem(i);
             List<ClientMessage> history = conversation.getHistory();
             ClientMessage lastMessage = conversation.getHistory().get(history.size()-1);
 
             if(conversation.hasUnreadMessages()) {  //Highlight unread conversations.
-                time.setTypeface(null, Typeface.BOLD);
-                name.setTypeface(null, Typeface.BOLD);
+                unreadMessage.setVisibility(View.VISIBLE);
             } else {
-                time.setTypeface(null, Typeface.NORMAL);
-                name.setTypeface(null, Typeface.NORMAL);
+                unreadMessage.setVisibility(View.INVISIBLE);
             }
 
             if(lastMessage.getContent() instanceof Drawing) {
@@ -232,6 +248,20 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             }
             name.setText(conversation.toString());
             time.setText(lastMessage.dateToShow());
+
+            fast_reply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO implement reply to self case
+                    if(conversation.getOtherParticipants().size() > 0){
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
+                                .addToBackStack(null).commit();
+                    }else{
+                        Toast.makeText(MyApplication.getContext(), "Can not reply to self.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
             return v;
         }

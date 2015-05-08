@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:paddingTop="10dp">
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="4dp"
-        android:background="@color/white"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp">
-
+        tools:context=".MainActivity"
+        android:background="@color/white">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:id="@+id/photoImageView"
+            android:src="@drawable/ic_action_person"
+            android:background="@drawable/fab"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="10dp"/>
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="'name'"
@@ -24,7 +29,8 @@
             android:id="@+id/titleTextView"
             android:layout_gravity="left|center_horizontal"
             android:gravity="left|center"
-            android:layout_marginLeft="10dp" /><!--android:background="@drawable/border"-->
+            android:paddingStart="10dp"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,16 +38,18 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="'date'"
             android:textColor="@color/darkGrey"
-            android:layout_gravity="center_horizontal|right"
             android:id="@+id/dateTextView"
             android:gravity="center|right"
-            android:layout_marginRight="10dp" /><!--android:background="@drawable/border"-->
+            android:paddingEnd="10dp"
+            android:layout_gravity="center|right"
+            android:layout_weight="1" />
 
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="450dp"
-            android:id="@+id/drawingToShow"
-            android:background="@drawable/image_border_top"
-            android:layout_marginTop="55dp" />
-    </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:id="@+id/drawingToShow"
+        android:background="@drawable/image_border_top" />
+
 </LinearLayout>

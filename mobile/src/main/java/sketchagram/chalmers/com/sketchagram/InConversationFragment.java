@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -107,12 +108,16 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO implement reply to self case
+                //TODO implement actual reply to self
                 if(conversation.getOtherParticipants().size() > 0){
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
                             .addToBackStack(null).commit();
-                }}
+                }
+                else{
+                    Toast.makeText(MyApplication.getContext(), "Can not reply to self.", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
 
         showGlobalContextActionBar();
