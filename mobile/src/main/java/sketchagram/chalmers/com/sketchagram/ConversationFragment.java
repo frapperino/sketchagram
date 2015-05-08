@@ -258,7 +258,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                         fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
                                 .addToBackStack(null).commit();
                     }else{
-                        Toast.makeText(MyApplication.getContext(), "Can not reply to self.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyApplication.getContext(), "Can not reply to self... yet ^^", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

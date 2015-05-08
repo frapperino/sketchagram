@@ -115,7 +115,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                             .addToBackStack(null).commit();
                 }
                 else{
-                    Toast.makeText(MyApplication.getContext(), "Can not reply to self.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyApplication.getContext(), "Can not reply to self... yet ^^", Toast.LENGTH_SHORT).show();
                 }
             }
         });
