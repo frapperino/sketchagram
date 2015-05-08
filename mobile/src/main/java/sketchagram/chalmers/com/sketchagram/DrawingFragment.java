@@ -1,6 +1,7 @@
 package sketchagram.chalmers.com.sketchagram;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
@@ -149,18 +150,16 @@ public class DrawingFragment extends Fragment implements Observer {
         actionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_fragment_frame, new ContactSendFragment())
-                        .addToBackStack(null).commit();
+                FragmentManager fm = getActivity().getFragmentManager();
+                fm.popBackStack();
             }
         });
 
         actionBarIcon1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_fragment_frame, new ContactSendFragment())
-                        .addToBackStack(null).commit();
+                FragmentManager fm = getActivity().getFragmentManager();
+                fm.popBackStack();
             }
         });
 
