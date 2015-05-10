@@ -240,7 +240,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             TextView titleText;
             TextView dateText;
             ImageView drawing;
-            ImageView status_icon;
+            //ImageView status_icon;
         }
 
         /**
@@ -265,7 +265,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                 holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
                 holder.dateText = (TextView)viewToUse.findViewById(R.id.dateTextView);
                 holder.drawing = (ImageView) viewToUse.findViewById(R.id.drawingToShow);
-                holder.status_icon = (ImageView) viewToUse.findViewById(R.id.status_icon);
+                //holder.status_icon = (ImageView) viewToUse.findViewById(R.id.status_icon);
                 viewToUse.setTag(holder);
             } else {
                 viewToUse = convertView;
@@ -273,7 +273,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             }
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
             Date resultDate = new Date(item.getTimestamp());
-            final Contact contact = UserManager.getInstance().getAllContacts().get(position);
+            //final Contact contact = UserManager.getInstance().getAllContacts().get(position);
 
             holder.dateText.setText(sdf.format(resultDate));
             holder.titleText.setText(item.getSender().getUsername().toString());
@@ -290,6 +290,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             }
             item.setRead(true); //Mark message as read.
 
+            /* the refresh on this seemed to be to slow, causing the status be be red sometimes when online
             if(contact.getStatus() != null) {
                 switch(contact.getStatus()) {
                     case ONLINE:
@@ -305,7 +306,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                         holder.status_icon.setBackgroundColor(Color.WHITE);
                         break;
                 }
-            }
+            }*/
 
             return viewToUse;
         }
