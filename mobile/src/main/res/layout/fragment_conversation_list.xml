@@ -32,7 +32,7 @@
         android:id="@+id/imageButton"
         android:background="@drawable/fab"
         android:layout_gravity="bottom|right"
-        android:src="@drawable/ic_mode_edit_white_36dp"
+        android:src="@drawable/ic_mode_edit_white_24dp"
         android:onClick="newMessage"
         android:elevation="4dp"
         android:layout_margin="16dp" />
