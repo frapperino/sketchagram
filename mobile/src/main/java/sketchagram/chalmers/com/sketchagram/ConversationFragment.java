@@ -103,7 +103,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
 
         if(UserManager.getInstance().getAllConversations().size() == 0){
             noMessages.setVisibility(View.VISIBLE);
-            noMessages.setText("You have no conversations, start a new by clicking the blue botton below.");
+            noMessages.setText("You have no conversations, start a new by clicking the blue button below.");
         } else {
             noMessages.setVisibility(View.INVISIBLE);
         }

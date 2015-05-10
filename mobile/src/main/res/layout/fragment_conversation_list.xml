@@ -13,7 +13,8 @@
         android:visibility="invisible"
         android:text="hej"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="10dp" />
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp" />
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/conversation_list"
