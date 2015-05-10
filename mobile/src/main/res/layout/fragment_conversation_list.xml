@@ -24,7 +24,11 @@
         android:stretchMode="columnWidth"
         android:gravity="center"
         android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp" />
+        android:layout_marginRight="3dp"
+        android:verticalSpacing="3dp"
+        android:clipToPadding="false"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp" />
 
     <ImageButton
         android:layout_width="56dp"
