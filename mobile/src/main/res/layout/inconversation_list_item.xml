@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:clickable="false"
             android:id="@+id/photoImageView"
-            android:src="@drawable/ic_action_person"
+            android:src="@drawable/ic_person_white_24dp"
             android:background="@drawable/fab"
             android:layout_gravity="left|center_vertical"
             android:layout_marginLeft="10dp"/>

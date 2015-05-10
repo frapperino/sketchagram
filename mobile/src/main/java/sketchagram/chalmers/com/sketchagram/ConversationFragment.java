@@ -303,7 +303,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         actionBarTitle.setText("Conversations");
         //actionBarTitle.setPadding(25,0,0,0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
-        actionBarIcon2.setImageResource(R.drawable.ic_action_cc_bcc);
+        actionBarIcon2.setImageResource(R.drawable.ic_group_white_24dp);
 
         actionBarIcon2.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -136,7 +136,7 @@ public class DrawingFragment extends Fragment implements Observer {
     private void showGlobalContextActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         ImageButton actionBarIcon1 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon1);
-        actionBarIcon1.setImageResource(R.drawable.ic_action_back);
+        actionBarIcon1.setImageResource(R.drawable.ic_arrow_back_white_24dp);
         TextView actionBarTitle = (TextView) getActivity().findViewById(R.id.action_bar_title);
         if(receivers.size()>0) {
             actionBarTitle.setText("To: " + receivers.get(0).getUsername().toString());
@@ -145,7 +145,7 @@ public class DrawingFragment extends Fragment implements Observer {
         }
         //actionBarTitle.setPadding(25, 0, 0, 0);
         ImageButton actionBarIcon2 = (ImageButton) getActivity().findViewById(R.id.action_bar_icon2);
-        actionBarIcon2.setImageResource(R.drawable.ic_action_cancel);
+        actionBarIcon2.setImageResource(R.drawable.ic_close_white_24dp);
 
         actionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override

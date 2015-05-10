@@ -57,16 +57,18 @@
         android:id="@+id/unreadMessage"
         android:background="@color/sketchagramPrimary"
         android:visibility="invisible"
-        android:src="@drawable/ic_action_unread"
-        android:layout_gravity="left|bottom" />
+        android:src="@drawable/ic_email_white_24dp"
+        android:layout_gravity="left|bottom"
+        android:padding="5dp" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fast_reply"
         android:background="@drawable/gradient"
-        android:src="@drawable/ic_action_reply"
+        android:src="@drawable/ic_reply_white_24dp"
         android:clickable="true"
-        android:layout_gravity="right|bottom" />
+        android:layout_gravity="right|bottom"
+        android:padding="5dp" />
 
 </FrameLayout>
 
