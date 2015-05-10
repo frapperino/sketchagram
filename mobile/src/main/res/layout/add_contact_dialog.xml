@@ -15,6 +15,8 @@
         android:id="@+id/user_name_dialog"
         android:layout_gravity="center_horizontal"
         android:hint="@string/enter_username"
+        android:backgroundTint="@drawable/text_underline"
+        android:textCursorDrawable="@drawable/cursor_color"
         android:layout_marginBottom="16dp" />
 
     <LinearLayout
