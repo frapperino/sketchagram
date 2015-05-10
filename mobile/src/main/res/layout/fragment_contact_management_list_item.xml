@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="62dp"
     android:layout_width="match_parent"
-    android:paddingLeft="62dp"
+    android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
     android:orientation="horizontal">
 
     <!--RelativeLayout android:layout_width="wrap_content"

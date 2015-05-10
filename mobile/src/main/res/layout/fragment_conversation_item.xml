@@ -11,30 +11,45 @@
         android:scaleType="centerCrop"
         android:background="@drawable/conversation_item_layout"
         />
-    <TextView
-        android:id="@+id/senderText"
-        android:layout_width="match_parent"
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="15dp"
-        android:text="test"
-        android:paddingBottom="15dp"
-        android:layout_gravity="top|left"
-        android:textColor="@android:color/white"
-        android:background="@color/blackTransparent"
-        />
-    <TextView
-        android:id="@+id/senderDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:layout_gravity="right|top"
-        android:textColor="@android:color/white" />
+        android:background="@color/blackTransparent">
+
+        <TextView
+            android:id="@+id/senderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="15dp"
+            android:text="test"
+            android:paddingBottom="15dp"
+            android:layout_gravity="top|left"
+            android:textColor="@android:color/white"
+            />
+
+        <ImageView
+            android:id="@+id/status_image_grid"
+            android:layout_height="10dp"
+            android:layout_width="10dp"
+            android:layout_gravity="center|end"
+            android:layout_margin="10dp"/>
+
+        <TextView
+            android:id="@+id/senderDate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="test2"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:layout_gravity="right|top"
+            android:textColor="@android:color/white"
+            android:gravity="right" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -54,3 +69,4 @@
         android:layout_gravity="right|bottom" />
 
 </FrameLayout>
+

@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.Emoticon;
@@ -215,6 +217,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             TextView time;
             ImageView unreadMessage;
             ImageView fast_reply;
+            ImageView status_image_grid;
 
             if(v == null) {
                 v = inflater.inflate(R.layout.fragment_conversation_item, viewGroup, false);
@@ -223,6 +226,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 v.setTag(R.id.senderText, v.findViewById(R.id.senderText));
                 v.setTag(R.id.unreadMessage, v.findViewById(R.id.unreadMessage));
                 v.setTag(R.id.fast_reply, v.findViewById(R.id.fast_reply));
+                v.setTag(R.id.status_image_grid, v.findViewById(R.id.status_image_grid));
             }
 
             picture = (ImageView)v.getTag(R.id.picture);
@@ -230,7 +234,9 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             time = (TextView)v.getTag(R.id.senderDate);
             unreadMessage = (ImageView) v.getTag(R.id.unreadMessage);
             fast_reply = (ImageView) v.getTag(R.id.fast_reply);
+            status_image_grid = (ImageView) v.getTag(R.id.status_image_grid);
 
+            Contact contact = UserManager.getInstance().getAllContacts().get(i);
             final Conversation conversation = (Conversation) getItem(i);
             List<ClientMessage> history = conversation.getHistory();
             ClientMessage lastMessage = conversation.getHistory().get(history.size()-1);
@@ -263,8 +269,29 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 }
             });
 
+            if(contact.getStatus() != null) {
+                switch(contact.getStatus()) {
+                    case ONLINE:
+                        status_image_grid.setBackgroundResource(R.drawable.status_online);
+                        break;
+                    case OFFLINE:
+                        status_image_grid.setBackgroundResource(R.drawable.status_offline);
+                        break;
+                    case AWAY:
+                        status_image_grid.setBackgroundResource(R.drawable.status_away);
+                        break;
+                    default:
+                        status_image_grid.setBackgroundColor(Color.WHITE);
+                        break;
+                }
+            }
+
+
             return v;
         }
+
+
+
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void showGlobalContextActionBar() {
