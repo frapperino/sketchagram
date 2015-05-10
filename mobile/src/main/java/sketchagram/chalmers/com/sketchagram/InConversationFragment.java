@@ -3,6 +3,7 @@ package sketchagram.chalmers.com.sketchagram;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import sketchagram.chalmers.com.model.ClientMessage;
+import sketchagram.chalmers.com.model.Contact;
 import sketchagram.chalmers.com.model.Conversation;
 import sketchagram.chalmers.com.model.Drawing;
 import sketchagram.chalmers.com.model.Emoticon;
@@ -238,6 +240,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             TextView titleText;
             TextView dateText;
             ImageView drawing;
+            ImageView status_icon;
         }
 
         /**
@@ -262,6 +265,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                 holder.titleText = (TextView)viewToUse.findViewById(R.id.titleTextView);
                 holder.dateText = (TextView)viewToUse.findViewById(R.id.dateTextView);
                 holder.drawing = (ImageView) viewToUse.findViewById(R.id.drawingToShow);
+                holder.status_icon = (ImageView) viewToUse.findViewById(R.id.status_icon);
                 viewToUse.setTag(holder);
             } else {
                 viewToUse = convertView;
@@ -269,6 +273,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
             }
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
             Date resultDate = new Date(item.getTimestamp());
+            final Contact contact = UserManager.getInstance().getAllContacts().get(position);
 
             holder.dateText.setText(sdf.format(resultDate));
             holder.titleText.setText(item.getSender().getUsername().toString());
@@ -284,8 +289,29 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                 holder.titleText.setText(UserManager.getInstance().getUsername().toString());
             }
             item.setRead(true); //Mark message as read.
+
+            if(contact.getStatus() != null) {
+                switch(contact.getStatus()) {
+                    case ONLINE:
+                        holder.status_icon.setBackgroundResource(R.drawable.status_online);
+                        break;
+                    case OFFLINE:
+                        holder.status_icon.setBackgroundResource(R.drawable.status_offline);
+                        break;
+                    case AWAY:
+                        holder.status_icon.setBackgroundResource(R.drawable.status_away);
+                        break;
+                    default:
+                        holder.status_icon.setBackgroundColor(Color.WHITE);
+                        break;
+                }
+            }
+
             return viewToUse;
         }
+
+
+
     }
 
 

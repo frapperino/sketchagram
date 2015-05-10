@@ -236,7 +236,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             fast_reply = (ImageView) v.getTag(R.id.fast_reply);
             status_image_grid = (ImageView) v.getTag(R.id.status_image_grid);
 
-            Contact contact = UserManager.getInstance().getAllContacts().get(i);
+            final Contact contact = UserManager.getInstance().getAllContacts().get(i);
             final Conversation conversation = (Conversation) getItem(i);
             List<ClientMessage> history = conversation.getHistory();
             ClientMessage lastMessage = conversation.getHistory().get(history.size()-1);
@@ -259,7 +259,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
                 @Override
                 public void onClick(View v) {
                     //TODO implement reply to self case
-                    if(conversation.getOtherParticipants().size() > 0){
+                    if(!(contact.getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase()))){
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
                                 .addToBackStack(null).commit();

@@ -29,8 +29,14 @@
             android:id="@+id/titleTextView"
             android:layout_gravity="left|center_horizontal"
             android:gravity="left|center"
-            android:paddingStart="10dp"
-            android:layout_weight="1" />
+            android:paddingStart="10dp" />
+
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_height="10dp"
+            android:layout_width="10dp"
+            android:layout_gravity="center|end"
+            android:layout_margin="10dp"/>
 
         <TextView
             android:layout_width="wrap_content"
