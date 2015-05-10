@@ -95,6 +95,7 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
         //actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.custom_actionbar);
+        actionBar.setElevation(0);
         showGlobalContextActionBar();
 
         TextView noMessages;
