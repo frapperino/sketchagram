@@ -258,13 +258,13 @@ public class ConversationFragment extends Fragment implements AbsListView.OnItem
             fast_reply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO implement reply to self case
+                    //TODO: does this always work?
                     if(!(contact.getUsername().toLowerCase().equals(UserManager.getInstance().getUsername().toLowerCase()))){
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.main_fragment_frame, DrawingFragment.newInstance(conversation.getOtherParticipants()))
                                 .addToBackStack(null).commit();
                     }else{
-                        Toast.makeText(MyApplication.getContext(), "Can not reply to self... yet ^^", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyApplication.getContext(), "Can not reply to self.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
