@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/unreadMessage"
-        android:background="@color/notificationColor"
+        android:background="@color/sketchagramPrimary"
         android:visibility="invisible"
         android:src="@drawable/ic_email_white_24dp"
         android:layout_gravity="left|bottom"
