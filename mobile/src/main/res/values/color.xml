@@ -6,17 +6,25 @@
     <color name="list_divider">#272727</color>
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
+
+    <color name="light_blue">#333281ff</color>
+
     <color name="grey">#e0e0e0</color>
     <color name="darkGrey">#cccccc</color>
-    <color name="light_blue">#333281ff</color>
-    <color name="sketchagramPrimary">#f44336</color>
-    <color name="sketchagramPrimary2">#d32f2f</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="blackTransparent">#55000000</color>
-    <color name="sketchagramSecondary">#3281ff</color>
-    <color name="sketchagramSecondary2">#116DFF</color>
+
+    <color name="sketchagramPrimary">#3B9060</color>
+    <color name="sketchagramPrimary2">#217746</color>
+    <color name="sketchagramSecondary">#386980</color>
+    <color name="sketchagramSecondary2">#21526A</color>
+    <color name="notificationColor">#95CCAD</color>
+
+
     <color name="offline">#f44336</color>
     <color name="online">#33CC33</color>
     <color name="away">#FFFF66</color>
 </resources>
+
+

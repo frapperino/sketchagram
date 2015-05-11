@@ -102,6 +102,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
         //actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.custom_actionbar);
+        actionBar.setElevation(0);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -271,7 +272,7 @@ public class InConversationFragment extends Fragment implements AbsListView.OnIt
                 viewToUse = convertView;
                 holder = (ViewHolder) viewToUse.getTag();
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd, HH:mm");
             Date resultDate = new Date(item.getTimestamp());
             //final Contact contact = UserManager.getInstance().getAllContacts().get(position);
 

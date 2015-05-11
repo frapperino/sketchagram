@@ -28,7 +28,8 @@
         android:id="@+id/photoImageView"
         android:src="@drawable/ic_person_white_24dp"
         android:background="@drawable/fab"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="left|center_vertical"
+        android:padding="5dp" />
     <TextView
         android:id="@+id/contact_name"
         android:layout_width="wrap_content"
