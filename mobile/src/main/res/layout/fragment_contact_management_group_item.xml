@@ -11,7 +11,7 @@
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
         android:textSize="17dp"
         android:background="@drawable/contact_list_border"
-        android:textColor="@color/sketchagramSecondary"
+        android:textColor="@color/notificationColor"
         android:text="sssssssssssss"
         android:gravity="left|center"
         android:clickable="false"/>
