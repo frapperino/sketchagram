@@ -15,11 +15,12 @@
     <color name="black">#000000</color>
     <color name="blackTransparent">#55000000</color>
 
-    <color name="sketchagramPrimary">#f44336</color>
-    <color name="sketchagramPrimary2">#d32f2f</color>
-    <color name="sketchagramSecondary">#3281ff</color>
-    <color name="sketchagramSecondary2">#116DFF</color>
-    <!--color name="notificationColor">#f44336</color-->
+    <color name="sketchagramPrimary">#386980</color>
+    <color name="sketchagramPrimary2">#21526A</color>
+    <color name="sketchagramSecondary">#3B9060</color>
+    <color name="sketchagramSecondary2">#217746</color>
+    <color name="notificationColor">#CA9353</color>
+    <color name="notificationColor2">#A76F2F</color>
 
     <color name="offline">#f44336</color>
     <color name="online">#33CC33</color>

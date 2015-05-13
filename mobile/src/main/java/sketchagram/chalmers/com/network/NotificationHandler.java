@@ -49,7 +49,7 @@ public class NotificationHandler {
         }
         mBuilder.setAutoCancel(true);
         mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
-        mBuilder.setLights(Color.MAGENTA, 500, 500);
+        mBuilder.setLights(Color.rgb(167,111,47), 500, 500);
 
 
         // Creates an explicit intent for an Activity in your app

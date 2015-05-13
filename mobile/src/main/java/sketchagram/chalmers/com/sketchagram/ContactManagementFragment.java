@@ -109,9 +109,8 @@ public class ContactManagementFragment extends Fragment implements AbsListView.O
     }
 
     private void setupQuickScroll(View view) {
-        //TODO: Setup proper colors to match the rest of application.
-        final int blue = getResources().getColor(R.color.sketchagramSecondary);
-        final int blue_dark = getResources().getColor(R.color.sketchagramSecondary2);
+        final int blue = getResources().getColor(R.color.notificationColor);
+        final int blue_dark = getResources().getColor(R.color.notificationColor2);
 
         //Initialize quickscroll
         final QuickScroll quickscroll = (QuickScroll) view.findViewById(R.id.quickscroll);
