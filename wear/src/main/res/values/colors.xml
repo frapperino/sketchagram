@@ -18,6 +18,6 @@
     <color name="wl_blue">#2878ff</color>
     <color name="wl_gray">#c1c1c1</color>
     <color name="text_color">#434343</color>
-    <color name="sg_dark">#f44336</color>
-    <color name="sg_light">#d32f2f</color>
+    <color name="sg_dark">#ff21526a</color>
+    <color name="sg_light">#ff386980</color>
 </resources>
