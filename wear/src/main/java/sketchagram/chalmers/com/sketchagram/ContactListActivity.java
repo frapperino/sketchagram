@@ -313,7 +313,7 @@ public class ContactListActivity extends Activity implements WearableListView.Cl
             final String item = items.get(i);
 
             ImageView img = (ImageView) mItemView.findViewById(R.id.image);
-            img.setBackgroundResource(R.drawable.ic_contact_red);
+            img.setBackgroundResource(R.drawable.ic_contact_blue);
 
             TextView txt = (TextView) mItemView.findViewById(R.id.text);
             txt.setText(item);
