@@ -195,7 +195,7 @@ android:layout_width="match_parent" android:layout_height="match_parent">
                                 android:ems="10"
                                 android:id="@+id/enter_username_id"
                                 android:layout_marginBottom="20dp"
-                                android:hint="Chose a username"
+                                android:hint="Choose a username"
                                 android:backgroundTint="@drawable/text_underline"
                                 android:textCursorDrawable="@drawable/cursor_color"
                                 android:textColor="#ffffff"
