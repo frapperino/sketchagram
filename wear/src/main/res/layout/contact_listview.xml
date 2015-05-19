@@ -16,7 +16,7 @@
         android:layout_height="52dp"
         android:layout_marginStart="72dp"
         android:layout_width="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="@color/sg_dark"
         android:scaleX="0.8"
         android:scaleY="0.8"
         android:alpha="0.6"
