@@ -24,7 +24,7 @@
             android:layout_height="55dp"
             android:id="@+id/drawingButton"
             android:clickable="false"
-            android:src="@drawable/ic_draw_red" />
+            android:src="@drawable/ic_draw_blue" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
             android:layout_height="55dp"
             android:scaleType="fitCenter"
             android:background="@null"
-            android:src="@drawable/ic_emoji_red"/>
+            android:src="@drawable/ic_emoji_blue"/>
 
         <TextView
             android:clickable="false"
@@ -80,7 +80,7 @@
             android:scaleType="fitCenter"
             android:background="@null"
             android:id="@+id/conversationButton"
-            android:src="@drawable/ic_message_red" />
+            android:src="@drawable/ic_message_blue" />
 
         <TextView
             android:clickable="false"

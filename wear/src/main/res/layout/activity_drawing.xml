@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/backButton"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_back_blue"
         android:clickable="true"
         android:onClick="backPressed"
         android:layout_alignParentTop="true"
